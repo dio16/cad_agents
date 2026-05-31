@@ -128,14 +128,23 @@
 ## Sources of Truth
 
 1. `GOAL.md`
-2. `AGENTS.md`
-3. `TASKS.md`
-4. canonical workflow / design-rule / gate documents
-5. `manifests/*.json`
-6. generator scripts
-7. generated reports and viewer artifacts
+2. `SPEC.md`
+3. `AGENTS.md`
+4. `TASKS.md`
+5. canonical workflow / design-rule / gate documents under `docs/`
+6. `manifests/*.json`
+7. generator scripts under `scripts/`
+8. generated reports under `reports/` and viewer artifacts under `deliverables/`
 
 版別文書は歴史と根拠であり、現在の慣行を定義する正本ではない。永続化すべき学びは canonical artifact へ昇格する。
+
+## Environment
+
+- **OS:** WSL 2 (Linux), Bash-only active work
+- **Python:** 3.12+, managed by UV
+- **Package manager:** UV (required), pnpm (auxiliary, Node.js only)
+- **CAD backends:** CadQuery + build123d (both supported, manifest-driven)
+- **License:** Apache-2.0
 
 ## Review Cadence
 
