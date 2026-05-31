@@ -5,7 +5,7 @@
 
 Lightweight, auditable agentic CAD framework that runs deterministic geometry, motion, visibility, and fabrication gates locally. Final artifact verification reads generated files from disk in a fresh WSL process.
 
-- **License:** MIT
+- **License:** Apache-2.0
 - **Python:** 3.12+
 - **Package manager:** UV
 - **Backends:** CadQuery + build123d
