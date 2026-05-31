@@ -1,5 +1,5 @@
 {
-  "created_at": "2026-05-31T06:29:12.697950+00:00",
+  "created_at": "2026-05-31T07:27:07.317774+00:00",
   "status": "pass",
   "cwd": "/home/diobrando/codex_wsl/cad_agent_framework",
   "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
@@ -11,7 +11,7 @@
   "sanctioned_runner": "/home/diobrando/codex_wsl/cad_agent_framework/run_cad_agent.sh",
   "sanctioned_shell": "bash",
   "local_only": true,
-  "requested_local_only": false,
+  "requested_local_only": true,
   "runner_local_only": true,
   "checks": [
     {
@@ -59,7 +59,7 @@
       "name": "Onshape credentials present or explicitly waived",
       "status": "pass",
       "local_only": true,
-      "requested_local_only": false,
+      "requested_local_only": true,
       "runner_local_only": true,
       "env": {
         "ONSHAPE_ACCESS_KEY": false,
