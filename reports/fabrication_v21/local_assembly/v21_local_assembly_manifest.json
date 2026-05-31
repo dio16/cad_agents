@@ -1,0 +1,34 @@
+{
+  "manifest": "manifests/tourbillon_v21_onshape_run.json",
+  "created_at": "2026-04-30T17:00:55.735284+00:00",
+  "roles": [
+    "central_bearing_608zz",
+    "fixed_base",
+    "fixed_ring",
+    "hand_3mm_shaft",
+    "hand_crank",
+    "m3_ring_screws",
+    "orbit_3mm_shaft",
+    "orbit_pinion",
+    "rotating_cage"
+  ],
+  "input_glbs": {
+    "fixed_base": "/mnt/c/Users/diobrando/Documents/New project/cad_agent_framework/reports/text_to_cad_review/tourbillon_v20/step/.01_base_608zz_bearing_pocket_v20.step/model.glb",
+    "fixed_ring": "/mnt/c/Users/diobrando/Documents/New project/cad_agent_framework/reports/text_to_cad_review/tourbillon_v20/step/.02_fixed_internal_ring_clearance_teeth_v20.step/model.glb",
+    "rotating_cage": "/mnt/c/Users/diobrando/Documents/New project/cad_agent_framework/reports/text_to_cad_review/tourbillon_v20/step/.03_rotating_cage_bearing_journal_shaft_retainer_v20.step/model.glb",
+    "orbit_pinion": "/mnt/c/Users/diobrando/Documents/New project/cad_agent_framework/reports/text_to_cad_review/tourbillon_v20/step/.04_orbit_pinion_3mm_bore_backlash_teeth_v20.step/model.glb",
+    "hand_crank": "/mnt/c/Users/diobrando/Documents/New project/cad_agent_framework/reports/text_to_cad_review/tourbillon_v20/step/.05_hand_crank_3mm_shaft_bore_retained_pinion_v20.step/model.glb",
+    "central_bearing_608zz": "/mnt/c/Users/diobrando/Documents/New project/cad_agent_framework/reports/text_to_cad_review/tourbillon_v20/step/.06_ref_608zz_bearing.step/model.glb",
+    "orbit_3mm_shaft": "/mnt/c/Users/diobrando/Documents/New project/cad_agent_framework/reports/text_to_cad_review/tourbillon_v20/step/.07_ref_orbit_3mm_shaft.step/model.glb",
+    "hand_3mm_shaft": "/mnt/c/Users/diobrando/Documents/New project/cad_agent_framework/reports/text_to_cad_review/tourbillon_v20/step/.08_ref_hand_3mm_shaft.step/model.glb",
+    "m3_ring_screws": "/mnt/c/Users/diobrando/Documents/New project/cad_agent_framework/reports/text_to_cad_review/tourbillon_v20/step/.09_ref_m3_ring_screws.step/model.glb"
+  },
+  "printed_stl_dir": "/mnt/c/Users/diobrando/Documents/New project/cad_agent_framework/reports/fabrication_v21/stl",
+  "pose_angles_deg": [
+    0.0,
+    90.0,
+    180.0,
+    270.0
+  ],
+  "native_gear_relation": "blocked; represented by local transform poses and contact sheet"
+}

@@ -1,0 +1,166 @@
+{
+  "version": "V26",
+  "status": "mechanical_package_contract",
+  "target": "mechanically coherent AM tabletop tourbillon demonstrator",
+  "design_intent": {
+    "object_class": "desktop demonstrator, not certified timekeeping watch movement",
+    "completion_gate": "local fabrication complete when contract, part package, BOM, assembly sequence, analytic checks, and continuous fallback motion viewer pass",
+    "native_onshape_status": "optional final review; native Gear Relation remains blocked until a known-good schema is available"
+  },
+  "scheme_improvements_from_v25": [
+    "Unify V21 hardware/clearance package with V25 mechanism-first design contract.",
+    "Require separated printable parts instead of a single assembly STL/GLB.",
+    "Make every visible role traceable to a shaft, bridge, bearing, seat, or screw feature.",
+    "Treat the visual escapement as a carrier-mounted demonstrator module driven by the orbit shaft; do not claim regulating watch escapement performance.",
+    "Add AM package gates: printed parts CSV, purchased hardware CSV, assembly sequence, STL size checks, analytic shaft/bearing clearance checks, and continuous viewer smoke checks.",
+    "Harden the package after V26 review: split orbit support seats away from the rotating pinion stack, add lower/upper carrier bridge seats for balance and pallet roles, remove duplicate escape/knob geometry ownership, and require an inspectable 3D CAD mesh viewer with free camera, pose stepper, explode, section, supports, labels, traces, and ratio readout."
+  ],
+  "assumptions": {
+    "material": "PETG, tough resin, or SLS nylon prototype",
+    "printer_baseline": "FDM 0.4 mm nozzle / 0.16-0.20 mm layer, with process-specific clearance tuning",
+    "allowable_bending_stress_mpa": 35.0,
+    "input_torque_nmm": 25.0,
+    "gear_pressure_angle_deg": 20.0,
+    "module_mm": 1.5,
+    "running_backlash_mm": 0.3,
+    "minimum_wall_mm": 1.2,
+    "minimum_tooth_tip_mm": 0.8
+  },
+  "standard_hardware": [
+    {
+      "role": "central_bearing",
+      "standard": "608ZZ",
+      "size_mm": "8x22x7",
+      "qty": 1,
+      "fit": "slip pocket with 0.25 mm radial OD clearance"
+    },
+    {
+      "role": "orbit_escape_shaft",
+      "standard": "MISUMI equivalent precision shaft or dowel pin",
+      "size_mm": "3 dia x 38",
+      "qty": 1,
+      "fit": "supported by split lower/upper carrier bridge seats clear of the rotating pinion and escape wheel stack"
+    },
+    {
+      "role": "hand_crank_shaft",
+      "standard": "MISUMI equivalent precision shaft or dowel pin",
+      "size_mm": "3 dia x 42",
+      "qty": 1,
+      "fit": "two-point fixed-frame support"
+    },
+    {
+      "role": "ring_fasteners",
+      "standard": "M3 socket head screws",
+      "size_mm": "M3 x 42 envelope",
+      "qty": 4,
+      "fit": "fixed ring to base standoffs"
+    },
+    {
+      "role": "retention",
+      "standard": "M3 washers or printed collars",
+      "size_mm": "3.2 bore",
+      "qty": 4,
+      "fit": "axial retainers for hand and orbit shafts"
+    }
+  ],
+  "gear_meshes": [
+    {
+      "name": "fixed_internal_ring_to_orbit_escape_pinion",
+      "type": "fixed_internal_ring_to_external_planet",
+      "module_mm": 1.5,
+      "pressure_angle_deg": 20.0,
+      "ring_teeth": 72,
+      "pinion_teeth": 18,
+      "ring_pitch_radius_mm": 54.0,
+      "pinion_pitch_radius_mm": 13.5,
+      "center_distance_mm": 40.5,
+      "absolute_pinion_spin_ratio_per_carrier_rev": -3.0,
+      "relative_pinion_spin_ratio_in_carrier": -4.0,
+      "face_width_mm": 5.0,
+      "backlash_mm": 0.3
+    },
+    {
+      "name": "hand_pinion_to_carrier_drive_gear",
+      "type": "external_to_external",
+      "module_mm": 1.5,
+      "pressure_angle_deg": 20.0,
+      "driver_teeth": 18,
+      "driven_teeth": 60,
+      "driver_pitch_radius_mm": 13.5,
+      "driven_pitch_radius_mm": 45.0,
+      "center_distance_mm": 58.5,
+      "carrier_ratio_from_hand": -0.3,
+      "hand_spin_ratio_to_carrier": -3.3333333333,
+      "face_width_mm": 5.0,
+      "backlash_mm": 0.3
+    }
+  ],
+  "axes_and_supports": {
+    "central_axis": {
+      "axis_mm": [0.0, 0.0],
+      "support": "608ZZ bearing in base plus printed cage journal",
+      "journal_radius_mm": 3.95,
+      "bearing_bore_radius_mm": 4.0,
+      "base_clearance_bore_radius_mm": 4.4
+    },
+    "orbit_escape_axis": {
+      "axis_mm": [40.5, 0.0],
+      "support": "split lower and upper carrier bridge seats around a 3 mm shaft; support material is axially outside the rotating pinion and escape wheel stack",
+      "shaft_radius_mm": 1.5,
+      "printed_bore_radius_mm": 1.75,
+      "support_span_mm": 35.0
+    },
+    "hand_axis": {
+      "axis_mm": [0.0, -58.5],
+      "support": "fixed lower boss and upper bushing bracket around a 3 mm shaft",
+      "shaft_radius_mm": 1.5,
+      "printed_bore_radius_mm": 1.8,
+      "support_span_mm": 28.0
+    },
+    "balance_axis": {
+      "axis_mm": [-18.0, 10.0],
+      "support": "carrier-mounted lower and upper bridge seats bracketing the visible balance role",
+      "printed_bore_radius_mm": 0.8
+    },
+    "pallet_axis": {
+      "axis_mm": [10.0, -12.0],
+      "support": "carrier-mounted lower and upper bridge seats bracketing the visible pallet role, plus banking pins",
+      "printed_bore_radius_mm": 0.8
+    }
+  },
+  "escapement_demonstrator": {
+    "type": "carrier-mounted visual lever escapement demonstrator",
+    "escape_wheel_teeth": 15,
+    "drive": "coaxial with orbit_escape_shaft",
+    "balance_amplitude_deg": 22.0,
+    "pallet_amplitude_deg": 12.0,
+    "limitation": "visual and kinematic tabletop demonstrator; not a regulating escapement with verified impulse/lock contact physics"
+  },
+  "printable_parts": [
+    "01_base_plinth_bearing_pocket_v26.stl",
+    "02_fixed_internal_ring_72t_v26.stl",
+    "03_rotating_carrier_drive_gear_v26.stl",
+    "04_orbit_escape_pinion_18t_v26.stl",
+    "05_hand_crank_pinion_v26.stl",
+    "06_balance_wheel_v26.stl",
+    "07_escape_wheel_15t_v26.stl",
+    "08_pallet_fork_bridge_v26.stl",
+    "09_crank_knob_v26.stl"
+  ],
+  "required_gates": [
+    "contract_schema_pass",
+    "gear_ratio_and_center_distance_pass",
+    "lewis_stress_pass",
+    "bearing_and_shaft_clearance_pass",
+    "no_floating_roles_pass",
+    "support_contact_graph_pass",
+    "assembled_interference_axial_stack_pass",
+    "no_duplicate_role_geometry_pass",
+    "am_part_package_pass",
+    "assembly_sequence_pass",
+    "continuous_fallback_motion_viewer_pass",
+    "embedded_3d_cad_mesh_viewer_pass",
+    "viewer_transform_contract_pass",
+    "completion_wording_pass"
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "created_at": "2026-05-01T02:20:42.726281+00:00",
+  "status": "pass",
+  "checks": [
+    {
+      "name": "escapement parent frame",
+      "status": "pass"
+    },
+    {
+      "name": "escape wheel teeth",
+      "status": "pass"
+    },
+    {
+      "name": "banking angle bounded",
+      "status": "pass"
+    },
+    {
+      "name": "balance visual amplitude bounded",
+      "status": "pass"
+    },
+    {
+      "name": "state sequence defined",
+      "status": "pass",
+      "states": [
+        "lock",
+        "unlock",
+        "impulse",
+        "drop",
+        "lock_opposite"
+      ]
+    },
+    {
+      "name": "pallet lock faces defined",
+      "status": "pass",
+      "entry_lock_angle_deg": 2.0,
+      "exit_lock_angle_deg": 2.0
+    },
+    {
+      "name": "impulse faces defined",
+      "status": "pass",
+      "entry_impulse_angle_deg": 10.0,
+      "exit_impulse_angle_deg": 10.0
+    },
+    {
+      "name": "banking pins supported",
+      "status": "pass",
+      "banking_limit_deg": 12
+    },
+    {
+      "name": "guard and roller roles declared",
+      "status": "pass",
+      "roles": [
+        "guard_pin",
+        "roller_jewel",
+        "fork_slot"
+      ]
+    }
+  ]
+}

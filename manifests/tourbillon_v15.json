@@ -1,0 +1,366 @@
+{
+  "name": "tourbillon_v15",
+  "document_url": "https://cad.onshape.com/documents/0222fa90c0584ca0727f31d2/w/0cb8dde2f58aafcc165e983c/e/47455c94128d905048aeb521",
+  "assembly": {
+    "name": "Tourbillon V15 PDCA functional verification",
+    "element_id": "02ec794d33363341f7b5c182"
+  },
+  "pdca": "Final PDCA pass: clearer cage spokes, larger tooth radii, and conservative FDM clearances.",
+  "design_checks": [
+    {
+      "name": "orbit pinion to fixed ring pitch",
+      "type": "gear_mesh",
+      "center_distance_mm": 43.0,
+      "pinion_pitch_radius_mm": 13.0,
+      "ring_pitch_radius_mm": 56.0,
+      "max_pitch_error_mm": 0.25
+    },
+    {
+      "name": "cage drive gear to hand crank pinion pitch",
+      "type": "external_gear_mesh",
+      "center_distance_mm": 53.0,
+      "first_pitch_radius_mm": 10.0,
+      "second_pitch_radius_mm": 43.0,
+      "max_pitch_error_mm": 0.25
+    }
+  ],
+  "mechanism_requirements": [
+    {
+      "name": "hand crank drives the model",
+      "type": "driver_motion",
+      "role": "hand_crank"
+    },
+    {
+      "name": "hand crank is mechanically coupled to cage",
+      "type": "functional_connection",
+      "from_role": "hand_crank",
+      "to_role": "rotating_cage",
+      "connected": true,
+      "message": "Hand crank pinion meshes with the external drive gear integrated into the cage."
+    },
+    {
+      "name": "orbit pinion internal rolling ratio",
+      "type": "internal_gear_spin_ratio",
+      "pinion_role": "orbit_pinion",
+      "center_distance_mm": 43.0,
+      "pinion_pitch_radius_mm": 13.0,
+      "tolerance": 0.02
+    },
+    {
+      "name": "orbit pinion bore clears cage axle",
+      "type": "radial_clearance",
+      "inner_radius_mm": 3.0,
+      "shaft_radius_mm": 2.2,
+      "min_clearance_mm": 0.25
+    }
+  ],
+  "parts": [
+    {
+      "name": "base",
+      "role": "fixed_base",
+      "file": "C:/Users/diobrando/Documents/New project/tourbillon_v15_step/01_base_plinth_axis_v15.step",
+      "element_id": "618f02af6ed9311419fce82e",
+      "translation_id": "69edb3181bbb40071cbca4ce",
+      "part_id": "JFD",
+      "instance_id": "M/BMyxfnhPcTxFMJl"
+    },
+    {
+      "name": "fixed_internal_ring",
+      "role": "fixed_ring",
+      "file": "C:/Users/diobrando/Documents/New project/tourbillon_v15_step/02_fixed_internal_ring_96t_v15.step",
+      "element_id": "597293e3adba7faa328b9a90",
+      "translation_id": "69edb3231bbb40071cbca4dc",
+      "part_id": "JFD",
+      "instance_id": "MajcVZ8yI7CHQBhGw"
+    },
+    {
+      "name": "rotating_cage",
+      "role": "rotating_cage",
+      "file": "C:/Users/diobrando/Documents/New project/tourbillon_v15_step/03_rotating_cage_drive_gear_v15.step",
+      "motion": {
+        "type": "rotate_z",
+        "ratio": 1.0
+      },
+      "element_id": "7d742f2af492b915d80fce55",
+      "translation_id": "69edb32e1bbb40071cbca4ea",
+      "part_id": "JFD",
+      "instance_id": "M38TGJSpQZlqN9cel"
+    },
+    {
+      "name": "orbit_pinion",
+      "role": "orbit_pinion",
+      "file": "C:/Users/diobrando/Documents/New project/tourbillon_v15_step/04_orbit_pinion_24t_v15.step",
+      "motion": {
+        "type": "orbit_and_spin_z",
+        "center_mm": [
+          43.0,
+          0.0
+        ],
+        "orbit_ratio": 1.0,
+        "spin_ratio": -3.3076923076923075
+      },
+      "element_id": "c10619ec02cacf56421a5e87",
+      "translation_id": "69edb3391bbb40071cbca506",
+      "part_id": "JFD",
+      "instance_id": "M1XC8jGzjyRyd3u1R"
+    },
+    {
+      "name": "balance_wheel",
+      "role": "balance_wheel",
+      "file": "C:/Users/diobrando/Documents/New project/tourbillon_v15_step/05_balance_wheel_v15.step",
+      "motion": {
+        "type": "rotate_z",
+        "ratio": 1.0
+      },
+      "element_id": "c377961e93f906654b3b8678",
+      "translation_id": "69edb3441bbb40071cbca52a",
+      "part_id": "JFD",
+      "instance_id": "MiO5tA4S/Cn7yCm8q"
+    },
+    {
+      "name": "escape_wheel",
+      "role": "escape_wheel",
+      "file": "C:/Users/diobrando/Documents/New project/tourbillon_v15_step/06_escape_wheel_v15.step",
+      "motion": {
+        "type": "rotate_z",
+        "ratio": -2.4
+      },
+      "element_id": "da2b8c52c129101c949ee928",
+      "translation_id": "69edb34f1bbb40071cbca53d",
+      "part_id": "JFD",
+      "instance_id": "MevjESws+4MHOz0MG"
+    },
+    {
+      "name": "hand_crank",
+      "role": "hand_crank",
+      "file": "C:/Users/diobrando/Documents/New project/tourbillon_v15_step/07_hand_crank_drive_pinion_v15.step",
+      "motion": {
+        "type": "spin_about_point_z",
+        "center_mm": [
+          0.0,
+          -53.0
+        ],
+        "ratio": -4.3
+      },
+      "element_id": "a16e9dbd3ace52a05c82e045",
+      "translation_id": "69edb35a1bbb40071cbca54e",
+      "part_id": "JFD",
+      "instance_id": "MJqh4vgiTJLHeZEGx"
+    }
+  ],
+  "verification_runs": [
+    {
+      "kind": "design_check",
+      "status": "pass",
+      "timestamp": "2026-04-26T06:38:58.575956+00:00",
+      "results": [
+        {
+          "name": "orbit pinion to fixed ring pitch",
+          "type": "gear_mesh",
+          "status": "pass",
+          "pitch_error_mm": 0.0,
+          "max_pitch_error_mm": 0.25
+        },
+        {
+          "name": "cage drive gear to hand crank pinion pitch",
+          "type": "external_gear_mesh",
+          "status": "pass",
+          "pitch_error_mm": 0.0,
+          "max_pitch_error_mm": 0.25
+        }
+      ]
+    },
+    {
+      "kind": "mechanism_audit",
+      "status": "pass",
+      "timestamp": "2026-04-26T06:38:59.410931+00:00",
+      "results": [
+        {
+          "name": "hand crank drives the model",
+          "type": "driver_motion",
+          "status": "pass",
+          "role": "hand_crank",
+          "motion": {
+            "type": "rotate_z",
+            "ratio": -0.23255813953488372
+          },
+          "message": ""
+        },
+        {
+          "name": "hand crank is mechanically coupled to cage",
+          "type": "functional_connection",
+          "status": "pass",
+          "from_role": "hand_crank",
+          "to_role": "rotating_cage",
+          "message": "Hand crank pinion meshes with the external drive gear integrated into the cage."
+        },
+        {
+          "name": "orbit pinion internal rolling ratio",
+          "type": "internal_gear_spin_ratio",
+          "status": "pass",
+          "expected_spin_ratio": -3.3077,
+          "actual_spin_ratio": -3.3077,
+          "error": 0.0,
+          "tolerance": 0.02
+        },
+        {
+          "name": "orbit pinion bore clears cage axle",
+          "type": "radial_clearance",
+          "status": "pass",
+          "clearance_mm": 0.8,
+          "min_clearance_mm": 0.25,
+          "message": ""
+        }
+      ]
+    },
+    {
+      "kind": "pose",
+      "theta_deg": 120.0,
+      "transform_count": 5,
+      "timestamp": "2026-04-26T06:41:01.596187+00:00"
+    },
+    {
+      "kind": "design_check",
+      "status": "pass",
+      "timestamp": "2026-04-26T06:42:36.487569+00:00",
+      "results": [
+        {
+          "name": "orbit pinion to fixed ring pitch",
+          "type": "gear_mesh",
+          "status": "pass",
+          "pitch_error_mm": 0.0,
+          "max_pitch_error_mm": 0.25
+        },
+        {
+          "name": "cage drive gear to hand crank pinion pitch",
+          "type": "external_gear_mesh",
+          "status": "pass",
+          "pitch_error_mm": 0.0,
+          "max_pitch_error_mm": 0.25
+        }
+      ]
+    },
+    {
+      "kind": "mechanism_audit",
+      "status": "pass",
+      "timestamp": "2026-04-26T06:42:37.395141+00:00",
+      "results": [
+        {
+          "name": "hand crank drives the model",
+          "type": "driver_motion",
+          "status": "pass",
+          "role": "hand_crank",
+          "motion": {
+            "type": "spin_about_point_z",
+            "center_mm": [
+              0.0,
+              -53.0
+            ],
+            "ratio": -4.3
+          },
+          "message": ""
+        },
+        {
+          "name": "hand crank is mechanically coupled to cage",
+          "type": "functional_connection",
+          "status": "pass",
+          "from_role": "hand_crank",
+          "to_role": "rotating_cage",
+          "message": "Hand crank pinion meshes with the external drive gear integrated into the cage."
+        },
+        {
+          "name": "orbit pinion internal rolling ratio",
+          "type": "internal_gear_spin_ratio",
+          "status": "pass",
+          "expected_spin_ratio": -3.3077,
+          "actual_spin_ratio": -3.3077,
+          "error": 0.0,
+          "tolerance": 0.02
+        },
+        {
+          "name": "orbit pinion bore clears cage axle",
+          "type": "radial_clearance",
+          "status": "pass",
+          "clearance_mm": 0.8,
+          "min_clearance_mm": 0.25,
+          "message": ""
+        }
+      ]
+    },
+    {
+      "kind": "pose",
+      "theta_deg": 120.0,
+      "transform_count": 5,
+      "timestamp": "2026-04-26T06:42:39.474406+00:00"
+    },
+    {
+      "kind": "design_check",
+      "status": "pass",
+      "timestamp": "2026-04-26T06:44:06.570805+00:00",
+      "results": [
+        {
+          "name": "orbit pinion to fixed ring pitch",
+          "type": "gear_mesh",
+          "status": "pass",
+          "pitch_error_mm": 0.0,
+          "max_pitch_error_mm": 0.25
+        },
+        {
+          "name": "cage drive gear to hand crank pinion pitch",
+          "type": "external_gear_mesh",
+          "status": "pass",
+          "pitch_error_mm": 0.0,
+          "max_pitch_error_mm": 0.25
+        }
+      ]
+    },
+    {
+      "kind": "mechanism_audit",
+      "status": "pass",
+      "timestamp": "2026-04-26T06:44:07.415984+00:00",
+      "results": [
+        {
+          "name": "hand crank drives the model",
+          "type": "driver_motion",
+          "status": "pass",
+          "role": "hand_crank",
+          "motion": {
+            "type": "spin_about_point_z",
+            "center_mm": [
+              0.0,
+              -53.0
+            ],
+            "ratio": -4.3
+          },
+          "message": ""
+        },
+        {
+          "name": "hand crank is mechanically coupled to cage",
+          "type": "functional_connection",
+          "status": "pass",
+          "from_role": "hand_crank",
+          "to_role": "rotating_cage",
+          "message": "Hand crank pinion meshes with the external drive gear integrated into the cage."
+        },
+        {
+          "name": "orbit pinion internal rolling ratio",
+          "type": "internal_gear_spin_ratio",
+          "status": "pass",
+          "expected_spin_ratio": -3.3077,
+          "actual_spin_ratio": -3.3077,
+          "error": 0.0,
+          "tolerance": 0.02
+        },
+        {
+          "name": "orbit pinion bore clears cage axle",
+          "type": "radial_clearance",
+          "status": "pass",
+          "clearance_mm": 0.8,
+          "min_clearance_mm": 0.25,
+          "message": ""
+        }
+      ]
+    }
+  ],
+  "last_pose_deg": 120.0
+}

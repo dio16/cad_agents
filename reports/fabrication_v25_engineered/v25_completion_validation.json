@@ -1,0 +1,35 @@
+{
+  "status": "pass",
+  "created_at": "2026-05-01T02:23:42.902942+00:00",
+  "contract_completion": "C:\\Users\\diobrando\\Documents\\New project\\cad_agent_framework\\reports\\design_contract_v25\\v25_contract_completion.json",
+  "viewer": "C:\\Users\\diobrando\\Documents\\New project\\cad_agent_framework\\reports\\fabrication_v25_engineered\\v25_live_engineered_viewer.html",
+  "role_manifest": "C:\\Users\\diobrando\\Documents\\New project\\cad_agent_framework\\reports\\fabrication_v25_engineered\\v25_role_manifest.json",
+  "cad_assets_validation": "C:\\Users\\diobrando\\Documents\\New project\\cad_agent_framework\\reports\\fabrication_v25_engineered\\v25_cad_assets_validation.json",
+  "checks": [
+    {
+      "name": "design contract gates passed before CAD/viewer",
+      "status": "pass"
+    },
+    {
+      "name": "viewer uses internal fixed ring representation",
+      "status": "pass"
+    },
+    {
+      "name": "jewels are on visible seats/bridges",
+      "status": "pass"
+    },
+    {
+      "name": "GLB/STL CAD assets exist",
+      "status": "pass"
+    },
+    {
+      "name": "continuous local animation exists",
+      "status": "pass"
+    },
+    {
+      "name": "native Onshape Gear Relation blocked explicit",
+      "status": "pass"
+    }
+  ],
+  "status_wording": "V25 watch-grade-inspired local tourbillon demonstrator pass: design workflow, involute/stress estimates, supported escapement, internal ring representation, and continuous local viewer pass; native Onshape Gear Relation remains blocked."
+}

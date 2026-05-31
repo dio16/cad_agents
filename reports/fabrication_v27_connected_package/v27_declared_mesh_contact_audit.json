@@ -1,0 +1,311 @@
+{
+  "created_at": "2026-05-16T13:14:39.102214+00:00",
+  "generation_id": "2026-05-16T13:12:01.537997+00:00",
+  "input_manifest_sha256": "538917edf59d9d44fc3a62ba5d6d8d13216206e6b45cc9fde2bb0c3af0710c65",
+  "input_artifact_set_sha256": "dab3fee722fca31dec10c0f121cd3ea8eaef3dc630907ba0ab4b70478ea7bc0b",
+  "status": "pass",
+  "checks": [
+    {
+      "name": "02_fixed_internal_ring_72t_v27::04_orbit_escape_pinion_18t_v27 has no volumetric tooth overlap",
+      "status": "pass",
+      "max_common_volume_mm3": 0.0,
+      "min_common_volume_mm3": 0.0
+    },
+    {
+      "name": "03_rotating_carrier_drive_gear_v27::05_hand_crank_pinion_v27 has no volumetric tooth overlap",
+      "status": "pass",
+      "max_common_volume_mm3": 0.0,
+      "min_common_volume_mm3": 0.0
+    }
+  ],
+  "samples": [
+    {
+      "carrier_deg": 0,
+      "a": "02_fixed_internal_ring_72t_v27",
+      "b": "04_orbit_escape_pinion_18t_v27",
+      "common_volume_mm3": 0.0
+    },
+    {
+      "carrier_deg": 0,
+      "a": "03_rotating_carrier_drive_gear_v27",
+      "b": "05_hand_crank_pinion_v27",
+      "common_volume_mm3": 0.0
+    },
+    {
+      "carrier_deg": 15,
+      "a": "02_fixed_internal_ring_72t_v27",
+      "b": "04_orbit_escape_pinion_18t_v27",
+      "common_volume_mm3": 0.0
+    },
+    {
+      "carrier_deg": 15,
+      "a": "03_rotating_carrier_drive_gear_v27",
+      "b": "05_hand_crank_pinion_v27",
+      "common_volume_mm3": 0.0
+    },
+    {
+      "carrier_deg": 30,
+      "a": "02_fixed_internal_ring_72t_v27",
+      "b": "04_orbit_escape_pinion_18t_v27",
+      "common_volume_mm3": 0.0
+    },
+    {
+      "carrier_deg": 30,
+      "a": "03_rotating_carrier_drive_gear_v27",
+      "b": "05_hand_crank_pinion_v27",
+      "common_volume_mm3": 0.0
+    },
+    {
+      "carrier_deg": 45,
+      "a": "02_fixed_internal_ring_72t_v27",
+      "b": "04_orbit_escape_pinion_18t_v27",
+      "common_volume_mm3": 0.0
+    },
+    {
+      "carrier_deg": 45,
+      "a": "03_rotating_carrier_drive_gear_v27",
+      "b": "05_hand_crank_pinion_v27",
+      "common_volume_mm3": 0.0
+    },
+    {
+      "carrier_deg": 60,
+      "a": "02_fixed_internal_ring_72t_v27",
+      "b": "04_orbit_escape_pinion_18t_v27",
+      "common_volume_mm3": 0.0
+    },
+    {
+      "carrier_deg": 60,
+      "a": "03_rotating_carrier_drive_gear_v27",
+      "b": "05_hand_crank_pinion_v27",
+      "common_volume_mm3": 0.0
+    },
+    {
+      "carrier_deg": 75,
+      "a": "02_fixed_internal_ring_72t_v27",
+      "b": "04_orbit_escape_pinion_18t_v27",
+      "common_volume_mm3": 0.0
+    },
+    {
+      "carrier_deg": 75,
+      "a": "03_rotating_carrier_drive_gear_v27",
+      "b": "05_hand_crank_pinion_v27",
+      "common_volume_mm3": 0.0
+    },
+    {
+      "carrier_deg": 90,
+      "a": "02_fixed_internal_ring_72t_v27",
+      "b": "04_orbit_escape_pinion_18t_v27",
+      "common_volume_mm3": 0.0
+    },
+    {
+      "carrier_deg": 90,
+      "a": "03_rotating_carrier_drive_gear_v27",
+      "b": "05_hand_crank_pinion_v27",
+      "common_volume_mm3": 0.0
+    },
+    {
+      "carrier_deg": 105,
+      "a": "02_fixed_internal_ring_72t_v27",
+      "b": "04_orbit_escape_pinion_18t_v27",
+      "common_volume_mm3": 0.0
+    },
+    {
+      "carrier_deg": 105,
+      "a": "03_rotating_carrier_drive_gear_v27",
+      "b": "05_hand_crank_pinion_v27",
+      "common_volume_mm3": 0.0
+    },
+    {
+      "carrier_deg": 120,
+      "a": "02_fixed_internal_ring_72t_v27",
+      "b": "04_orbit_escape_pinion_18t_v27",
+      "common_volume_mm3": 0.0
+    },
+    {
+      "carrier_deg": 120,
+      "a": "03_rotating_carrier_drive_gear_v27",
+      "b": "05_hand_crank_pinion_v27",
+      "common_volume_mm3": 0.0
+    },
+    {
+      "carrier_deg": 135,
+      "a": "02_fixed_internal_ring_72t_v27",
+      "b": "04_orbit_escape_pinion_18t_v27",
+      "common_volume_mm3": 0.0
+    },
+    {
+      "carrier_deg": 135,
+      "a": "03_rotating_carrier_drive_gear_v27",
+      "b": "05_hand_crank_pinion_v27",
+      "common_volume_mm3": 0.0
+    },
+    {
+      "carrier_deg": 150,
+      "a": "02_fixed_internal_ring_72t_v27",
+      "b": "04_orbit_escape_pinion_18t_v27",
+      "common_volume_mm3": 0.0
+    },
+    {
+      "carrier_deg": 150,
+      "a": "03_rotating_carrier_drive_gear_v27",
+      "b": "05_hand_crank_pinion_v27",
+      "common_volume_mm3": 0.0
+    },
+    {
+      "carrier_deg": 165,
+      "a": "02_fixed_internal_ring_72t_v27",
+      "b": "04_orbit_escape_pinion_18t_v27",
+      "common_volume_mm3": 0.0
+    },
+    {
+      "carrier_deg": 165,
+      "a": "03_rotating_carrier_drive_gear_v27",
+      "b": "05_hand_crank_pinion_v27",
+      "common_volume_mm3": 0.0
+    },
+    {
+      "carrier_deg": 180,
+      "a": "02_fixed_internal_ring_72t_v27",
+      "b": "04_orbit_escape_pinion_18t_v27",
+      "common_volume_mm3": 0.0
+    },
+    {
+      "carrier_deg": 180,
+      "a": "03_rotating_carrier_drive_gear_v27",
+      "b": "05_hand_crank_pinion_v27",
+      "common_volume_mm3": 0.0
+    },
+    {
+      "carrier_deg": 195,
+      "a": "02_fixed_internal_ring_72t_v27",
+      "b": "04_orbit_escape_pinion_18t_v27",
+      "common_volume_mm3": 0.0
+    },
+    {
+      "carrier_deg": 195,
+      "a": "03_rotating_carrier_drive_gear_v27",
+      "b": "05_hand_crank_pinion_v27",
+      "common_volume_mm3": 0.0
+    },
+    {
+      "carrier_deg": 210,
+      "a": "02_fixed_internal_ring_72t_v27",
+      "b": "04_orbit_escape_pinion_18t_v27",
+      "common_volume_mm3": 0.0
+    },
+    {
+      "carrier_deg": 210,
+      "a": "03_rotating_carrier_drive_gear_v27",
+      "b": "05_hand_crank_pinion_v27",
+      "common_volume_mm3": 0.0
+    },
+    {
+      "carrier_deg": 225,
+      "a": "02_fixed_internal_ring_72t_v27",
+      "b": "04_orbit_escape_pinion_18t_v27",
+      "common_volume_mm3": 0.0
+    },
+    {
+      "carrier_deg": 225,
+      "a": "03_rotating_carrier_drive_gear_v27",
+      "b": "05_hand_crank_pinion_v27",
+      "common_volume_mm3": 0.0
+    },
+    {
+      "carrier_deg": 240,
+      "a": "02_fixed_internal_ring_72t_v27",
+      "b": "04_orbit_escape_pinion_18t_v27",
+      "common_volume_mm3": 0.0
+    },
+    {
+      "carrier_deg": 240,
+      "a": "03_rotating_carrier_drive_gear_v27",
+      "b": "05_hand_crank_pinion_v27",
+      "common_volume_mm3": 0.0
+    },
+    {
+      "carrier_deg": 255,
+      "a": "02_fixed_internal_ring_72t_v27",
+      "b": "04_orbit_escape_pinion_18t_v27",
+      "common_volume_mm3": 0.0
+    },
+    {
+      "carrier_deg": 255,
+      "a": "03_rotating_carrier_drive_gear_v27",
+      "b": "05_hand_crank_pinion_v27",
+      "common_volume_mm3": 0.0
+    },
+    {
+      "carrier_deg": 270,
+      "a": "02_fixed_internal_ring_72t_v27",
+      "b": "04_orbit_escape_pinion_18t_v27",
+      "common_volume_mm3": 0.0
+    },
+    {
+      "carrier_deg": 270,
+      "a": "03_rotating_carrier_drive_gear_v27",
+      "b": "05_hand_crank_pinion_v27",
+      "common_volume_mm3": 0.0
+    },
+    {
+      "carrier_deg": 285,
+      "a": "02_fixed_internal_ring_72t_v27",
+      "b": "04_orbit_escape_pinion_18t_v27",
+      "common_volume_mm3": 0.0
+    },
+    {
+      "carrier_deg": 285,
+      "a": "03_rotating_carrier_drive_gear_v27",
+      "b": "05_hand_crank_pinion_v27",
+      "common_volume_mm3": 0.0
+    },
+    {
+      "carrier_deg": 300,
+      "a": "02_fixed_internal_ring_72t_v27",
+      "b": "04_orbit_escape_pinion_18t_v27",
+      "common_volume_mm3": 0.0
+    },
+    {
+      "carrier_deg": 300,
+      "a": "03_rotating_carrier_drive_gear_v27",
+      "b": "05_hand_crank_pinion_v27",
+      "common_volume_mm3": 0.0
+    },
+    {
+      "carrier_deg": 315,
+      "a": "02_fixed_internal_ring_72t_v27",
+      "b": "04_orbit_escape_pinion_18t_v27",
+      "common_volume_mm3": 0.0
+    },
+    {
+      "carrier_deg": 315,
+      "a": "03_rotating_carrier_drive_gear_v27",
+      "b": "05_hand_crank_pinion_v27",
+      "common_volume_mm3": 0.0
+    },
+    {
+      "carrier_deg": 330,
+      "a": "02_fixed_internal_ring_72t_v27",
+      "b": "04_orbit_escape_pinion_18t_v27",
+      "common_volume_mm3": 0.0
+    },
+    {
+      "carrier_deg": 330,
+      "a": "03_rotating_carrier_drive_gear_v27",
+      "b": "05_hand_crank_pinion_v27",
+      "common_volume_mm3": 0.0
+    },
+    {
+      "carrier_deg": 345,
+      "a": "02_fixed_internal_ring_72t_v27",
+      "b": "04_orbit_escape_pinion_18t_v27",
+      "common_volume_mm3": 0.0
+    },
+    {
+      "carrier_deg": 345,
+      "a": "03_rotating_carrier_drive_gear_v27",
+      "b": "05_hand_crank_pinion_v27",
+      "common_volume_mm3": 0.0
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "created_at": "2026-05-17T15:31:52.661221+00:00",
+  "generation_id": "v30::2026-05-17T15:30:41.872880+00:00",
+  "status": "pass",
+  "url": "http://127.0.0.1:53983/v30_3d_cad_motion_viewer.html",
+  "checks": [
+    {
+      "name": "HTTP response OK",
+      "status": "pass"
+    },
+    {
+      "name": "viewer loaded solids",
+      "status": "pass",
+      "status_text": "Loaded V30 18 CAD mesh solids / 177,540 vertices."
+    },
+    {
+      "name": "viewer advances over time",
+      "status": "pass"
+    },
+    {
+      "name": "viewer wording names real shafts",
+      "status": "pass"
+    }
+  ]
+}

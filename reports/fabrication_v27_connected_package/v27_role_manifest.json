@@ -1,0 +1,49 @@
+{
+  "status": "pass",
+  "created_at": "2026-05-16T13:12:03.720820+00:00",
+  "generation_id": "2026-05-16T13:12:01.537997+00:00",
+  "input_manifest_sha256": "538917edf59d9d44fc3a62ba5d6d8d13216206e6b45cc9fde2bb0c3af0710c65",
+  "input_artifact_set_sha256": "dab3fee722fca31dec10c0f121cd3ea8eaef3dc630907ba0ab4b70478ea7bc0b",
+  "roles": {
+    "fixed_internal_ring": {
+      "parent": "world",
+      "support": "M3-fastened fixed ring",
+      "motion": "fixed"
+    },
+    "carrier": {
+      "parent": "world",
+      "support": "608ZZ bearing and printed journal",
+      "motion": "revolute_z"
+    },
+    "orbit_escape_pinion": {
+      "parent": "carrier",
+      "support": "3 mm shaft with two carrier bridge seats",
+      "motion": "orbit plus spin"
+    },
+    "hand_input_pinion": {
+      "parent": "world",
+      "support": "3 mm hand input shaft",
+      "motion": "revolute_z"
+    },
+    "balance_wheel": {
+      "parent": "carrier",
+      "support": "1.6 mm staff seats",
+      "motion": "supported visual hardware only"
+    },
+    "escape_wheel": {
+      "parent": "orbit_escape_pinion",
+      "support": "coaxial orbit/escape shaft",
+      "motion": "coaxial spin"
+    },
+    "pallet_display": {
+      "parent": "carrier",
+      "support": "1.6 mm pallet arbor",
+      "motion": "eccentric pin-slot display"
+    },
+    "input_knob": {
+      "parent": "hand_input_pinion",
+      "support": "coaxial hand input shaft",
+      "motion": "coaxial spin"
+    }
+  }
+}

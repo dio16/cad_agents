@@ -1,0 +1,951 @@
+{
+  "name": "tourbillon_v19_mechanically_valid",
+  "document_url": "https://cad.onshape.com/documents/0222fa90c0584ca0727f31d2/w/0cb8dde2f58aafcc165e983c/e/d06eca291d4b92e8e6634fa4",
+  "assembly": {
+    "name": "Tourbillon V19 mechanically valid clearance gate",
+    "element_id": "a50ffc5c9de9cde026cc6ee4"
+  },
+  "mechanism_spec": {
+    "name": "tourbillon_v19_mechanically_valid",
+    "design_rule": "solid_interference_before_onshape",
+    "standard_components": [
+      {
+        "name": "central bearing",
+        "type": "608ZZ",
+        "bore_mm": 8.0,
+        "od_mm": 22.0,
+        "width_mm": 7.0,
+        "qty": 1
+      },
+      {
+        "name": "orbit pinion shaft",
+        "type": "MISUMI or equivalent 3 mm shaft",
+        "diameter_mm": 3.0,
+        "qty": 1
+      },
+      {
+        "name": "hand crank shaft",
+        "type": "MISUMI or equivalent 3 mm shaft",
+        "diameter_mm": 3.0,
+        "qty": 1
+      },
+      {
+        "name": "fasteners",
+        "type": "M3 screws",
+        "qty": 8
+      }
+    ],
+    "gears": {
+      "fixed_ring": {
+        "pitch_radius_mm": 54.0,
+        "teeth": 72,
+        "z": 38.0
+      },
+      "orbit_pinion": {
+        "pitch_radius_mm": 13.5,
+        "teeth": 18,
+        "center_radius_mm": 40.5,
+        "z": 38.0
+      },
+      "cage_drive": {
+        "pitch_radius_mm": 45.0,
+        "teeth": 60,
+        "z": 25.0
+      },
+      "hand_crank_pinion": {
+        "pitch_radius_mm": 13.5,
+        "teeth": 18,
+        "center_distance_mm": 58.5,
+        "z": 25.0
+      }
+    },
+    "clearance_strategy": {
+      "gear_profile": "backlash trapezoid involute-like teeth",
+      "tooth_radial_clearance_mm": 0.2,
+      "solid_interference_max_mm3": 0.01,
+      "vertical_layer_gap_mm": 2.0
+    }
+  },
+  "motion_contract": {
+    "pose_parameter": "cage_angle_deg",
+    "input_role": "hand_crank",
+    "input_to_cage_ratio": -0.3,
+    "joints": [
+      {
+        "role": "rotating_cage",
+        "joint": "revolute_z",
+        "axis_mm": [
+          0.0,
+          0.0
+        ],
+        "motion_type": "rotate_z"
+      },
+      {
+        "role": "hand_crank",
+        "joint": "revolute_z",
+        "axis_mm": [
+          0.0,
+          -58.5
+        ],
+        "motion_type": "spin_about_point_z"
+      },
+      {
+        "role": "orbit_pinion",
+        "joint": "revolute_on_cage_z",
+        "axis_mm": [
+          40.5,
+          0.0
+        ],
+        "motion_type": "orbit_absolute_spin_z"
+      }
+    ],
+    "relations": [
+      {
+        "name": "fixed ring determines absolute orbit pinion spin",
+        "type": "internal_fixed_ring_orbit",
+        "planet_role": "orbit_pinion",
+        "center_distance_mm": 40.5,
+        "planet_pitch_radius_mm": 13.5,
+        "tolerance": 0.02
+      },
+      {
+        "name": "hand crank pinion inversely drives cage",
+        "type": "external_pair",
+        "driver_role": "hand_crank",
+        "driven_role": "rotating_cage",
+        "driver_pitch_radius_mm": 13.5,
+        "driven_pitch_radius_mm": 45.0,
+        "tolerance": 0.02
+      }
+    ]
+  },
+  "design_checks": [
+    {
+      "name": "fixed internal ring to orbit pinion pitch",
+      "type": "gear_mesh",
+      "center_distance_mm": 40.5,
+      "pinion_pitch_radius_mm": 13.5,
+      "ring_pitch_radius_mm": 54.0,
+      "max_pitch_error_mm": 0.1
+    },
+    {
+      "name": "hand crank pinion to cage drive gear pitch",
+      "type": "external_gear_mesh",
+      "center_distance_mm": 58.5,
+      "first_pitch_radius_mm": 13.5,
+      "second_pitch_radius_mm": 45.0,
+      "max_pitch_error_mm": 0.1
+    },
+    {
+      "name": "fixed ring plane separated from drive plane",
+      "type": "connection",
+      "connected": true,
+      "message": "Drive gear Z25-29 and internal ring Z38-42 are separated by 9 mm."
+    },
+    {
+      "name": "orbit pinion support avoids drive plane",
+      "type": "connection",
+      "connected": true,
+      "message": "Cage uses a connected lower orbit boss and leaves the drive gear plane open for the hand pinion."
+    }
+  ],
+  "mechanism_requirements": [
+    {
+      "name": "hand crank drives the model",
+      "type": "driver_motion",
+      "role": "hand_crank"
+    },
+    {
+      "name": "hand crank gear meshes with cage drive gear",
+      "type": "functional_connection",
+      "from_role": "hand_crank",
+      "to_role": "rotating_cage",
+      "connected": true
+    },
+    {
+      "name": "fixed ring forces orbit pinion spin",
+      "type": "functional_connection",
+      "from_role": "fixed_ring",
+      "to_role": "orbit_pinion",
+      "connected": true
+    },
+    {
+      "name": "orbit pinion internal rolling ratio",
+      "type": "internal_gear_spin_ratio",
+      "pinion_role": "orbit_pinion",
+      "center_distance_mm": 40.5,
+      "pinion_pitch_radius_mm": 13.5,
+      "tolerance": 0.02
+    },
+    {
+      "name": "orbit pinion shaft bore clearance",
+      "type": "radial_clearance",
+      "inner_radius_mm": 2.5,
+      "shaft_radius_mm": 1.5,
+      "min_clearance_mm": 0.4
+    }
+  ],
+  "solid_interference": {
+    "max_allowed_intersection_volume_mm3": 0.01
+  },
+  "onshape_mate_plan": {
+    "name": "Tourbillon V19 Onshape-constrained motion test",
+    "create_relations": false,
+    "relation_status": "schema_captured_but_onshape_relation_currently_errors",
+    "part_ids": {
+      "fixed_base": "JFD",
+      "fixed_ring": "JFD",
+      "rotating_cage": "JFD",
+      "orbit_pinion": "JFD",
+      "hand_crank": "JFD"
+    },
+    "mate_connectors": [
+      {
+        "key": "base_center",
+        "name": "Codex V19 MC base center",
+        "role": "fixed_base",
+        "deterministic_id": "JFl",
+        "translation_mm": {
+          "z": 2.5
+        }
+      },
+      {
+        "key": "cage_center",
+        "name": "Codex V19 MC cage center",
+        "role": "rotating_cage",
+        "deterministic_id": "KF5E"
+      },
+      {
+        "key": "base_ring_ground",
+        "name": "Codex V19 MC base ground at fixed ring plane",
+        "role": "fixed_base",
+        "deterministic_id": "JFl",
+        "translation_mm": {
+          "z": 26.5
+        }
+      },
+      {
+        "key": "fixed_ring_ground",
+        "name": "Codex V19 MC fixed ring ground",
+        "role": "fixed_ring",
+        "deterministic_id": "JF1"
+      },
+      {
+        "key": "base_hand_axis",
+        "name": "Codex V19 MC base hand axis",
+        "role": "fixed_base",
+        "deterministic_id": "KFFB",
+        "translation_mm": {
+          "z": 1.0
+        }
+      },
+      {
+        "key": "hand_axis",
+        "name": "Codex V19 MC hand crank axis",
+        "role": "hand_crank",
+        "deterministic_id": "KFtU"
+      },
+      {
+        "key": "cage_orbit_axis",
+        "name": "Codex V19 MC cage orbit pinion axis",
+        "role": "rotating_cage",
+        "deterministic_id": "KFlE",
+        "translation_mm": {
+          "z": 19.0
+        }
+      },
+      {
+        "key": "orbit_pinion_axis",
+        "name": "Codex V19 MC orbit pinion axis",
+        "role": "orbit_pinion",
+        "deterministic_id": "KFVS"
+      }
+    ],
+    "mates": [
+      {
+        "key": "fixed_ring_to_base",
+        "name": "Codex V19 Fastened fixed ring to base",
+        "mate_type": "FASTENED",
+        "connectors": [
+          "base_ring_ground",
+          "fixed_ring_ground"
+        ]
+      },
+      {
+        "key": "cage_revolute",
+        "name": "Codex V19 Revolute cage about center",
+        "mate_type": "REVOLUTE",
+        "connectors": [
+          "base_center",
+          "cage_center"
+        ]
+      },
+      {
+        "key": "hand_revolute",
+        "name": "Codex V19 Revolute hand crank",
+        "mate_type": "REVOLUTE",
+        "connectors": [
+          "base_hand_axis",
+          "hand_axis"
+        ]
+      },
+      {
+        "key": "orbit_pinion_revolute",
+        "name": "Codex V19 Revolute orbit pinion on cage",
+        "mate_type": "REVOLUTE",
+        "connectors": [
+          "cage_orbit_axis",
+          "orbit_pinion_axis"
+        ]
+      }
+    ],
+    "relations": [
+      {
+        "key": "hand_to_cage",
+        "name": "Codex V19 Gear relation hand crank to cage",
+        "relation_type": "GEAR",
+        "mates": [
+          "hand_revolute",
+          "cage_revolute"
+        ],
+        "ratio": 3.3333333333333335,
+        "query_data": "Rz",
+        "relation_length": "25 mm",
+        "reverse": true
+      },
+      {
+        "key": "orbit_to_cage",
+        "name": "Codex V19 Gear relation orbit pinion to cage",
+        "relation_type": "GEAR",
+        "mates": [
+          "orbit_pinion_revolute",
+          "cage_revolute"
+        ],
+        "ratio": 4.0,
+        "query_data": "Rz",
+        "relation_length": "25 mm",
+        "reverse": true
+      }
+    ]
+  },
+  "parts": [
+    {
+      "name": "base",
+      "role": "fixed_base",
+      "file": "C:/Users/diobrando/Documents/New project/tourbillon_v19_step/01_base_clearanced_bearing_frame_v19.step",
+      "element_id": "1e1c0dae92b98fc556dbdb60",
+      "translation_id": "69ede802dec8124aaa94031e",
+      "part_id": "JFD",
+      "instance_id": "MHQYiCAiPExuVWxuf"
+    },
+    {
+      "name": "fixed_internal_ring",
+      "role": "fixed_ring",
+      "file": "C:/Users/diobrando/Documents/New project/tourbillon_v19_step/02_fixed_internal_ring_clearance_teeth_v19.step",
+      "element_id": "ffa8697efaba390f5bc3c794",
+      "translation_id": "69ede80ddec8124aaa940331",
+      "part_id": "JFD",
+      "instance_id": "Mu8G+aT0XYqakNfQT"
+    },
+    {
+      "name": "rotating_cage",
+      "role": "rotating_cage",
+      "file": "C:/Users/diobrando/Documents/New project/tourbillon_v19_step/03_rotating_cage_separated_drive_gear_v19.step",
+      "motion": {
+        "type": "rotate_z",
+        "ratio": 1.0
+      },
+      "element_id": "705e3b9ad0a89e49ee5216ee",
+      "translation_id": "69ede818dec8124aaa94033d",
+      "part_id": "JFD",
+      "instance_id": "MBRZbax20lekE/yCx"
+    },
+    {
+      "name": "orbit_pinion",
+      "role": "orbit_pinion",
+      "file": "C:/Users/diobrando/Documents/New project/tourbillon_v19_step/04_orbit_pinion_backlash_teeth_v19.step",
+      "motion": {
+        "type": "orbit_absolute_spin_z",
+        "center_mm": [
+          40.5,
+          0.0
+        ],
+        "orbit_ratio": 1.0,
+        "absolute_spin_ratio": -3.0
+      },
+      "element_id": "1c136131142f3f9568d13913",
+      "translation_id": "69ede823dec8124aaa940347",
+      "part_id": "JFD",
+      "instance_id": "MAW1wmcgoNyNN8RH7"
+    },
+    {
+      "name": "hand_crank",
+      "role": "hand_crank",
+      "file": "C:/Users/diobrando/Documents/New project/tourbillon_v19_step/05_hand_crank_clearanced_pinion_v19.step",
+      "motion": {
+        "type": "spin_about_point_z",
+        "center_mm": [
+          0.0,
+          -58.5
+        ],
+        "ratio": -3.3333333333333335
+      },
+      "element_id": "b7e816fd36ead6ef7ae5a673",
+      "translation_id": "69ede82edec8124aaa940354",
+      "part_id": "JFD",
+      "instance_id": "MkOYsJKAGHn9P6AzY"
+    }
+  ],
+  "verification_runs": [
+    {
+      "kind": "design_check",
+      "status": "pass",
+      "timestamp": "2026-04-26T11:03:31.576351+00:00",
+      "results": [
+        {
+          "name": "fixed internal ring to orbit pinion pitch",
+          "type": "gear_mesh",
+          "status": "pass",
+          "pitch_error_mm": 0.0,
+          "max_pitch_error_mm": 0.1
+        },
+        {
+          "name": "hand crank pinion to cage drive gear pitch",
+          "type": "external_gear_mesh",
+          "status": "pass",
+          "pitch_error_mm": 0.0,
+          "max_pitch_error_mm": 0.1
+        },
+        {
+          "name": "fixed ring plane separated from drive plane",
+          "type": "connection",
+          "status": "pass",
+          "message": "Drive gear Z25-29 and internal ring Z38-42 are separated by 9 mm."
+        },
+        {
+          "name": "orbit pinion support avoids drive plane",
+          "type": "connection",
+          "status": "pass",
+          "message": "Cage uses a connected lower orbit boss and leaves the drive gear plane open for the hand pinion."
+        }
+      ]
+    },
+    {
+      "kind": "mechanism_audit",
+      "status": "pass",
+      "timestamp": "2026-04-26T11:03:31.598249+00:00",
+      "results": [
+        {
+          "name": "hand crank drives the model",
+          "type": "driver_motion",
+          "status": "pass",
+          "role": "hand_crank",
+          "motion": {
+            "type": "spin_about_point_z",
+            "center_mm": [
+              0.0,
+              -58.5
+            ],
+            "ratio": -3.3333333333333335
+          },
+          "message": ""
+        },
+        {
+          "name": "hand crank gear meshes with cage drive gear",
+          "type": "functional_connection",
+          "status": "pass",
+          "from_role": "hand_crank",
+          "to_role": "rotating_cage",
+          "message": ""
+        },
+        {
+          "name": "fixed ring forces orbit pinion spin",
+          "type": "functional_connection",
+          "status": "pass",
+          "from_role": "fixed_ring",
+          "to_role": "orbit_pinion",
+          "message": ""
+        },
+        {
+          "name": "orbit pinion internal rolling ratio",
+          "type": "internal_gear_spin_ratio",
+          "status": "pass",
+          "expected_spin_ratio": -3.0,
+          "actual_spin_ratio": -3.0,
+          "error": 0.0,
+          "tolerance": 0.02
+        },
+        {
+          "name": "orbit pinion shaft bore clearance",
+          "type": "radial_clearance",
+          "status": "pass",
+          "clearance_mm": 1.0,
+          "min_clearance_mm": 0.4,
+          "message": ""
+        }
+      ]
+    },
+    {
+      "kind": "motion_check",
+      "status": "pass",
+      "timestamp": "2026-04-26T11:03:31.625835+00:00",
+      "results": [
+        {
+          "name": "pose parameter is defined",
+          "type": "motion_contract",
+          "status": "pass",
+          "pose_parameter": "cage_angle_deg"
+        },
+        {
+          "name": "joint motion for rotating_cage",
+          "type": "joint_motion",
+          "status": "pass",
+          "role": "rotating_cage",
+          "expected_motion_type": "rotate_z",
+          "actual_motion": {
+            "type": "rotate_z",
+            "ratio": 1.0
+          }
+        },
+        {
+          "name": "joint motion for hand_crank",
+          "type": "joint_motion",
+          "status": "pass",
+          "role": "hand_crank",
+          "expected_motion_type": "spin_about_point_z",
+          "actual_motion": {
+            "type": "spin_about_point_z",
+            "center_mm": [
+              0.0,
+              -58.5
+            ],
+            "ratio": -3.3333333333333335
+          }
+        },
+        {
+          "name": "joint motion for orbit_pinion",
+          "type": "joint_motion",
+          "status": "pass",
+          "role": "orbit_pinion",
+          "expected_motion_type": "orbit_absolute_spin_z",
+          "actual_motion": {
+            "type": "orbit_absolute_spin_z",
+            "center_mm": [
+              40.5,
+              0.0
+            ],
+            "orbit_ratio": 1.0,
+            "absolute_spin_ratio": -3.0
+          }
+        },
+        {
+          "name": "fixed ring determines absolute orbit pinion spin",
+          "type": "internal_fixed_ring_orbit",
+          "status": "pass",
+          "expected_absolute_spin_ratio": -3.0,
+          "actual_ratio": -3.0,
+          "requires_motion_type": "orbit_absolute_spin_z",
+          "actual_motion_type": "orbit_absolute_spin_z"
+        },
+        {
+          "name": "hand crank pinion inversely drives cage",
+          "type": "external_pair",
+          "status": "pass",
+          "expected_driver_ratio_for_pose_parameter": -3.3333,
+          "actual_driver_ratio": -3.3333
+        }
+      ]
+    },
+    {
+      "kind": "solid_interference_audit",
+      "status": "pass",
+      "timestamp": "2026-04-26T11:04:01.765694+00:00",
+      "sample_step_deg": 15.0,
+      "results": [
+        {
+          "name": "fixed_base step body",
+          "type": "solid_body_loaded",
+          "status": "pass",
+          "role": "fixed_base",
+          "volume_mm3": 221555.434,
+          "bbox_mm": {
+            "xmin": -92.0,
+            "xmax": 92.0,
+            "ymin": -92.0,
+            "ymax": 92.0,
+            "zmin": 0.0,
+            "zmax": 36.0
+          }
+        },
+        {
+          "name": "fixed_ring step body",
+          "type": "solid_body_loaded",
+          "status": "pass",
+          "role": "fixed_ring",
+          "volume_mm3": 37149.463,
+          "bbox_mm": {
+            "xmin": -77.0,
+            "xmax": 77.0,
+            "ymin": -77.0,
+            "ymax": 77.0,
+            "zmin": 38.0,
+            "zmax": 42.0
+          }
+        },
+        {
+          "name": "rotating_cage step body",
+          "type": "solid_body_loaded",
+          "status": "pass",
+          "role": "rotating_cage",
+          "volume_mm3": 47482.584,
+          "bbox_mm": {
+            "xmin": -45.947,
+            "xmax": 45.947,
+            "ymin": -45.947,
+            "ymax": 45.947,
+            "zmin": 13.0,
+            "zmax": 53.0
+          }
+        },
+        {
+          "name": "orbit_pinion step body",
+          "type": "solid_body_loaded",
+          "status": "pass",
+          "role": "orbit_pinion",
+          "volume_mm3": 2207.686,
+          "bbox_mm": {
+            "xmin": 26.059,
+            "xmax": 54.941,
+            "ymin": -14.309,
+            "ymax": 14.309,
+            "zmin": 37.0,
+            "zmax": 43.0
+          }
+        },
+        {
+          "name": "hand_crank step body",
+          "type": "solid_body_loaded",
+          "status": "pass",
+          "role": "hand_crank",
+          "volume_mm3": 2745.102,
+          "bbox_mm": {
+            "xmin": -14.441,
+            "xmax": 14.441,
+            "ymin": -97.7,
+            "ymax": -44.191,
+            "zmin": 24.0,
+            "zmax": 34.0
+          }
+        }
+      ]
+    },
+    {
+      "kind": "onshape_geometry_audit",
+      "status": "pass",
+      "timestamp": "2026-04-26T11:09:41.868197+00:00",
+      "results": [
+        {
+          "name": "selected body for fixed_base",
+          "status": "pass",
+          "role": "fixed_base",
+          "part_id": "JFD",
+          "edge_count": 26,
+          "face_count": 26
+        },
+        {
+          "name": "selected body for fixed_ring",
+          "status": "pass",
+          "role": "fixed_ring",
+          "part_id": "JFD",
+          "edge_count": 1298,
+          "face_count": 435
+        },
+        {
+          "name": "selected body for rotating_cage",
+          "status": "pass",
+          "role": "rotating_cage",
+          "part_id": "JFD",
+          "edge_count": 1298,
+          "face_count": 446
+        },
+        {
+          "name": "selected body for orbit_pinion",
+          "status": "pass",
+          "role": "orbit_pinion",
+          "part_id": "JFD",
+          "edge_count": 330,
+          "face_count": 115
+        },
+        {
+          "name": "selected body for hand_crank",
+          "status": "pass",
+          "role": "hand_crank",
+          "part_id": "JFD",
+          "edge_count": 364,
+          "face_count": 131
+        },
+        {
+          "name": "Codex V19 MC base center",
+          "type": "mate_connector_reference",
+          "status": "pass",
+          "role": "fixed_base",
+          "deterministic_id": "JFl",
+          "entity_type": "edge",
+          "curve_type": "CIRCLE",
+          "origin_mm": [
+            0.0,
+            0.0,
+            11.5
+          ],
+          "radius_mm": 4.5
+        },
+        {
+          "name": "Codex V19 MC cage center",
+          "type": "mate_connector_reference",
+          "status": "pass",
+          "role": "rotating_cage",
+          "deterministic_id": "KF5E",
+          "entity_type": "edge",
+          "curve_type": "CIRCLE",
+          "origin_mm": [
+            0.0,
+            0.0,
+            14.0
+          ],
+          "radius_mm": 4.6
+        },
+        {
+          "name": "Codex V19 MC base ground at fixed ring plane",
+          "type": "mate_connector_reference",
+          "status": "pass",
+          "role": "fixed_base",
+          "deterministic_id": "JFl",
+          "entity_type": "edge",
+          "curve_type": "CIRCLE",
+          "origin_mm": [
+            0.0,
+            0.0,
+            11.5
+          ],
+          "radius_mm": 4.5
+        },
+        {
+          "name": "Codex V19 MC fixed ring ground",
+          "type": "mate_connector_reference",
+          "status": "pass",
+          "role": "fixed_ring",
+          "deterministic_id": "JF1",
+          "entity_type": "edge",
+          "curve_type": "CIRCLE",
+          "origin_mm": [
+            0.0,
+            0.0,
+            38.0
+          ],
+          "radius_mm": 55.2
+        },
+        {
+          "name": "Codex V19 MC base hand axis",
+          "type": "mate_connector_reference",
+          "status": "pass",
+          "role": "fixed_base",
+          "deterministic_id": "KFFB",
+          "entity_type": "edge",
+          "curve_type": "CIRCLE",
+          "origin_mm": [
+            0.0,
+            -58.5,
+            24.0
+          ],
+          "radius_mm": 2.2
+        },
+        {
+          "name": "Codex V19 MC hand crank axis",
+          "type": "mate_connector_reference",
+          "status": "pass",
+          "role": "hand_crank",
+          "deterministic_id": "KFtU",
+          "entity_type": "edge",
+          "curve_type": "CIRCLE",
+          "origin_mm": [
+            0.0,
+            -58.5,
+            25.0
+          ],
+          "radius_mm": 1.35
+        },
+        {
+          "name": "Codex V19 MC cage orbit pinion axis",
+          "type": "mate_connector_reference",
+          "status": "pass",
+          "role": "rotating_cage",
+          "deterministic_id": "KFlE",
+          "entity_type": "edge",
+          "curve_type": "CIRCLE",
+          "origin_mm": [
+            40.5,
+            0.0,
+            18.0
+          ],
+          "radius_mm": 2.0
+        },
+        {
+          "name": "Codex V19 MC orbit pinion axis",
+          "type": "mate_connector_reference",
+          "status": "pass",
+          "role": "orbit_pinion",
+          "deterministic_id": "KFVS",
+          "entity_type": "edge",
+          "curve_type": "CIRCLE",
+          "origin_mm": [
+            40.5,
+            0.0,
+            37.0
+          ],
+          "radius_mm": 2.5
+        }
+      ]
+    },
+    {
+      "kind": "onshape_mated_assembly",
+      "status": "blocked",
+      "timestamp": "2026-04-26T11:10:06.874471+00:00",
+      "assembly_element_id": "29286d9c8528b2dc3a4ec78a",
+      "mate_connector_count": 8,
+      "mate_count": 4,
+      "relation_count": 0,
+      "relation_status": {
+        "hand_to_cage": null,
+        "orbit_to_cage": null
+      }
+    },
+    {
+      "kind": "onshape_mate_audit",
+      "status": "pass",
+      "timestamp": "2026-04-26T11:10:46.133066+00:00",
+      "results": [
+        {
+          "name": "Codex V19 MC base center",
+          "feature_type": "mateConnector",
+          "feature_id": "MjXgni/uuISqeQJWa",
+          "status": "OK"
+        },
+        {
+          "name": "Codex V19 MC cage center",
+          "feature_type": "mateConnector",
+          "feature_id": "MungadifmUDWuzhOM",
+          "status": "OK"
+        },
+        {
+          "name": "Codex V19 MC base ground at fixed ring plane",
+          "feature_type": "mateConnector",
+          "feature_id": "M1zC1gKNqhwmycjGj",
+          "status": "OK"
+        },
+        {
+          "name": "Codex V19 MC fixed ring ground",
+          "feature_type": "mateConnector",
+          "feature_id": "MZPrevaCiD9DjUzWv",
+          "status": "OK"
+        },
+        {
+          "name": "Codex V19 MC base hand axis",
+          "feature_type": "mateConnector",
+          "feature_id": "MiW4VbKAufDWbeQoM",
+          "status": "OK"
+        },
+        {
+          "name": "Codex V19 MC hand crank axis",
+          "feature_type": "mateConnector",
+          "feature_id": "MYlb6ZCUD4pKgX9ug",
+          "status": "OK"
+        },
+        {
+          "name": "Codex V19 MC cage orbit pinion axis",
+          "feature_type": "mateConnector",
+          "feature_id": "MGFCrbYBS9cqewI0U",
+          "status": "OK"
+        },
+        {
+          "name": "Codex V19 MC orbit pinion axis",
+          "feature_type": "mateConnector",
+          "feature_id": "Md/5QV+q6sV0euF2Q",
+          "status": "OK"
+        },
+        {
+          "name": "Codex V19 Fastened fixed ring to base",
+          "feature_type": "mate",
+          "feature_id": "MKlQ0YfZNT1y6BjXx",
+          "status": "OK"
+        },
+        {
+          "name": "Codex V19 Revolute cage about center",
+          "feature_type": "mate",
+          "feature_id": "MYRQvrAYHLji+hDDs",
+          "status": "OK"
+        },
+        {
+          "name": "Codex V19 Revolute hand crank",
+          "feature_type": "mate",
+          "feature_id": "MRq2dG3U9G7sxsZ70",
+          "status": "OK"
+        },
+        {
+          "name": "Codex V19 Revolute orbit pinion on cage",
+          "feature_type": "mate",
+          "feature_id": "MgQxzd9CAORbxGAyL",
+          "status": "OK"
+        }
+      ]
+    }
+  ],
+  "mated_assembly": {
+    "element_id": "29286d9c8528b2dc3a4ec78a",
+    "instances": {
+      "fixed_base": {
+        "instance_id": "MR87Gd49MeAh6jvRU",
+        "part_id": "JFD",
+        "element_id": "1e1c0dae92b98fc556dbdb60"
+      },
+      "fixed_ring": {
+        "instance_id": "M0K1CvXxwq3U/7BOM",
+        "part_id": "JFD",
+        "element_id": "ffa8697efaba390f5bc3c794"
+      },
+      "rotating_cage": {
+        "instance_id": "MtGg4ljPK+HUhRlrD",
+        "part_id": "JFD",
+        "element_id": "705e3b9ad0a89e49ee5216ee"
+      },
+      "orbit_pinion": {
+        "instance_id": "MhFwpUWBwCDfXdvae",
+        "part_id": "JFD",
+        "element_id": "1c136131142f3f9568d13913"
+      },
+      "hand_crank": {
+        "instance_id": "M+j3ag1dUyGacOj52",
+        "part_id": "JFD",
+        "element_id": "b7e816fd36ead6ef7ae5a673"
+      }
+    },
+    "mate_connectors": {
+      "base_center": "MjXgni/uuISqeQJWa",
+      "cage_center": "MungadifmUDWuzhOM",
+      "base_ring_ground": "M1zC1gKNqhwmycjGj",
+      "fixed_ring_ground": "MZPrevaCiD9DjUzWv",
+      "base_hand_axis": "MiW4VbKAufDWbeQoM",
+      "hand_axis": "MYlb6ZCUD4pKgX9ug",
+      "cage_orbit_axis": "MGFCrbYBS9cqewI0U",
+      "orbit_pinion_axis": "Md/5QV+q6sV0euF2Q"
+    },
+    "mates": {
+      "fixed_ring_to_base": "MKlQ0YfZNT1y6BjXx",
+      "cage_revolute": "MYRQvrAYHLji+hDDs",
+      "hand_revolute": "MRq2dG3U9G7sxsZ70",
+      "orbit_pinion_revolute": "MgQxzd9CAORbxGAyL"
+    },
+    "relations": {},
+    "document_url": "https://cad.onshape.com/documents/0222fa90c0584ca0727f31d2/w/0cb8dde2f58aafcc165e983c/e/29286d9c8528b2dc3a4ec78a",
+    "updated_at": "2026-04-26T11:10:06.874471+00:00"
+  }
+}

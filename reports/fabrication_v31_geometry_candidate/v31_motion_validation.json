@@ -1,0 +1,97 @@
+{
+  "created_at": "2026-05-17T16:44:39.353825+00:00",
+  "generation_id": "v31::2026-05-17T15:50:56.648915+00:00",
+  "status": "pass",
+  "type": "fallback_transform_motion_contract_before_sampled_geometry_audit",
+  "motion_story": [
+    {
+      "from": "spring_barrel_output",
+      "to": "lower_transfer_pinion",
+      "ratio_to_parent": 2.0
+    },
+    {
+      "from": "lower_transfer_pinion",
+      "to": "vertical_lift_shaft",
+      "ratio_to_parent": 1.0
+    },
+    {
+      "from": "vertical_lift_shaft",
+      "to": "upper_transfer_pinion",
+      "ratio_to_parent": 1.0
+    },
+    {
+      "from": "upper_transfer_pinion",
+      "to": "carrier",
+      "ratio_to_parent": 0.3
+    },
+    {
+      "from": "carrier",
+      "to": "orbit_escape_pinion",
+      "relative_ratio_in_carrier": -4.0
+    },
+    {
+      "from": "orbit_escape_pinion",
+      "to": "escape_wheel",
+      "ratio_to_parent": 1.0
+    },
+    {
+      "from": "escape_wheel",
+      "to": "pallet_fork",
+      "motion": "eccentric_pin_slot_display"
+    },
+    {
+      "from": "pallet_fork",
+      "to": "balance_wheel",
+      "motion": "pallet_output_pin_display"
+    }
+  ],
+  "sampled_driver_angles_deg": [
+    0,
+    15,
+    30,
+    45,
+    60,
+    75,
+    90,
+    105,
+    120,
+    135,
+    150,
+    165,
+    180,
+    195,
+    210,
+    225,
+    240,
+    255,
+    270,
+    285,
+    300,
+    315,
+    330,
+    345
+  ],
+  "strict_language": "fallback motion contract only; sampled geometry/contact/visibility audits are still required before completion",
+  "checks": [
+    {
+      "name": "required motion roles exist in role manifest",
+      "status": "pass",
+      "missing_roles": []
+    },
+    {
+      "name": "barrel to lower transfer ratio is closed",
+      "status": "pass",
+      "ratio": 2.0
+    },
+    {
+      "name": "upper transfer to carrier ratio is closed",
+      "status": "pass",
+      "ratio": 0.3
+    },
+    {
+      "name": "barrel to carrier ratio is closed through vertical shaft",
+      "status": "pass",
+      "ratio": 0.6
+    }
+  ]
+}

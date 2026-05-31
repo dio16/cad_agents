@@ -1,0 +1,76 @@
+{
+  "manifest": "/tmp/tourbillon_v20_relation_variants.json",
+  "assembly_element_id": "a72024da45e4d33c65414555",
+  "document_url": "https://cad.onshape.com/documents/0222fa90c0584ca0727f31d2/w/0cb8dde2f58aafcc165e983c/e/a72024da45e4d33c65414555",
+  "created_at": "2026-04-29T18:34:33.152405+00:00",
+  "relation_filter": "hand_to_cage",
+  "variant": "ratio_value_expression",
+  "results": [
+    {
+      "kind": "mateRelation",
+      "key": "hand_to_cage",
+      "name": "Codex V20 Gear relation hand crank to cage",
+      "feature_id": "Mhnjq1CoJtIaIdS/e",
+      "status": "ERROR",
+      "readback_status": "ERROR",
+      "payload": {
+        "btType": "BTMMateRelation-1412",
+        "featureType": "mateRelation",
+        "returnAfterSubfeatures": false,
+        "subFeatures": [],
+        "namespace": "",
+        "version": 0,
+        "name": "Codex V20 Gear relation hand crank to cage",
+        "parameters": [
+          {
+            "btType": "BTMParameterEnum-145",
+            "namespace": "",
+            "enumName": "Relation type",
+            "value": "GEAR",
+            "parameterId": "relationType"
+          },
+          {
+            "btType": "BTMParameterQueryWithOccurrenceList-67",
+            "queries": [
+              {
+                "btType": "BTMFeatureQueryWithOccurrence-157",
+                "path": [],
+                "featureId": "MGXXVatHc96VQYTHA",
+                "queryData": "Rz"
+              },
+              {
+                "btType": "BTMFeatureQueryWithOccurrence-157",
+                "path": [],
+                "featureId": "MddINjciJPRyTptGV",
+                "queryData": "Rz"
+              }
+            ],
+            "parameterId": "matesQuery"
+          },
+          {
+            "btType": "BTMParameterQuantity-147",
+            "namespace": "",
+            "value": 3.3333333333333335,
+            "units": "",
+            "expression": "3.3333333333333335",
+            "isInteger": false,
+            "parameterId": "relationRatio"
+          },
+          {
+            "btType": "BTMParameterBoolean-144",
+            "namespace": "",
+            "value": true,
+            "parameterId": "reverseDirection"
+          }
+        ],
+        "suppressed": false
+      },
+      "feature_state": {
+        "btType": "BTFeatureState-1688",
+        "featureStatus": "ERROR",
+        "inactive": false
+      }
+    }
+  ],
+  "status": "blocked"
+}

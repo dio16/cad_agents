@@ -1,0 +1,165 @@
+{
+  "name": "tourbillon_v10",
+  "document_url": "https://cad.onshape.com/documents/0222fa90c0584ca0727f31d2/w/0cb8dde2f58aafcc165e983c/e/f6dabf269d55fa17f6b05896",
+  "assembly": {
+    "name": "Tourbillon V10 API workflow verification",
+    "element_id": "51032f736d5308a396c05de4"
+  },
+  "design_checks": [
+    {
+      "name": "orbit pinion to fixed ring pitch",
+      "type": "gear_mesh",
+      "center_distance_mm": 39.5,
+      "pinion_pitch_radius_mm": 13.5,
+      "ring_pitch_radius_mm": 53.0,
+      "max_pitch_error_mm": 0.25
+    },
+    {
+      "name": "central sleeve bearing clearance",
+      "type": "radial_clearance",
+      "inner_radius_mm": 5.0,
+      "outer_radius_mm": 5.65,
+      "min_clearance_mm": 0.5
+    },
+    {
+      "name": "front crank connected to center drive",
+      "type": "connection",
+      "connected": true,
+      "message": "V10 keeps the V9 crank shaft/drive arm connection."
+    },
+    {
+      "name": "gear plane separated from cage top",
+      "type": "connection",
+      "connected": true,
+      "message": "V10 raises the gear plane to z=23 mm and lowers/thins the cage top ring."
+    }
+  ],
+  "parts": [
+    {
+      "name": "base",
+      "role": "fixed_base",
+      "file": "C:/Users/diobrando/Documents/New project/tourbillon_v10_step/01_base_plinth_axis_v10.step",
+      "element_id": "b56b4e3e40868a0fb808699d",
+      "translation_id": "69ed9fd21bbb40071cbc7e48",
+      "part_id": "JFD",
+      "instance_id": "M5WvVdVvSHc0mnYxT"
+    },
+    {
+      "name": "fixed_internal_ring",
+      "role": "fixed_ring",
+      "file": "C:/Users/diobrando/Documents/New project/tourbillon_v10_step/02_fixed_internal_ring_96t_v10.step",
+      "element_id": "6c20d6223f19a97ba54c049e",
+      "translation_id": "69ed9fde1bbb40071cbc7e5c",
+      "part_id": "JFD",
+      "instance_id": "MxN7/6Lub1+i+cQLd"
+    },
+    {
+      "name": "rotating_cage",
+      "role": "rotating_cage",
+      "file": "C:/Users/diobrando/Documents/New project/tourbillon_v10_step/03_rotating_cage_with_axles_v10.step",
+      "motion": {
+        "type": "rotate_z",
+        "ratio": 1.0
+      },
+      "element_id": "d0464e0aaa271b45701d6896",
+      "translation_id": "69ed9fe91bbb40071cbc7ec6",
+      "part_id": "JFD",
+      "instance_id": "MHctHNGl1rKKJ8f+P"
+    },
+    {
+      "name": "orbit_pinion",
+      "role": "orbit_pinion",
+      "file": "C:/Users/diobrando/Documents/New project/tourbillon_v10_step/04_orbit_pinion_24t_v10.step",
+      "motion": {
+        "type": "orbit_and_spin_z",
+        "center_mm": [
+          39.5,
+          0.0
+        ],
+        "orbit_ratio": 1.0,
+        "spin_ratio": -4.0
+      },
+      "element_id": "d940fe0e3fbf2775ad80c194",
+      "translation_id": "69ed9ff41bbb40071cbc7eda",
+      "part_id": "JFD",
+      "instance_id": "MAiLtTn1uO50rbCwd"
+    },
+    {
+      "name": "balance_wheel",
+      "role": "balance_wheel",
+      "file": "C:/Users/diobrando/Documents/New project/tourbillon_v10_step/05_balance_wheel_v10.step",
+      "motion": {
+        "type": "rotate_z",
+        "ratio": 1.0
+      },
+      "element_id": "f95fb7ea1d792484b712a329",
+      "translation_id": "69ed9fff1bbb40071cbc7eee",
+      "part_id": "JFD",
+      "instance_id": "Mnl304UUAc81D/I3W"
+    },
+    {
+      "name": "escape_wheel",
+      "role": "escape_wheel",
+      "file": "C:/Users/diobrando/Documents/New project/tourbillon_v10_step/06_escape_wheel_30t_v10.step",
+      "motion": {
+        "type": "rotate_z",
+        "ratio": 1.0
+      },
+      "element_id": "471601e06c40417dc0661e84",
+      "translation_id": "69eda00a1bbb40071cbc7efc",
+      "part_id": "JFD",
+      "instance_id": "M9LmXTQ0VSJfKW7e9"
+    },
+    {
+      "name": "hand_crank",
+      "role": "hand_crank",
+      "file": "C:/Users/diobrando/Documents/New project/tourbillon_v10_step/07_hand_crank_knob_v10.step",
+      "element_id": "c684b58840b7ee8c9cd3c697",
+      "translation_id": "69eda0151bbb40071cbc7f1c",
+      "part_id": "JFD",
+      "instance_id": "MGVwnICOIgGx92TI/"
+    }
+  ],
+  "verification_runs": [
+    {
+      "kind": "design_check",
+      "status": "pass",
+      "timestamp": "2026-04-26T05:17:04.481787+00:00",
+      "results": [
+        {
+          "name": "orbit pinion to fixed ring pitch",
+          "type": "gear_mesh",
+          "status": "pass",
+          "pitch_error_mm": 0.0,
+          "max_pitch_error_mm": 0.25
+        },
+        {
+          "name": "central sleeve bearing clearance",
+          "type": "radial_clearance",
+          "status": "pass",
+          "clearance_mm": 0.65,
+          "min_clearance_mm": 0.5
+        },
+        {
+          "name": "front crank connected to center drive",
+          "type": "connection",
+          "status": "pass",
+          "message": "V10 keeps the V9 crank shaft/drive arm connection."
+        },
+        {
+          "name": "gear plane separated from cage top",
+          "type": "connection",
+          "status": "pass",
+          "message": "V10 raises the gear plane to z=23 mm and lowers/thins the cage top ring."
+        }
+      ]
+    },
+    {
+      "kind": "pose",
+      "theta_deg": 90.0,
+      "transform_count": 4,
+      "timestamp": "2026-04-26T05:18:45.942865+00:00"
+    }
+  ],
+  "last_pose_deg": 90.0
+}

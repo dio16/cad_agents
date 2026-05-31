@@ -1,0 +1,40 @@
+{
+  "design_id": "v31_ratchet_barrel_vertical_lift_to_elevated_core",
+  "minimum_wall_thickness_mm": 2.4,
+  "minimum_running_clearance_mm": 0.2,
+  "two_point_support_roles": [
+    "winding_arbor",
+    "spring_barrel_axis",
+    "vertical_lift_shaft"
+  ],
+  "support_stacks": {
+    "winding_arbor": {
+      "shaft_diameter_mm": 3,
+      "support_count": 2,
+      "seat_type": "printed_bushing_seat",
+      "axial_retention": ["washer", "shaft_collar"]
+    },
+    "spring_barrel_axis": {
+      "shaft_diameter_mm": 3,
+      "support_count": 2,
+      "seat_type": "printed_bushing_seat",
+      "axial_retention": ["washer", "shaft_collar"]
+    },
+    "vertical_lift_shaft": {
+      "shaft_diameter_mm": 3,
+      "support_count": 2,
+      "seat_type": "printed_bushing_seat",
+      "axial_retention": ["washer", "shaft_collar"]
+    }
+  },
+  "print_orientations": {
+    "lower_base": "flat",
+    "lower_bridge": "flat",
+    "upper_deck": "flat"
+  },
+  "assembly_access": [
+    "front lower module",
+    "open upper core",
+    "serviceable winding module"
+  ]
+}

@@ -1,0 +1,164 @@
+{
+  "version": "V29",
+  "status": "kinematic_dimension_contract_ready",
+  "source_contract": "manifests/tourbillon_v29_full_assembly_contract.json",
+  "gear_assumptions": {
+    "default_module_mm": 1.0,
+    "default_pressure_angle_deg": 20,
+    "printed_backlash_target_mm": 0.25,
+    "minimum_unshifted_external_pinion_teeth": 18
+  },
+  "gear_meshes": [
+    {
+      "name": "motor_to_winding_drum",
+      "type": "external",
+      "driver": {
+        "role": "motor_pinion",
+        "teeth": 18
+      },
+      "driven": {
+        "role": "visible_winding_drum_gear",
+        "teeth": 108
+      },
+      "module_mm": 0.8,
+      "pitch_radii_mm": {
+        "driver": 7.2,
+        "driven": 43.2
+      },
+      "center_distance_mm": 50.4,
+      "speed_ratio_driven_over_driver": -0.1666666667,
+      "ideal_torque_ratio_driven_over_driver": 6.0,
+      "purpose": "slow visible macro winding motion"
+    },
+    {
+      "name": "barrel_to_transfer",
+      "type": "external",
+      "driver": {
+        "role": "spring_barrel_output",
+        "teeth": 36
+      },
+      "driven": {
+        "role": "horizontal_transfer_pinion",
+        "teeth": 18
+      },
+      "module_mm": 1.0,
+      "pitch_radii_mm": {
+        "driver": 18.0,
+        "driven": 9.0
+      },
+      "center_distance_mm": 27.0,
+      "speed_ratio_driven_over_driver": -2.0,
+      "ideal_torque_ratio_driven_over_driver": 0.5,
+      "purpose": "raise speed modestly before the spatial transition"
+    },
+    {
+      "name": "horizontal_to_vertical_riser",
+      "type": "bevel_equivalent",
+      "driver": {
+        "role": "horizontal_transfer_bevel",
+        "teeth": 20
+      },
+      "driven": {
+        "role": "vertical_riser_bevel",
+        "teeth": 20
+      },
+      "module_mm": 1.0,
+      "pitch_radii_mm": {
+        "driver": 10.0,
+        "driven": 10.0
+      },
+      "center_distance_mm": 20.0,
+      "speed_ratio_driven_over_driver": -1.0,
+      "ideal_torque_ratio_driven_over_driver": 1.0,
+      "purpose": "make the required spatial axis transition legible"
+    },
+    {
+      "name": "riser_to_carrier",
+      "type": "external",
+      "driver": {
+        "role": "canted_drive_pinion",
+        "teeth": 18
+      },
+      "driven": {
+        "role": "carrier_drive_gear",
+        "teeth": 54
+      },
+      "module_mm": 1.0,
+      "pitch_radii_mm": {
+        "driver": 9.0,
+        "driven": 27.0
+      },
+      "center_distance_mm": 36.0,
+      "speed_ratio_driven_over_driver": -0.3333333333,
+      "ideal_torque_ratio_driven_over_driver": 3.0,
+      "purpose": "slow the display carrier relative to the transfer train"
+    },
+    {
+      "name": "fixed_ring_to_orbit_pinion",
+      "type": "internal",
+      "driver": {
+        "role": "fixed_internal_ring",
+        "teeth": 72
+      },
+      "driven": {
+        "role": "orbit_escape_pinion",
+        "teeth": 18
+      },
+      "module_mm": 1.0,
+      "pitch_radii_mm": {
+        "driver": 36.0,
+        "driven": 9.0
+      },
+      "center_distance_mm": 27.0,
+      "absolute_spin_ratio_vs_carrier": -3.0,
+      "purpose": "retain a readable tourbillon-style orbit spin relation"
+    }
+  ],
+  "shaft_supports": [
+    {
+      "name": "visible_winding_drum_arbor",
+      "nominal_shaft_mm": 3,
+      "support_style": "two_point",
+      "support_span_mm": 28,
+      "axial_retention": "shoulder_plus_washer",
+      "clearance_radial_mm": 0.2
+    },
+    {
+      "name": "horizontal_transfer_shaft",
+      "nominal_shaft_mm": 3,
+      "support_style": "two_point",
+      "support_span_mm": 42,
+      "axial_retention": "washer_plus_screw",
+      "clearance_radial_mm": 0.2
+    },
+    {
+      "name": "vertical_riser_shaft",
+      "nominal_shaft_mm": 3,
+      "support_style": "two_point",
+      "support_span_mm": 42,
+      "axial_retention": "upper_cap_plus_lower_shoulder",
+      "clearance_radial_mm": 0.2
+    },
+    {
+      "name": "canted_carrier_axis",
+      "nominal_shaft_mm": 3,
+      "support_style": "two_point",
+      "support_span_mm": 18,
+      "axial_retention": "bridge_pair",
+      "clearance_radial_mm": 0.2
+    }
+  ],
+  "dimension_budget_mm": {
+    "visible_winding_drum_diameter": 80,
+    "spring_barrel_diameter": 36,
+    "carrier_outer_diameter": 84,
+    "riser_axis_lift": 42
+  },
+  "required_gates": [
+    "gear_pitch_ratio_pass",
+    "center_distance_pass",
+    "backlash_assumption_pass",
+    "support_span_pass",
+    "shaft_clearance_pass"
+  ]
+}

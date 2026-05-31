@@ -1,0 +1,86 @@
+{
+  "version": "V29",
+  "status": "risky_subsystems_contract_ready",
+  "purpose": "de-risk the three expensive unknowns before full sculpture geometry",
+  "claim": "concept-only local subsystem package; not full-assembly, motion-complete, or fabrication-complete",
+  "modules": [
+    {
+      "name": "01_autonomous_power_module_concept",
+      "learning_objective": "prove the visible-energy architecture can separate hidden motor, visible macro motion, storage, and output shaft before whole-object CAD",
+      "required_roles": [
+        "motor_chamber",
+        "visible_winding_drum",
+        "storage_barrel",
+        "output_shaft"
+      ],
+      "pass_criteria": [
+        "macro-motion envelope is visually dominant",
+        "storage and output are distinct roles",
+        "external low-voltage power claim remains explicit"
+      ],
+      "non_claims": [
+        "torque reserve proven",
+        "clutch/end-stop design complete",
+        "real winding efficiency proven"
+      ]
+    },
+    {
+      "name": "02_spatial_riser_concept",
+      "learning_objective": "prove the selected concept contains a real lower-plane to elevated-plane transfer before large geometry",
+      "required_roles": [
+        "horizontal_input_shaft",
+        "lower_hub",
+        "vertical_transfer_shaft",
+        "upper_hub",
+        "elevated_output"
+      ],
+      "pass_criteria": [
+        "input and output axes occupy different heights",
+        "axis transition is mechanically meaningful",
+        "support hubs exist at both ends of the riser"
+      ],
+      "non_claims": [
+        "bevel tooth geometry finalized",
+        "bearing life proven",
+        "full load path dimensioned"
+      ]
+    },
+    {
+      "name": "03_canted_cage_sightline_concept",
+      "learning_objective": "prove the sculpture can tilt the carrier while preserving an open fine-motion sightline",
+      "required_roles": [
+        "open_cage",
+        "spokes",
+        "fast_fine_zone"
+      ],
+      "pass_criteria": [
+        "carrier is visibly canted",
+        "fine-motion zone remains open in the concept envelope",
+        "tilt is bounded before full-support design"
+      ],
+      "non_claims": [
+        "final carrier stiffness proven",
+        "full escapement support geometry proven",
+        "hero-view composition of the complete sculpture proven"
+      ]
+    }
+  ],
+  "required_artifacts": [
+    "step",
+    "stl",
+    "contact_sheet",
+    "review_report"
+  ],
+  "required_gates": [
+    "contract_traceability_pass",
+    "module_presence_pass",
+    "declared_roles_pass",
+    "concept_parameter_pass",
+    "review_artifact_pass"
+  ],
+  "source_docs": [
+    "docs/v29_pre_cad_feasibility_package_ja.md",
+    "docs/v29_detailed_dimensioning_package_ja.md",
+    "docs/front_loaded_design_framework_ja.md"
+  ]
+}

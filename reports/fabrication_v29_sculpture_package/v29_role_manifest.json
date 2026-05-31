@@ -1,0 +1,162 @@
+{
+  "created_at": "2026-05-17T07:33:28.323160+00:00",
+  "status": "pass",
+  "roles": {
+    "visible_winding_drum": {
+      "parent": "base_frame",
+      "support": "two-point axle support integrated into base plinth",
+      "motion": "slow macro rotation",
+      "axis": {
+        "name": "winding_axis",
+        "origin_mm": [
+          -80,
+          0,
+          40
+        ],
+        "direction": [
+          1,
+          0,
+          0
+        ],
+        "frame": "base_frame"
+      }
+    },
+    "horizontal_transfer": {
+      "parent": "base_frame",
+      "support": "two-point printed seats",
+      "motion": "external gear transfer",
+      "axis": {
+        "name": "horizontal_transfer_axis",
+        "origin_mm": [
+          -12,
+          0,
+          20
+        ],
+        "direction": [
+          1,
+          0,
+          0
+        ],
+        "frame": "base_frame"
+      }
+    },
+    "vertical_riser": {
+      "parent": "riser_frame",
+      "support": "lower and upper riser hubs",
+      "motion": "vertical-axis transfer",
+      "axis": {
+        "name": "vertical_riser_axis",
+        "origin_mm": [
+          0,
+          0,
+          61
+        ],
+        "direction": [
+          0,
+          0,
+          1
+        ],
+        "frame": "riser_frame"
+      }
+    },
+    "carrier": {
+      "parent": "carrier_frame_30deg",
+      "support": "canted bridge pair",
+      "motion": "carrier rotation",
+      "axis": {
+        "name": "carrier_axis",
+        "origin_mm": [
+          45,
+          0,
+          62
+        ],
+        "direction": [
+          0,
+          -0.5,
+          0.8660254
+        ],
+        "frame": "carrier_frame_30deg"
+      }
+    },
+    "orbit_escape_pinion": {
+      "parent": "carrier_frame_30deg",
+      "support": "carrier-mounted orbit shaft",
+      "motion": "internal-ring-driven orbit spin",
+      "axis": {
+        "name": "orbit_axis",
+        "origin_mm": [
+          72,
+          0,
+          62
+        ],
+        "direction": [
+          0,
+          -0.5,
+          0.8660254
+        ],
+        "frame": "carrier_frame_30deg"
+      }
+    },
+    "escape_wheel": {
+      "parent": "carrier_frame_30deg",
+      "support": "coaxial with orbit shaft",
+      "motion": "coaxial fine rotation",
+      "axis": {
+        "name": "escape_axis",
+        "origin_mm": [
+          72,
+          0,
+          62
+        ],
+        "direction": [
+          0,
+          -0.5,
+          0.8660254
+        ],
+        "frame": "carrier_frame_30deg"
+      }
+    },
+    "pallet_fork": {
+      "parent": "carrier_frame_30deg",
+      "support": "carrier-mounted pallet pivot",
+      "motion": "demonstrative oscillation",
+      "axis": {
+        "name": "pallet_axis",
+        "origin_mm": [
+          27,
+          10,
+          62
+        ],
+        "direction": [
+          0,
+          -0.5,
+          0.8660254
+        ],
+        "frame": "carrier_frame_30deg"
+      }
+    },
+    "balance_wheel": {
+      "parent": "carrier_frame_30deg",
+      "support": "carrier-mounted balance pivot",
+      "motion": "demonstrative oscillation",
+      "axis": {
+        "name": "balance_axis",
+        "origin_mm": [
+          45,
+          0,
+          62
+        ],
+        "direction": [
+          0,
+          -0.5,
+          0.8660254
+        ],
+        "frame": "carrier_frame_30deg"
+      }
+    }
+  },
+  "claim_limitations": [
+    "demonstrative non-regulating escapement",
+    "fallback transform motion, not native CAD animation"
+  ]
+}

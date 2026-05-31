@@ -1,0 +1,31 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>V25 Engineered Tourbillon Object</title>
+<script type="module" src="https://unpkg.com/three@0.160.0/build/three.module.js"></script>
+<style>body{margin:0;background:#10151c;color:#eef3f6;font-family:system-ui,sans-serif}main{display:grid;grid-template-columns:1fr 340px;min-height:100vh}#stage{width:100%;height:100vh}.panel{padding:18px;background:#161e27;border-left:1px solid #354250}button{margin:0 6px 8px 0;padding:8px 10px;border:1px solid #607080;border-radius:6px;background:#25313d;color:white}.warn{color:#ffcf77}@media(max-width:760px){main{grid-template-columns:1fr}#stage{height:72vh}.panel{border-left:0;border-top:1px solid #354250}}</style>
+</head><body><main><div id="stage"></div><aside class="panel"><h1>V25 Engineered Tourbillon</h1><button id="play">Pause</button><button id="slow">Slow</button><button id="fast">Fast</button><button data-cam="front">Front</button><button data-cam="top">Top</button><button data-cam="esc">Escapement</button><p>Fixed ring is an internal gear. Red jewels sit on bridge/shaft seats. Carrier-mounted escapement follows the carrier.</p><p class="warn">Watch-grade-inspired validation: involute/stress checks are simplified engineering estimates, not certified watch production analysis.</p></aside></main>
+<script type="module">
+import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
+const root=document.getElementById('stage'), scene=new THREE.Scene(); scene.background=new THREE.Color(0x10151c);
+const camera=new THREE.PerspectiveCamera(32,root.clientWidth/root.clientHeight,.01,1); camera.position.set(.09,-.17,.13); camera.lookAt(0,0,.035);
+const renderer=new THREE.WebGLRenderer({antialias:true}); renderer.setSize(root.clientWidth,root.clientHeight); root.appendChild(renderer.domElement);
+scene.add(new THREE.HemisphereLight(0xffffff,0x1b2028,2.5)); const dl=new THREE.DirectionalLight(0xffffff,1.6); dl.position.set(.1,-.1,.2); scene.add(dl);
+const mat=(c,o=1)=>new THREE.MeshStandardMaterial({color:c,roughness:.48,metalness:.25,transparent:o<1,opacity:o});
+function cyl(r,h,m){const g=new THREE.CylinderGeometry(r,r,h,64); const mesh=new THREE.Mesh(g,m); mesh.rotation.x=Math.PI/2; return mesh;}
+function box(x,y,z,m){return new THREE.Mesh(new THREE.BoxGeometry(x,y,z),m)}
+function extGear(r,t,m){const g=new THREE.Group(); g.add(cyl(r-.0018,.004,m)); for(let i=0;i<t;i++){const a=i*2*Math.PI/t, tooth=box(.0036,.0012,.004,m); tooth.position.set(Math.cos(a)*r,Math.sin(a)*r,0); tooth.rotation.z=a; g.add(tooth)} return g}
+function internalRing(r,t,m){const g=new THREE.Group(); const tor=new THREE.Mesh(new THREE.TorusGeometry(r,.0012,8,160),m); g.add(tor); for(let i=0;i<t;i++){const a=i*2*Math.PI/t, tooth=box(.0032,.0010,.0035,m); tooth.position.set(Math.cos(a)*(r-.0028),Math.sin(a)*(r-.0028),0); tooth.rotation.z=a+Math.PI/2; g.add(tooth)} return g}
+const fixed=new THREE.Group(); scene.add(fixed); const base=cyl(.055,.006,mat(0x292f35)); fixed.add(base);
+const ring=internalRing(.036,72,mat(0x4f7897,.45)); ring.position.z=.020; fixed.add(ring);
+const hand=extGear(.009,18,mat(0xc95489)); hand.position.set(0,-.036,.032); fixed.add(hand); const handShaft=cyl(.0015,.06,mat(0xc7cdd1)); handShaft.position.set(0,-.036,.035); fixed.add(handShaft);
+const carrier=new THREE.Group(); scene.add(carrier); const cage=new THREE.Group(); cage.add(new THREE.Mesh(new THREE.TorusGeometry(.028,.0014,8,120),mat(0xd9ad52))); const drive=extGear(.027,54,mat(0xd9ad52)); drive.position.z=.032; cage.add(drive); carrier.add(cage);
+function bridge(x,y,label){const p=cyl(.0012,.025,mat(0xc7cdd1)); p.position.set(x,y,.049); carrier.add(p); const seat=cyl(.0021,.0012,mat(0x8a6f46)); seat.position.set(x,y,.063); carrier.add(seat); const jewel=cyl(.0012,.0010,mat(0xda1841)); jewel.position.set(x,y,.065); carrier.add(jewel)}
+bridge(.027,0,'orbit'); bridge(-.012,.005,'balance'); bridge(.012,.007,'escape'); bridge(.003,-.008,'pallet');
+const orbit=extGear(.009,18,mat(0xe8792d)); orbit.position.set(.027,0,.020); carrier.add(orbit);
+const bal=new THREE.Group(); bal.position.set(-.012,.005,.058); bal.add(new THREE.Mesh(new THREE.TorusGeometry(.010,.00065,8,72),mat(0xefce6e))); carrier.add(bal);
+const esc=extGear(.0055,15,mat(0xed8531)); esc.position.set(.012,.007,.059); carrier.add(esc);
+const pallet=new THREE.Group(); pallet.position.set(.003,-.008,.061); pallet.add(box(.018,.0012,.0012,mat(0xebe6d7))); carrier.add(pallet);
+let theta=0,speed=.7,playing=true; play.onclick=()=>{playing=!playing;play.textContent=playing?'Pause':'Play'}; slow.onclick=()=>speed=.25; fast.onclick=()=>speed=1.4;
+document.querySelectorAll('[data-cam]').forEach(b=>b.onclick=()=>{const c=b.dataset.cam;if(c==='front')camera.position.set(0,-.15,.10);if(c==='top')camera.position.set(0,0,.22);if(c==='esc')camera.position.set(.04,-.07,.08);camera.lookAt(0,0,.04);});
+let last=performance.now(); function loop(now){const dt=(now-last)/1000; last=now; if(playing) theta+=dt*speed; carrier.rotation.z=theta; orbit.rotation.z=-4*theta; hand.rotation.z=-3*theta; esc.rotation.z=8*theta; bal.rotation.z=Math.sin(theta*5)*.38; pallet.rotation.z=Math.sin(theta*5+1)*.21; renderer.render(scene,camera); requestAnimationFrame(loop)} requestAnimationFrame(loop);
+addEventListener('resize',()=>{camera.aspect=root.clientWidth/root.clientHeight;camera.updateProjectionMatrix();renderer.setSize(root.clientWidth,root.clientHeight)});
+</script></body></html>

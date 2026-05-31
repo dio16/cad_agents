@@ -1,0 +1,303 @@
+﻿{
+  "manifest": "manifests/tourbillon_v21_onshape_run.json",
+  "status": "pass",
+  "results": [
+    {
+      "name": "selected body for fixed_base",
+      "status": "pass",
+      "role": "fixed_base",
+      "part_id": "JFD",
+      "edge_count": 168,
+      "face_count": 93
+    },
+    {
+      "name": "selected body for fixed_ring",
+      "status": "pass",
+      "role": "fixed_ring",
+      "part_id": "JFD",
+      "edge_count": 3028,
+      "face_count": 1012
+    },
+    {
+      "name": "selected body for rotating_cage",
+      "status": "pass",
+      "role": "rotating_cage",
+      "part_id": "JFD",
+      "edge_count": 2952,
+      "face_count": 1006
+    },
+    {
+      "name": "selected body for orbit_pinion",
+      "status": "pass",
+      "role": "orbit_pinion",
+      "part_id": "JFD",
+      "edge_count": 762,
+      "face_count": 259
+    },
+    {
+      "name": "selected body for hand_crank",
+      "status": "pass",
+      "role": "hand_crank",
+      "part_id": "JFD",
+      "edge_count": 806,
+      "face_count": 277
+    },
+    {
+      "name": "Codex V20 MC base center",
+      "type": "mate_connector_reference",
+      "status": "pass",
+      "role": "fixed_base",
+      "deterministic_id": "JFJ",
+      "resolved_deterministic_id": "JFJ",
+      "selector": {
+        "entity_type": "edge",
+        "curve_type": "CIRCLE",
+        "origin_mm": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "radius_mm": 4.4,
+        "tolerance_mm": {
+          "origin": 0.05,
+          "radius": 0.02
+        }
+      },
+      "match_count": 1,
+      "message": "",
+      "entity_type": "edge",
+      "curve_type": "CIRCLE",
+      "origin_mm": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "radius_mm": 4.4
+    },
+    {
+      "name": "Codex V20 MC cage center",
+      "type": "mate_connector_reference",
+      "status": "pass",
+      "role": "rotating_cage",
+      "deterministic_id": "LFN4C",
+      "resolved_deterministic_id": "LFN4C",
+      "selector": {
+        "entity_type": "edge",
+        "curve_type": "CIRCLE",
+        "origin_mm": [
+          0.0,
+          0.0,
+          0.8
+        ],
+        "radius_mm": 3.95,
+        "tolerance_mm": {
+          "origin": 0.05,
+          "radius": 0.02
+        }
+      },
+      "match_count": 1,
+      "message": "",
+      "entity_type": "edge",
+      "curve_type": "CIRCLE",
+      "origin_mm": [
+        0.0,
+        0.0,
+        0.8
+      ],
+      "radius_mm": 3.95
+    },
+    {
+      "name": "Codex V20 MC base ring ground",
+      "type": "mate_connector_reference",
+      "status": "pass",
+      "role": "fixed_base",
+      "deterministic_id": "JFJ",
+      "resolved_deterministic_id": "JFJ",
+      "selector": {
+        "entity_type": "edge",
+        "curve_type": "CIRCLE",
+        "origin_mm": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "radius_mm": 4.4,
+        "tolerance_mm": {
+          "origin": 0.05,
+          "radius": 0.02
+        }
+      },
+      "match_count": 1,
+      "message": "",
+      "entity_type": "edge",
+      "curve_type": "CIRCLE",
+      "origin_mm": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "radius_mm": 4.4
+    },
+    {
+      "name": "Codex V20 MC fixed ring ground",
+      "type": "mate_connector_reference",
+      "status": "pass",
+      "role": "fixed_ring",
+      "deterministic_id": "KFJ/",
+      "resolved_deterministic_id": "KFJ/",
+      "selector": {
+        "prefer_legacy_id": true,
+        "entity_type": "edge",
+        "curve_type": "CIRCLE",
+        "origin_mm": [
+          0.0,
+          0.0,
+          38.0
+        ],
+        "radius_mm": 55.2,
+        "tolerance_mm": {
+          "origin": 0.05,
+          "radius": 0.02
+        }
+      },
+      "match_count": 1,
+      "message": "",
+      "entity_type": "edge",
+      "curve_type": "CIRCLE",
+      "origin_mm": [
+        0.0,
+        0.0,
+        38.0
+      ],
+      "radius_mm": 55.2
+    },
+    {
+      "name": "Codex V20 MC base hand axis",
+      "type": "mate_connector_reference",
+      "status": "pass",
+      "role": "fixed_base",
+      "deterministic_id": "KFdK",
+      "resolved_deterministic_id": "KFdK",
+      "selector": {
+        "entity_type": "edge",
+        "curve_type": "CIRCLE",
+        "origin_mm": [
+          0.0,
+          -58.5,
+          8.0
+        ],
+        "radius_mm": 1.75,
+        "tolerance_mm": {
+          "origin": 0.05,
+          "radius": 0.02
+        }
+      },
+      "match_count": 1,
+      "message": "",
+      "entity_type": "edge",
+      "curve_type": "CIRCLE",
+      "origin_mm": [
+        0.0,
+        -58.5,
+        8.0
+      ],
+      "radius_mm": 1.75
+    },
+    {
+      "name": "Codex V20 MC hand crank axis",
+      "type": "mate_connector_reference",
+      "status": "pass",
+      "role": "hand_crank",
+      "deterministic_id": "KFdv",
+      "resolved_deterministic_id": "KFdv",
+      "selector": {
+        "entity_type": "edge",
+        "curve_type": "CIRCLE",
+        "origin_mm": [
+          0.0,
+          -58.5,
+          24.0
+        ],
+        "radius_mm": 1.7,
+        "tolerance_mm": {
+          "origin": 0.05,
+          "radius": 0.02
+        }
+      },
+      "match_count": 1,
+      "message": "",
+      "entity_type": "edge",
+      "curve_type": "CIRCLE",
+      "origin_mm": [
+        0.0,
+        -58.5,
+        24.0
+      ],
+      "radius_mm": 1.7
+    },
+    {
+      "name": "Codex V20 MC cage orbit pinion axis",
+      "type": "mate_connector_reference",
+      "status": "pass",
+      "role": "rotating_cage",
+      "deterministic_id": "LFxzC",
+      "resolved_deterministic_id": "LFxzC",
+      "selector": {
+        "entity_type": "edge",
+        "curve_type": "CIRCLE",
+        "origin_mm": [
+          40.5,
+          0.0,
+          18.0
+        ],
+        "radius_mm": 1.7,
+        "tolerance_mm": {
+          "origin": 0.05,
+          "radius": 0.02
+        }
+      },
+      "match_count": 1,
+      "message": "",
+      "entity_type": "edge",
+      "curve_type": "CIRCLE",
+      "origin_mm": [
+        40.5,
+        0.0,
+        18.0
+      ],
+      "radius_mm": 1.7
+    },
+    {
+      "name": "Codex V20 MC orbit pinion axis",
+      "type": "mate_connector_reference",
+      "status": "pass",
+      "role": "orbit_pinion",
+      "deterministic_id": "KF1k",
+      "resolved_deterministic_id": "KF1k",
+      "selector": {
+        "entity_type": "edge",
+        "curve_type": "CIRCLE",
+        "origin_mm": [
+          40.5,
+          0.0,
+          37.0
+        ],
+        "radius_mm": 1.7,
+        "tolerance_mm": {
+          "origin": 0.05,
+          "radius": 0.02
+        }
+      },
+      "match_count": 1,
+      "message": "",
+      "entity_type": "edge",
+      "curve_type": "CIRCLE",
+      "origin_mm": [
+        40.5,
+        0.0,
+        37.0
+      ],
+      "radius_mm": 1.7
+    }
+  ]
+}

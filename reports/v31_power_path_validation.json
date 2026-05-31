@@ -1,0 +1,28 @@
+{
+  "created_at": "2026-05-17T15:50:54.387571+00:00",
+  "status": "pass",
+  "checks": [
+    {
+      "name": "torque reserve >= 5x",
+      "status": "pass",
+      "reserve_ratio": 13.333333333333334
+    },
+    {
+      "name": "holdover target closes",
+      "status": "pass",
+      "holdover_s": 60.0
+    },
+    {
+      "name": "winding control chain defined",
+      "status": "pass"
+    },
+    {
+      "name": "overwind protection is selected, not deferred",
+      "status": "pass"
+    },
+    {
+      "name": "spring barrel packaging is dimensioned",
+      "status": "pass"
+    }
+  ]
+}

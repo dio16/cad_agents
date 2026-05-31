@@ -1,0 +1,150 @@
+{
+  "created_at": "2026-05-17T01:46:19.067245+00:00",
+  "source_package": "reports/fabrication_v28_mechanism_package",
+  "source_manifest": "manifests/tourbillon_v28_mechanism_contract.json",
+  "generation_id": "2026-05-17T01:43:26.640220+00:00",
+  "object_class": "mechanically-driven-tabletop-mechanism",
+  "viewer_entrypoint": "viewer.html",
+  "printable_parts_dir": "stl",
+  "preview_files": [
+    "preview.png",
+    "preview_contact_sheet.png"
+  ],
+  "bom_files": [
+    "printed_parts.csv",
+    "purchased_parts.csv"
+  ],
+  "assembly_file": "assembly_sequence.csv",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 683,
+      "sha256": "a6b296ed0358821906d8dfa58c37122cf71fc28e080175042b28fe95ebe8eaf1"
+    },
+    {
+      "path": "README_JA.md",
+      "bytes": 773,
+      "sha256": "87a4678d8438dbc9b24d2081f8b9aecde3c259d4f8951e027ce397f5142e5b33"
+    },
+    {
+      "path": "assembly_sequence.csv",
+      "bytes": 741,
+      "sha256": "fbf5fbe361c59ba2c08ad4d6e5e4be616dff13937d396f56a9d13377b8591b3c"
+    },
+    {
+      "path": "preview.png",
+      "bytes": 95898,
+      "sha256": "b6429d6e1e471a5e83a6632e11ab3c0ac234a4341c3a23422a6cd8d06170eaf0"
+    },
+    {
+      "path": "preview_contact_sheet.png",
+      "bytes": 34355,
+      "sha256": "65c09ba68d427503fceebf9413b15ccc892c87a2dcd83fb854ad53dfd3f77497"
+    },
+    {
+      "path": "printed_parts.csv",
+      "bytes": 2338,
+      "sha256": "a01a696e619911b0a7d4fa27062cccab3524fa2aede4df365116f6c65624ab9c"
+    },
+    {
+      "path": "purchased_parts.csv",
+      "bytes": 443,
+      "sha256": "b18bf5422a780beb81a8d40d215a13249dc3cb38909f29e872b6d8e60cba4eb5"
+    },
+    {
+      "path": "step/01_base_plinth_bearing_pocket_v28.step",
+      "bytes": 102617,
+      "sha256": "d57e5490bc0eeb77cb07e2379a69b5044ccaf12954090fdeac3613d6450ec3ae"
+    },
+    {
+      "path": "step/02_fixed_internal_ring_72t_v28.step",
+      "bytes": 1408185,
+      "sha256": "87aff4c946b17ae3ed9223cb72fbbea7c1c5d497936c5edb6a1eda0f3ec34804"
+    },
+    {
+      "path": "step/03_rotating_carrier_drive_gear_v28.step",
+      "bytes": 1240671,
+      "sha256": "f914821f89130060bc363536dbec8239a313504e3cf4861e0ce401d430050cb9"
+    },
+    {
+      "path": "step/04_orbit_escape_pinion_18t_v28.step",
+      "bytes": 300506,
+      "sha256": "ffa197ed8c585e572fdf566806473ff9561b2f5829231db75396f5ebc09e96c2"
+    },
+    {
+      "path": "step/05_hand_crank_pinion_v28.step",
+      "bytes": 300466,
+      "sha256": "e71686cebc3da03fb55dd698f1bf5e22b2aa9af48538691b3d02b5f673069873"
+    },
+    {
+      "path": "step/06_balance_wheel_v28.step",
+      "bytes": 137671,
+      "sha256": "8ad46bd6bc397f40344f2be67fce0e8d85c7d6bbb5dd542becf6b1e1859d0624"
+    },
+    {
+      "path": "step/07_escape_wheel_15t_v28.step",
+      "bytes": 284224,
+      "sha256": "3acd5e8e52ff6d9ec655cec27b31881c2e1a8d356641363f6202638dfa175e09"
+    },
+    {
+      "path": "step/08_pallet_fork_bridge_v28.step",
+      "bytes": 110356,
+      "sha256": "de11c82fce15a848b8b1236b3e79f0263bd1d6854864db414523af90350d7544"
+    },
+    {
+      "path": "step/09_crank_knob_v28.step",
+      "bytes": 24043,
+      "sha256": "020cf3ef104d116cbce46096734f1e66d676d6524218c61a9a329b9047935cd8"
+    },
+    {
+      "path": "stl/01_base_plinth_bearing_pocket_v28.stl",
+      "bytes": 374884,
+      "sha256": "da7b10193ce16af8c3de4b425dab304f994e75dc359ef669403a7f3a8f5040be"
+    },
+    {
+      "path": "stl/02_fixed_internal_ring_72t_v28.stl",
+      "bytes": 580484,
+      "sha256": "c0b41075539af5bc64ff79242314406fd0026cc07598adfc9436e48a5fed7da7"
+    },
+    {
+      "path": "stl/03_rotating_carrier_drive_gear_v28.stl",
+      "bytes": 785284,
+      "sha256": "85401206a41a65bbe0b5445c09ce87d604779f0bff31f6f82501d74723400d4c"
+    },
+    {
+      "path": "stl/04_orbit_escape_pinion_18t_v28.stl",
+      "bytes": 151484,
+      "sha256": "f80baf9eeb676791fb657e35e3c91f56cbf6a902ac1e50d2777f9fb58db8cc14"
+    },
+    {
+      "path": "stl/05_hand_crank_pinion_v28.stl",
+      "bytes": 158684,
+      "sha256": "194b3121144886c3612fa98f7e544d78242563ad1b98f07b9b15f6f4a72b29fc"
+    },
+    {
+      "path": "stl/06_balance_wheel_v28.stl",
+      "bytes": 169884,
+      "sha256": "14c6d44033519e94f31637fc8069e97d168d04b3d6b5370ac77088097424584a"
+    },
+    {
+      "path": "stl/07_escape_wheel_15t_v28.stl",
+      "bytes": 144184,
+      "sha256": "c6af974e3ec7a8290219e796c7a8e3df43ccf476c6860f39e658a3fcf51af54b"
+    },
+    {
+      "path": "stl/08_pallet_fork_bridge_v28.stl",
+      "bytes": 83984,
+      "sha256": "b77a7016f6069481ff01187a639829344c2053f3157c553bf277b38a7ecf5341"
+    },
+    {
+      "path": "stl/09_crank_knob_v28.stl",
+      "bytes": 157884,
+      "sha256": "21037cf9b3e37b06eb45df5cab34b650d3065950c8dffe1850095b9c1539f17a"
+    },
+    {
+      "path": "viewer.html",
+      "bytes": 2511297,
+      "sha256": "c574bbf61c5ff543855a65ca485b7ed0eab715086a74152adda2624715383340"
+    }
+  ]
+}

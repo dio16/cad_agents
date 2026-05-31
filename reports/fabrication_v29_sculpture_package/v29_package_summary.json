@@ -1,0 +1,261 @@
+{
+  "created_at": "2026-05-17T07:33:27.671355+00:00",
+  "status": "pass",
+  "claim": "first V29 local sculpture geometry package",
+  "parts": [
+    {
+      "name": "01_base_plinth_v29",
+      "step": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v29_sculpture_package/step/01_base_plinth_v29.step",
+      "stl": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v29_sculpture_package/stl/01_base_plinth_v29.stl",
+      "bbox_mm": {
+        "x": [
+          -95.0,
+          95.0
+        ],
+        "y": [
+          -65.0,
+          65.0
+        ],
+        "z": [
+          -0.0,
+          44.0
+        ]
+      }
+    },
+    {
+      "name": "02_visible_winding_drum_v29",
+      "step": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v29_sculpture_package/step/02_visible_winding_drum_v29.step",
+      "stl": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v29_sculpture_package/stl/02_visible_winding_drum_v29.stl",
+      "bbox_mm": {
+        "x": [
+          -84.0,
+          -76.0
+        ],
+        "y": [
+          -43.65,
+          43.65
+        ],
+        "z": [
+          -3.65,
+          83.65
+        ]
+      }
+    },
+    {
+      "name": "03_spring_barrel_housing_v29",
+      "step": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v29_sculpture_package/step/03_spring_barrel_housing_v29.step",
+      "stl": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v29_sculpture_package/stl/03_spring_barrel_housing_v29.stl",
+      "bbox_mm": {
+        "x": [
+          -42.006,
+          -23.994
+        ],
+        "y": [
+          -18.006,
+          18.006
+        ],
+        "z": [
+          2.0,
+          38.0
+        ]
+      }
+    },
+    {
+      "name": "04_horizontal_transfer_gear_v29",
+      "step": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v29_sculpture_package/step/04_horizontal_transfer_gear_v29.step",
+      "stl": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v29_sculpture_package/stl/04_horizontal_transfer_gear_v29.stl",
+      "bbox_mm": {
+        "x": [
+          -16.002,
+          -7.998
+        ],
+        "y": [
+          -9.338,
+          9.338
+        ],
+        "z": [
+          10.65,
+          29.35
+        ]
+      }
+    },
+    {
+      "name": "05_spatial_riser_bridge_v29",
+      "step": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v29_sculpture_package/step/05_spatial_riser_bridge_v29.step",
+      "stl": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v29_sculpture_package/stl/05_spatial_riser_bridge_v29.stl",
+      "bbox_mm": {
+        "x": [
+          -12.0,
+          49.0
+        ],
+        "y": [
+          -29.713,
+          29.713
+        ],
+        "z": [
+          15.997,
+          81.464
+        ]
+      }
+    },
+    {
+      "name": "06_vertical_riser_gear_v29",
+      "step": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v29_sculpture_package/step/06_vertical_riser_gear_v29.step",
+      "stl": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v29_sculpture_package/stl/06_vertical_riser_gear_v29.stl",
+      "bbox_mm": {
+        "x": [
+          -10.35,
+          10.35
+        ],
+        "y": [
+          -10.35,
+          10.35
+        ],
+        "z": [
+          57.997,
+          64.003
+        ]
+      }
+    },
+    {
+      "name": "07_canted_carrier_drive_gear_v29",
+      "step": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v29_sculpture_package/step/07_canted_carrier_drive_gear_v29.step",
+      "stl": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v29_sculpture_package/stl/07_canted_carrier_drive_gear_v29.stl",
+      "bbox_mm": {
+        "x": [
+          35.65,
+          54.35
+        ],
+        "y": [
+          -9.587,
+          9.587
+        ],
+        "z": [
+          54.733,
+          69.267
+        ]
+      }
+    },
+    {
+      "name": "08_fixed_internal_ring_72t_v29",
+      "step": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v29_sculpture_package/step/08_fixed_internal_ring_72t_v29.step",
+      "stl": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v29_sculpture_package/stl/08_fixed_internal_ring_72t_v29.stl",
+      "bbox_mm": {
+        "x": [
+          4.988,
+          85.012
+        ],
+        "y": [
+          -36.143,
+          36.143
+        ],
+        "z": [
+          39.396,
+          84.604
+        ]
+      }
+    },
+    {
+      "name": "09_canted_carrier_frame_v29",
+      "step": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v29_sculpture_package/step/09_canted_carrier_frame_v29.step",
+      "stl": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v29_sculpture_package/stl/09_canted_carrier_frame_v29.stl",
+      "bbox_mm": {
+        "x": [
+          2.987,
+          87.013
+        ],
+        "y": [
+          -38.875,
+          38.875
+        ],
+        "z": [
+          36.663,
+          87.337
+        ]
+      }
+    },
+    {
+      "name": "10_orbit_escape_pinion_18t_v29",
+      "step": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v29_sculpture_package/step/10_orbit_escape_pinion_18t_v29.step",
+      "stl": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v29_sculpture_package/stl/10_orbit_escape_pinion_18t_v29.stl",
+      "bbox_mm": {
+        "x": [
+          62.65,
+          81.35
+        ],
+        "y": [
+          -9.587,
+          9.587
+        ],
+        "z": [
+          54.733,
+          69.267
+        ]
+      }
+    },
+    {
+      "name": "11_escape_wheel_v29",
+      "step": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v29_sculpture_package/step/11_escape_wheel_v29.step",
+      "stl": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v29_sculpture_package/stl/11_escape_wheel_v29.stl",
+      "bbox_mm": {
+        "x": [
+          64.295,
+          79.75
+        ],
+        "y": [
+          -7.479,
+          7.479
+        ],
+        "z": [
+          56.816,
+          67.184
+        ]
+      }
+    },
+    {
+      "name": "12_pallet_fork_v29",
+      "step": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v29_sculpture_package/step/12_pallet_fork_v29.step",
+      "stl": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v29_sculpture_package/stl/12_pallet_fork_v29.stl",
+      "bbox_mm": {
+        "x": [
+          20.24,
+          49.76
+        ],
+        "y": [
+          0.996,
+          12.86
+        ],
+        "z": [
+          61.882,
+          70.118
+        ]
+      }
+    },
+    {
+      "name": "13_balance_wheel_v29",
+      "step": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v29_sculpture_package/step/13_balance_wheel_v29.step",
+      "stl": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v29_sculpture_package/stl/13_balance_wheel_v29.stl",
+      "bbox_mm": {
+        "x": [
+          31.996,
+          58.004
+        ],
+        "y": [
+          -11.759,
+          11.759
+        ],
+        "z": [
+          54.632,
+          69.368
+        ]
+      }
+    }
+  ],
+  "viewer": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v29_sculpture_package/v29_3d_cad_motion_viewer.html",
+  "visibility_contact_sheet": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v29_sculpture_package/v29_visibility_contact_sheet.png",
+  "evidence": {
+    "stationary_autonomous_winding_evidence": "requires_audit",
+    "spatial_drive_evidence": "requires_audit",
+    "object_value_evidence": "requires_audit"
+  }
+}

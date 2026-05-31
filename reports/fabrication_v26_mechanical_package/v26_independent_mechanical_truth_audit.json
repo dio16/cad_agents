@@ -1,0 +1,733 @@
+{
+  "created_at": "2026-05-08T16:04:46.922824+00:00",
+  "status": "fail",
+  "completion_allowed": false,
+  "p0_fail_count": 13,
+  "fail_count": 14,
+  "checks": [
+    {
+      "name": "audit is running inside WSL",
+      "status": "pass",
+      "severity": "P0",
+      "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+      "cwd": "/home/diobrando/codex_wsl/cad_agent_framework"
+    },
+    {
+      "name": "audit is independent from legacy package validation JSON",
+      "status": "pass",
+      "severity": "P0",
+      "legacy_validation_used": false
+    },
+    {
+      "name": "manifest printable parts match independent role map",
+      "status": "pass",
+      "severity": "P0",
+      "manifest_count": 9,
+      "role_map_count": 9,
+      "missing": [],
+      "extra": []
+    },
+    {
+      "name": "01_base_plinth_bearing_pocket_v26.stl exists in WSL package",
+      "status": "pass",
+      "severity": "P0",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v26_mechanical_package/stl/01_base_plinth_bearing_pocket_v26.stl",
+      "bytes": 955176
+    },
+    {
+      "name": "01_base_plinth_bearing_pocket_v26.stl has finite nondegenerate mesh",
+      "status": "pass",
+      "severity": "P0",
+      "triangles": 5392,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "01_base_plinth_bearing_pocket_v26.stl is manifold enough for a printable solid",
+      "status": "fail",
+      "severity": "P0",
+      "boundary_edges": 0,
+      "nonmanifold_edges": 128
+    },
+    {
+      "name": "01_base_plinth_bearing_pocket_v26.stl is one connected printable body",
+      "status": "fail",
+      "severity": "P0",
+      "connected_triangle_components": 12,
+      "largest_component_triangles": 2048
+    },
+    {
+      "name": "02_fixed_internal_ring_72t_v26.stl exists in WSL package",
+      "status": "pass",
+      "severity": "P0",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v26_mechanical_package/stl/02_fixed_internal_ring_72t_v26.stl",
+      "bytes": 897189
+    },
+    {
+      "name": "02_fixed_internal_ring_72t_v26.stl has finite nondegenerate mesh",
+      "status": "pass",
+      "severity": "P0",
+      "triangles": 4992,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "02_fixed_internal_ring_72t_v26.stl is manifold enough for a printable solid",
+      "status": "pass",
+      "severity": "P0",
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0
+    },
+    {
+      "name": "02_fixed_internal_ring_72t_v26.stl is one connected printable body",
+      "status": "fail",
+      "severity": "P0",
+      "connected_triangle_components": 5,
+      "largest_component_triangles": 3456
+    },
+    {
+      "name": "03_rotating_carrier_drive_gear_v26.stl exists in WSL package",
+      "status": "pass",
+      "severity": "P0",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v26_mechanical_package/stl/03_rotating_carrier_drive_gear_v26.stl",
+      "bytes": 1197376
+    },
+    {
+      "name": "03_rotating_carrier_drive_gear_v26.stl has finite nondegenerate mesh",
+      "status": "pass",
+      "severity": "P0",
+      "triangles": 6736,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "03_rotating_carrier_drive_gear_v26.stl is manifold enough for a printable solid",
+      "status": "pass",
+      "severity": "P0",
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0
+    },
+    {
+      "name": "03_rotating_carrier_drive_gear_v26.stl is one connected printable body",
+      "status": "fail",
+      "severity": "P0",
+      "connected_triangle_components": 18,
+      "largest_component_triangles": 2880
+    },
+    {
+      "name": "04_orbit_escape_pinion_18t_v26.stl exists in WSL package",
+      "status": "pass",
+      "severity": "P0",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v26_mechanical_package/stl/04_orbit_escape_pinion_18t_v26.stl",
+      "bytes": 340401
+    },
+    {
+      "name": "04_orbit_escape_pinion_18t_v26.stl has finite nondegenerate mesh",
+      "status": "pass",
+      "severity": "P0",
+      "triangles": 1888,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "04_orbit_escape_pinion_18t_v26.stl is manifold enough for a printable solid",
+      "status": "pass",
+      "severity": "P0",
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0
+    },
+    {
+      "name": "04_orbit_escape_pinion_18t_v26.stl is one connected printable body",
+      "status": "fail",
+      "severity": "P0",
+      "connected_triangle_components": 2,
+      "largest_component_triangles": 1024
+    },
+    {
+      "name": "05_hand_crank_pinion_v26.stl exists in WSL package",
+      "status": "pass",
+      "severity": "P0",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v26_mechanical_package/stl/05_hand_crank_pinion_v26.stl",
+      "bytes": 251167
+    },
+    {
+      "name": "05_hand_crank_pinion_v26.stl has finite nondegenerate mesh",
+      "status": "pass",
+      "severity": "P0",
+      "triangles": 1392,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "05_hand_crank_pinion_v26.stl is manifold enough for a printable solid",
+      "status": "pass",
+      "severity": "P0",
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0
+    },
+    {
+      "name": "05_hand_crank_pinion_v26.stl is one connected printable body",
+      "status": "fail",
+      "severity": "P0",
+      "connected_triangle_components": 3,
+      "largest_component_triangles": 864
+    },
+    {
+      "name": "06_balance_wheel_v26.stl exists in WSL package",
+      "status": "pass",
+      "severity": "P0",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v26_mechanical_package/stl/06_balance_wheel_v26.stl",
+      "bytes": 213245
+    },
+    {
+      "name": "06_balance_wheel_v26.stl has finite nondegenerate mesh",
+      "status": "pass",
+      "severity": "P0",
+      "triangles": 1216,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "06_balance_wheel_v26.stl is manifold enough for a printable solid",
+      "status": "pass",
+      "severity": "P0",
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0
+    },
+    {
+      "name": "06_balance_wheel_v26.stl is one connected printable body",
+      "status": "fail",
+      "severity": "P0",
+      "connected_triangle_components": 6,
+      "largest_component_triangles": 768
+    },
+    {
+      "name": "07_escape_wheel_15t_v26.stl exists in WSL package",
+      "status": "pass",
+      "severity": "P0",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v26_mechanical_package/stl/07_escape_wheel_15t_v26.stl",
+      "bytes": 205750
+    },
+    {
+      "name": "07_escape_wheel_15t_v26.stl has finite nondegenerate mesh",
+      "status": "pass",
+      "severity": "P0",
+      "triangles": 1104,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "07_escape_wheel_15t_v26.stl is manifold enough for a printable solid",
+      "status": "pass",
+      "severity": "P0",
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0
+    },
+    {
+      "name": "07_escape_wheel_15t_v26.stl is one connected printable body",
+      "status": "fail",
+      "severity": "P0",
+      "connected_triangle_components": 2,
+      "largest_component_triangles": 720
+    },
+    {
+      "name": "08_pallet_fork_bridge_v26.stl exists in WSL package",
+      "status": "pass",
+      "severity": "P0",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v26_mechanical_package/stl/08_pallet_fork_bridge_v26.stl",
+      "bytes": 110550
+    },
+    {
+      "name": "08_pallet_fork_bridge_v26.stl has finite nondegenerate mesh",
+      "status": "pass",
+      "severity": "P0",
+      "triangles": 624,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "08_pallet_fork_bridge_v26.stl is manifold enough for a printable solid",
+      "status": "pass",
+      "severity": "P0",
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0
+    },
+    {
+      "name": "08_pallet_fork_bridge_v26.stl is one connected printable body",
+      "status": "fail",
+      "severity": "P0",
+      "connected_triangle_components": 6,
+      "largest_component_triangles": 384
+    },
+    {
+      "name": "09_crank_knob_v26.stl exists in WSL package",
+      "status": "pass",
+      "severity": "P0",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v26_mechanical_package/stl/09_crank_knob_v26.stl",
+      "bytes": 113757
+    },
+    {
+      "name": "09_crank_knob_v26.stl has finite nondegenerate mesh",
+      "status": "pass",
+      "severity": "P0",
+      "triangles": 640,
+      "degenerate_triangles": 0
+    },
+    {
+      "name": "09_crank_knob_v26.stl is manifold enough for a printable solid",
+      "status": "pass",
+      "severity": "P0",
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0
+    },
+    {
+      "name": "09_crank_knob_v26.stl is one connected printable body",
+      "status": "fail",
+      "severity": "P0",
+      "connected_triangle_components": 2,
+      "largest_component_triangles": 384
+    },
+    {
+      "name": "hand_pinion_to_carrier_drive_gear has real axial face overlap",
+      "status": "pass",
+      "severity": "P0",
+      "overlap_mm": 13.0,
+      "minimum_mm": 4.0
+    },
+    {
+      "name": "fixed_internal_ring_to_orbit_escape_pinion has real axial face overlap",
+      "status": "pass",
+      "severity": "P0",
+      "overlap_mm": 6.0,
+      "minimum_mm": 4.0
+    },
+    {
+      "name": "orbit_escape_axis has lower and upper local support material",
+      "status": "pass",
+      "severity": "P0",
+      "role_z_mm": [
+        36.0,
+        48.0
+      ],
+      "lower_support_vertices": 612,
+      "upper_support_vertices": 1172,
+      "support_file": "03_rotating_carrier_drive_gear_v26.stl"
+    },
+    {
+      "name": "balance_axis has lower and upper local support material",
+      "status": "pass",
+      "severity": "P0",
+      "role_z_mm": [
+        49.0,
+        53.0
+      ],
+      "lower_support_vertices": 1152,
+      "upper_support_vertices": 1152,
+      "support_file": "03_rotating_carrier_drive_gear_v26.stl"
+    },
+    {
+      "name": "pallet_axis has lower and upper local support material",
+      "status": "pass",
+      "severity": "P0",
+      "role_z_mm": [
+        49.0,
+        53.0
+      ],
+      "lower_support_vertices": 1152,
+      "upper_support_vertices": 1152,
+      "support_file": "03_rotating_carrier_drive_gear_v26.stl"
+    },
+    {
+      "name": "hand_axis has lower and upper local support material",
+      "status": "fail",
+      "severity": "P0",
+      "role_z_mm": [
+        -2.0,
+        33.0
+      ],
+      "lower_support_vertices": 0,
+      "upper_support_vertices": 1532,
+      "support_file": "01_base_plinth_bearing_pocket_v26.stl"
+    },
+    {
+      "name": "coarse static bbox interference has only declared gear mesh overlaps",
+      "status": "fail",
+      "severity": "P0",
+      "overlap_pairs": [
+        {
+          "a": "01_base_plinth_bearing_pocket_v26.stl",
+          "b": "02_fixed_internal_ring_72t_v26.stl",
+          "overlap_mm": [
+            133.0,
+            133.0,
+            6.0
+          ]
+        },
+        {
+          "a": "01_base_plinth_bearing_pocket_v26.stl",
+          "b": "03_rotating_carrier_drive_gear_v26.stl",
+          "overlap_mm": [
+            92.846,
+            92.846,
+            45.0
+          ]
+        },
+        {
+          "a": "01_base_plinth_bearing_pocket_v26.stl",
+          "b": "04_orbit_escape_pinion_18t_v26.stl",
+          "overlap_mm": [
+            29.835,
+            29.545,
+            9.0
+          ]
+        },
+        {
+          "a": "01_base_plinth_bearing_pocket_v26.stl",
+          "b": "05_hand_crank_pinion_v26.stl",
+          "overlap_mm": [
+            29.835,
+            28.272,
+            13.0
+          ]
+        },
+        {
+          "a": "01_base_plinth_bearing_pocket_v26.stl",
+          "b": "09_crank_knob_v26.stl",
+          "overlap_mm": [
+            16.0,
+            16.0,
+            11.0
+          ]
+        },
+        {
+          "a": "02_fixed_internal_ring_72t_v26.stl",
+          "b": "03_rotating_carrier_drive_gear_v26.stl",
+          "overlap_mm": [
+            92.846,
+            92.846,
+            6.0
+          ]
+        },
+        {
+          "a": "03_rotating_carrier_drive_gear_v26.stl",
+          "b": "04_orbit_escape_pinion_18t_v26.stl",
+          "overlap_mm": [
+            29.835,
+            29.545,
+            9.0
+          ]
+        },
+        {
+          "a": "03_rotating_carrier_drive_gear_v26.stl",
+          "b": "06_balance_wheel_v26.stl",
+          "overlap_mm": [
+            26.0,
+            26.0,
+            4.0
+          ]
+        },
+        {
+          "a": "03_rotating_carrier_drive_gear_v26.stl",
+          "b": "07_escape_wheel_15t_v26.stl",
+          "overlap_mm": [
+            16.77,
+            16.862,
+            2.95
+          ]
+        },
+        {
+          "a": "03_rotating_carrier_drive_gear_v26.stl",
+          "b": "08_pallet_fork_bridge_v26.stl",
+          "overlap_mm": [
+            30.443,
+            13.4,
+            4.0
+          ]
+        },
+        {
+          "a": "03_rotating_carrier_drive_gear_v26.stl",
+          "b": "09_crank_knob_v26.stl",
+          "overlap_mm": [
+            16.0,
+            16.0,
+            13.0
+          ]
+        },
+        {
+          "a": "06_balance_wheel_v26.stl",
+          "b": "08_pallet_fork_bridge_v26.stl",
+          "overlap_mm": [
+            26.0,
+            13.4,
+            4.0
+          ]
+        }
+      ],
+      "overlap_pair_count": 12
+    },
+    {
+      "name": "motion report declares carrier, hand, orbit, escape, balance, and pallet joints",
+      "status": "pass",
+      "severity": "P0",
+      "roles": [
+        "balance",
+        "carrier",
+        "escape_wheel",
+        "hand_crank",
+        "orbit_escape_pinion",
+        "pallet"
+      ]
+    },
+    {
+      "name": "escape wheel is parented to orbit shaft in motion contract",
+      "status": "pass",
+      "severity": "P0",
+      "escape_joint": {
+        "role": "escape_wheel",
+        "axis_mm": [
+          40.5,
+          0.0
+        ],
+        "parent": "orbit_escape_pinion",
+        "motion": "coaxial_spin_z",
+        "relative_ratio_to_carrier": -4.0,
+        "absolute_ratio_to_carrier": -3.0
+      }
+    },
+    {
+      "name": "visible escapement is not falsely claimed as mechanically regulating",
+      "status": "pass",
+      "severity": "P1",
+      "limitation": "visual and kinematic tabletop demonstrator; not a regulating escapement with verified impulse/lock contact physics"
+    },
+    {
+      "name": "mechanical drive path from escape wheel to pallet and balance is physically modeled",
+      "status": "fail",
+      "severity": "P0",
+      "reason": "Current V26 uses visual_oscillation for balance and pallet; no contact/impulse/locking geometry or gear/jewel interaction is validated."
+    },
+    {
+      "name": "viewer contains required inspection controls",
+      "status": "pass",
+      "severity": "P1",
+      "missing": []
+    },
+    {
+      "name": "viewer is served-testable over WSL HTTP instead of file URL",
+      "status": "fail",
+      "severity": "P1",
+      "smoke_file": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v26_mechanical_package/wsl_http_viewer_smoke.json",
+      "smoke_status": "fail"
+    }
+  ],
+  "part_mesh_stats": {
+    "01_base_plinth_bearing_pocket_v26.stl": {
+      "file": "01_base_plinth_bearing_pocket_v26.stl",
+      "triangle_count": 5392,
+      "bbox_mm": {
+        "x": [
+          -72.0,
+          72.0
+        ],
+        "y": [
+          -72.0,
+          72.0
+        ],
+        "z": [
+          0.0,
+          45.0
+        ]
+      },
+      "degenerate_triangles": 0,
+      "unique_vertices": 2578,
+      "connected_triangle_components": 12,
+      "largest_component_triangles": 2048,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 128
+    },
+    "02_fixed_internal_ring_72t_v26.stl": {
+      "file": "02_fixed_internal_ring_72t_v26.stl",
+      "triangle_count": 4992,
+      "bbox_mm": {
+        "x": [
+          -66.5,
+          66.5
+        ],
+        "y": [
+          -66.5,
+          66.5
+        ],
+        "z": [
+          37.5,
+          43.5
+        ]
+      },
+      "degenerate_triangles": 0,
+      "unique_vertices": 2496,
+      "connected_triangle_components": 5,
+      "largest_component_triangles": 3456,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0
+    },
+    "03_rotating_carrier_drive_gear_v26.stl": {
+      "file": "03_rotating_carrier_drive_gear_v26.stl",
+      "triangle_count": 6736,
+      "bbox_mm": {
+        "x": [
+          -46.422938,
+          46.422938
+        ],
+        "y": [
+          -46.422938,
+          46.422938
+        ],
+        "z": [
+          -2.0,
+          56.0
+        ]
+      },
+      "degenerate_triangles": 0,
+      "unique_vertices": 3388,
+      "connected_triangle_components": 18,
+      "largest_component_triangles": 2880,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0
+    },
+    "04_orbit_escape_pinion_18t_v26.stl": {
+      "file": "04_orbit_escape_pinion_18t_v26.stl",
+      "triangle_count": 1888,
+      "bbox_mm": {
+        "x": [
+          -14.917635,
+          14.917635
+        ],
+        "y": [
+          -14.77241,
+          14.77241
+        ],
+        "z": [
+          36.0,
+          45.0
+        ]
+      },
+      "degenerate_triangles": 0,
+      "unique_vertices": 944,
+      "connected_triangle_components": 2,
+      "largest_component_triangles": 1024,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0
+    },
+    "05_hand_crank_pinion_v26.stl": {
+      "file": "05_hand_crank_pinion_v26.stl",
+      "triangle_count": 1392,
+      "bbox_mm": {
+        "x": [
+          -14.917635,
+          14.917635
+        ],
+        "y": [
+          -100.5,
+          -43.72759
+        ],
+        "z": [
+          20.0,
+          33.0
+        ]
+      },
+      "degenerate_triangles": 0,
+      "unique_vertices": 698,
+      "connected_triangle_components": 3,
+      "largest_component_triangles": 864,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0
+    },
+    "06_balance_wheel_v26.stl": {
+      "file": "06_balance_wheel_v26.stl",
+      "triangle_count": 1216,
+      "bbox_mm": {
+        "x": [
+          -13.0,
+          13.0
+        ],
+        "y": [
+          -13.0,
+          13.0
+        ],
+        "z": [
+          49.0,
+          53.0
+        ]
+      },
+      "degenerate_triangles": 0,
+      "unique_vertices": 616,
+      "connected_triangle_components": 6,
+      "largest_component_triangles": 768,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0
+    },
+    "07_escape_wheel_15t_v26.stl": {
+      "file": "07_escape_wheel_15t_v26.stl",
+      "triangle_count": 1104,
+      "bbox_mm": {
+        "x": [
+          -8.3256906,
+          8.443996
+        ],
+        "y": [
+          -8.4310294,
+          8.4310294
+        ],
+        "z": [
+          45.05,
+          48.0
+        ]
+      },
+      "degenerate_triangles": 0,
+      "unique_vertices": 552,
+      "connected_triangle_components": 2,
+      "largest_component_triangles": 720,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0
+    },
+    "08_pallet_fork_bridge_v26.stl": {
+      "file": "08_pallet_fork_bridge_v26.stl",
+      "triangle_count": 624,
+      "bbox_mm": {
+        "x": [
+          -15.221324,
+          15.221324
+        ],
+        "y": [
+          -6.7,
+          6.7
+        ],
+        "z": [
+          49.0,
+          53.0
+        ]
+      },
+      "degenerate_triangles": 0,
+      "unique_vertices": 322,
+      "connected_triangle_components": 6,
+      "largest_component_triangles": 384,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0
+    },
+    "09_crank_knob_v26.stl": {
+      "file": "09_crank_knob_v26.stl",
+      "triangle_count": 640,
+      "bbox_mm": {
+        "x": [
+          -8.0,
+          8.0
+        ],
+        "y": [
+          -8.0,
+          8.0
+        ],
+        "z": [
+          -2.0,
+          11.0
+        ]
+      },
+      "degenerate_triangles": 0,
+      "unique_vertices": 322,
+      "connected_triangle_components": 2,
+      "largest_component_triangles": 384,
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0
+    }
+  }
+}

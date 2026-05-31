@@ -1,0 +1,111 @@
+{
+  "manifest": "manifests/tourbillon_v21_onshape_run.json",
+  "status": "pass",
+  "created_at": "2026-04-30T17:00:48.018320+00:00",
+  "checks": [
+    {
+      "name": "five STL rows present",
+      "status": "pass"
+    },
+    {
+      "name": "all STL files exist and are nonzero",
+      "status": "pass"
+    },
+    {
+      "name": "all STL meshes have faces",
+      "status": "pass"
+    },
+    {
+      "name": "watertightness recorded",
+      "status": "pass"
+    }
+  ],
+  "stl_results": [
+    {
+      "role": "fixed_base",
+      "file": "/mnt/c/Users/diobrando/Documents/New project/cad_agent_framework/reports/fabrication_v21/stl/fixed_base.stl",
+      "exists": true,
+      "bytes": 601584,
+      "is_watertight": true,
+      "face_count": 12030,
+      "bbox_mm": {
+        "xmin": -92.0,
+        "ymin": -91.971,
+        "zmin": 0.0,
+        "xmax": 92.0,
+        "ymax": 91.971,
+        "zmax": 38.0
+      },
+      "status": "pass"
+    },
+    {
+      "role": "fixed_ring",
+      "file": "/mnt/c/Users/diobrando/Documents/New project/cad_agent_framework/reports/fabrication_v21/stl/fixed_ring.stl",
+      "exists": true,
+      "bytes": 281084,
+      "is_watertight": true,
+      "face_count": 5620,
+      "bbox_mm": {
+        "xmin": -77.0,
+        "ymin": -76.976,
+        "zmin": 38.0,
+        "xmax": 77.0,
+        "ymax": 76.976,
+        "zmax": 42.0
+      },
+      "status": "pass"
+    },
+    {
+      "role": "rotating_cage",
+      "file": "/mnt/c/Users/diobrando/Documents/New project/cad_agent_framework/reports/fabrication_v21/stl/rotating_cage.stl",
+      "exists": true,
+      "bytes": 883684,
+      "is_watertight": true,
+      "face_count": 17672,
+      "bbox_mm": {
+        "xmin": -45.947,
+        "ymin": -45.947,
+        "zmin": 0.8,
+        "xmax": 45.947,
+        "ymax": 45.947,
+        "zmax": 53.0
+      },
+      "status": "pass"
+    },
+    {
+      "role": "orbit_pinion",
+      "file": "/mnt/c/Users/diobrando/Documents/New project/cad_agent_framework/reports/fabrication_v21/stl/orbit_pinion.stl",
+      "exists": true,
+      "bytes": 136884,
+      "is_watertight": true,
+      "face_count": 2736,
+      "bbox_mm": {
+        "xmin": 26.059,
+        "ymin": -14.309,
+        "zmin": 37.0,
+        "xmax": 54.941,
+        "ymax": 14.309,
+        "zmax": 43.0
+      },
+      "status": "pass"
+    },
+    {
+      "role": "hand_crank",
+      "file": "/mnt/c/Users/diobrando/Documents/New project/cad_agent_framework/reports/fabrication_v21/stl/hand_crank.stl",
+      "exists": true,
+      "bytes": 235084,
+      "is_watertight": true,
+      "face_count": 4700,
+      "bbox_mm": {
+        "xmin": -14.441,
+        "ymin": -97.699,
+        "zmin": 24.0,
+        "xmax": 14.441,
+        "ymax": -44.191,
+        "zmax": 34.0
+      },
+      "status": "pass"
+    }
+  ],
+  "artifact": "/mnt/c/Users/diobrando/Documents/New project/cad_agent_framework/reports/fabrication_v21/local_mesh_validation.json"
+}

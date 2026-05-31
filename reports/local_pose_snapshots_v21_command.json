@@ -1,0 +1,719 @@
+{
+  "manifest": "manifests/tourbillon_v21_onshape_run.json",
+  "status": "pass",
+  "created_at": "2026-04-30T17:00:48.288718+00:00",
+  "pose_count": 5,
+  "poses": [
+    {
+      "theta_deg": 0.0,
+      "transforms": [
+        {
+          "role": "fixed_base",
+          "motion": "fixed",
+          "matrix": [
+            [
+              1.0,
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        },
+        {
+          "role": "fixed_ring",
+          "motion": "fixed",
+          "matrix": [
+            [
+              1.0,
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        },
+        {
+          "role": "rotating_cage",
+          "motion": "rotate_z",
+          "angle_deg": 0.0,
+          "matrix": [
+            [
+              1.0,
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        },
+        {
+          "role": "orbit_pinion",
+          "motion": "orbit_absolute_spin_z",
+          "orbit_deg": 0.0,
+          "absolute_spin_deg": -0.0
+        },
+        {
+          "role": "orbit_3mm_shaft",
+          "motion": "rotate_z_with_cage",
+          "angle_deg": 0.0,
+          "matrix": [
+            [
+              1.0,
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        },
+        {
+          "role": "hand_crank",
+          "motion": "spin_about_hand_axis",
+          "center_mm": [
+            0.0,
+            -58.5
+          ],
+          "angle_deg": 0.0
+        }
+      ]
+    },
+    {
+      "theta_deg": 45.0,
+      "transforms": [
+        {
+          "role": "fixed_base",
+          "motion": "fixed",
+          "matrix": [
+            [
+              1.0,
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        },
+        {
+          "role": "fixed_ring",
+          "motion": "fixed",
+          "matrix": [
+            [
+              1.0,
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        },
+        {
+          "role": "rotating_cage",
+          "motion": "rotate_z",
+          "angle_deg": 45.0,
+          "matrix": [
+            [
+              0.7071067811865476,
+              -0.7071067811865475,
+              0.0,
+              0.0
+            ],
+            [
+              0.7071067811865475,
+              0.7071067811865476,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        },
+        {
+          "role": "orbit_pinion",
+          "motion": "orbit_absolute_spin_z",
+          "orbit_deg": 45.0,
+          "absolute_spin_deg": -135.0
+        },
+        {
+          "role": "orbit_3mm_shaft",
+          "motion": "rotate_z_with_cage",
+          "angle_deg": 45.0,
+          "matrix": [
+            [
+              0.7071067811865476,
+              -0.7071067811865475,
+              0.0,
+              0.0
+            ],
+            [
+              0.7071067811865475,
+              0.7071067811865476,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        },
+        {
+          "role": "hand_crank",
+          "motion": "spin_about_hand_axis",
+          "center_mm": [
+            0.0,
+            -58.5
+          ],
+          "angle_deg": 150.0
+        }
+      ]
+    },
+    {
+      "theta_deg": 90.0,
+      "transforms": [
+        {
+          "role": "fixed_base",
+          "motion": "fixed",
+          "matrix": [
+            [
+              1.0,
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        },
+        {
+          "role": "fixed_ring",
+          "motion": "fixed",
+          "matrix": [
+            [
+              1.0,
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        },
+        {
+          "role": "rotating_cage",
+          "motion": "rotate_z",
+          "angle_deg": 90.0,
+          "matrix": [
+            [
+              6.123233995736766e-17,
+              -1.0,
+              0.0,
+              0.0
+            ],
+            [
+              1.0,
+              6.123233995736766e-17,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        },
+        {
+          "role": "orbit_pinion",
+          "motion": "orbit_absolute_spin_z",
+          "orbit_deg": 90.0,
+          "absolute_spin_deg": -270.0
+        },
+        {
+          "role": "orbit_3mm_shaft",
+          "motion": "rotate_z_with_cage",
+          "angle_deg": 90.0,
+          "matrix": [
+            [
+              6.123233995736766e-17,
+              -1.0,
+              0.0,
+              0.0
+            ],
+            [
+              1.0,
+              6.123233995736766e-17,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        },
+        {
+          "role": "hand_crank",
+          "motion": "spin_about_hand_axis",
+          "center_mm": [
+            0.0,
+            -58.5
+          ],
+          "angle_deg": 300.0
+        }
+      ]
+    },
+    {
+      "theta_deg": 135.0,
+      "transforms": [
+        {
+          "role": "fixed_base",
+          "motion": "fixed",
+          "matrix": [
+            [
+              1.0,
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        },
+        {
+          "role": "fixed_ring",
+          "motion": "fixed",
+          "matrix": [
+            [
+              1.0,
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        },
+        {
+          "role": "rotating_cage",
+          "motion": "rotate_z",
+          "angle_deg": 135.0,
+          "matrix": [
+            [
+              -0.7071067811865475,
+              -0.7071067811865476,
+              0.0,
+              0.0
+            ],
+            [
+              0.7071067811865476,
+              -0.7071067811865475,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        },
+        {
+          "role": "orbit_pinion",
+          "motion": "orbit_absolute_spin_z",
+          "orbit_deg": 135.0,
+          "absolute_spin_deg": -405.0
+        },
+        {
+          "role": "orbit_3mm_shaft",
+          "motion": "rotate_z_with_cage",
+          "angle_deg": 135.0,
+          "matrix": [
+            [
+              -0.7071067811865475,
+              -0.7071067811865476,
+              0.0,
+              0.0
+            ],
+            [
+              0.7071067811865476,
+              -0.7071067811865475,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        },
+        {
+          "role": "hand_crank",
+          "motion": "spin_about_hand_axis",
+          "center_mm": [
+            0.0,
+            -58.5
+          ],
+          "angle_deg": 450.0
+        }
+      ]
+    },
+    {
+      "theta_deg": 180.0,
+      "transforms": [
+        {
+          "role": "fixed_base",
+          "motion": "fixed",
+          "matrix": [
+            [
+              1.0,
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        },
+        {
+          "role": "fixed_ring",
+          "motion": "fixed",
+          "matrix": [
+            [
+              1.0,
+              -0.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        },
+        {
+          "role": "rotating_cage",
+          "motion": "rotate_z",
+          "angle_deg": 180.0,
+          "matrix": [
+            [
+              -1.0,
+              -1.2246467991473532e-16,
+              0.0,
+              0.0
+            ],
+            [
+              1.2246467991473532e-16,
+              -1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        },
+        {
+          "role": "orbit_pinion",
+          "motion": "orbit_absolute_spin_z",
+          "orbit_deg": 180.0,
+          "absolute_spin_deg": -540.0
+        },
+        {
+          "role": "orbit_3mm_shaft",
+          "motion": "rotate_z_with_cage",
+          "angle_deg": 180.0,
+          "matrix": [
+            [
+              -1.0,
+              -1.2246467991473532e-16,
+              0.0,
+              0.0
+            ],
+            [
+              1.2246467991473532e-16,
+              -1.0,
+              0.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              1.0,
+              0.0
+            ],
+            [
+              0.0,
+              0.0,
+              0.0,
+              1.0
+            ]
+          ]
+        },
+        {
+          "role": "hand_crank",
+          "motion": "spin_about_hand_axis",
+          "center_mm": [
+            0.0,
+            -58.5
+          ],
+          "angle_deg": 600.0
+        }
+      ]
+    }
+  ],
+  "artifact": "/mnt/c/Users/diobrando/Documents/New project/cad_agent_framework/reports/local_pose_snapshots_v21.json"
+}

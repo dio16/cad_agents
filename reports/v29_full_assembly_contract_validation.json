@@ -1,0 +1,114 @@
+{
+  "created_at": "2026-05-17T07:04:00.794618+00:00",
+  "status": "pass",
+  "source_contract": "/home/diobrando/codex_wsl/cad_agent_framework/manifests/tourbillon_v29_full_assembly_contract.json",
+  "checks": [
+    {
+      "name": "all source contracts exist",
+      "status": "pass",
+      "source_contracts": [
+        "/home/diobrando/codex_wsl/cad_agent_framework/manifests/tourbillon_v29_selected_concept_contract.json",
+        "/home/diobrando/codex_wsl/cad_agent_framework/manifests/tourbillon_v29_risky_subsystems_contract.json",
+        "/home/diobrando/codex_wsl/cad_agent_framework/manifests/tourbillon_v29_system_interface_control_contract.json"
+      ]
+    },
+    {
+      "name": "claim uses stationary-autonomous-winding semantics",
+      "status": "pass",
+      "claim": "stationary-autonomous-winding spatial kinetic sculpture with a bold macro silhouette, watch-like fine-motion zone, and physically meaningful 3D drive path"
+    },
+    {
+      "name": "all three selected V29 modules are present",
+      "status": "pass",
+      "modules": [
+        "autonomous_power_module",
+        "canted_cage_display",
+        "spatial_riser"
+      ]
+    },
+    {
+      "name": "motion hierarchy is complete",
+      "status": "pass",
+      "motion_classes": [
+        "fast_fine",
+        "medium_transfer",
+        "slow_macro"
+      ]
+    },
+    {
+      "name": "drive chain closes from motor to balance",
+      "status": "pass",
+      "drive_chain": [
+        "low_voltage_motor",
+        "visible_winding_drum",
+        "spring_barrel",
+        "horizontal_transfer_shaft",
+        "bevel_riser",
+        "canted_carrier_drive",
+        "tourbillon_carrier",
+        "orbit_escape_pinion",
+        "escape_wheel",
+        "pallet_fork",
+        "balance_wheel"
+      ]
+    },
+    {
+      "name": "low-plane to elevated-plane transition is explicit",
+      "status": "pass",
+      "transition": {
+        "name": "low_plane_to_elevated_plane",
+        "from_axis": "x",
+        "to_axis": "z",
+        "via": "bevel_riser",
+        "from_height_mm": 20,
+        "to_height_mm": 62
+      }
+    },
+    {
+      "name": "elevated display remains canted",
+      "status": "pass",
+      "transition": {
+        "name": "elevated_plane_to_canted_display",
+        "from_axis": "z",
+        "to_axis": "canted_30_deg",
+        "via": "canted_carrier_drive",
+        "from_height_mm": 62,
+        "to_height_mm": 62
+      }
+    },
+    {
+      "name": "future evidence set matches raised goal",
+      "status": "pass",
+      "required_future_evidence": [
+        "deliverable_package_evidence",
+        "mechanical_truth_evidence",
+        "object_value_evidence",
+        "spatial_drive_evidence",
+        "stationary_autonomous_winding_evidence"
+      ]
+    },
+    {
+      "name": "pre-geometry gates include interface control",
+      "status": "pass",
+      "required_pre_geometry_gates": [
+        "selected_concept_contract_pass",
+        "risky_subsystems_review_pass",
+        "cross_module_integration_pass",
+        "kinematic_dimension_contract_pass",
+        "selected_design_feasibility_closure_pass"
+      ]
+    },
+    {
+      "name": "selected-design feasibility closure is encoded before geometry",
+      "status": "pass",
+      "contract_status": "mechanically_viable_pre_cad_after_selected_design_feasibility",
+      "required_pre_geometry_gates": [
+        "selected_concept_contract_pass",
+        "risky_subsystems_review_pass",
+        "cross_module_integration_pass",
+        "kinematic_dimension_contract_pass",
+        "selected_design_feasibility_closure_pass"
+      ]
+    }
+  ]
+}

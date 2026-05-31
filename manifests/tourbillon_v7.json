@@ -1,0 +1,89 @@
+{
+  "name": "tourbillon_v7",
+  "document_url": "https://cad.onshape.com/documents/0222fa90c0584ca0727f31d2/w/0cb8dde2f58aafcc165e983c/e/f80d0f6a6d5aaf7c61fb63cd",
+  "assembly": {
+    "name": "Tourbillon V7 API workflow verification",
+    "element_id": "f80d0f6a6d5aaf7c61fb63cd"
+  },
+  "parts": [
+    {
+      "name": "base",
+      "role": "fixed_base",
+      "file": "C:/Users/diobrando/Documents/New project/tourbillon_v7_step/01_base_plinth_axis_v7.step",
+      "element_id": "4ef78d5c5bf40e72a5ae22eb",
+      "instance_id": "MkU/41jQKfrgbxmJ3"
+    },
+    {
+      "name": "fixed_internal_ring",
+      "role": "fixed_ring",
+      "file": "C:/Users/diobrando/Documents/New project/tourbillon_v7_step/02_fixed_internal_ring_96t_v7.step",
+      "element_id": "f0970a922ef24d6681306546",
+      "instance_id": "M0NSWo/cgZBlGGpzf"
+    },
+    {
+      "name": "rotating_cage",
+      "role": "rotating_cage",
+      "file": "C:/Users/diobrando/Documents/New project/tourbillon_v7_step/03_rotating_cage_with_axles_v7.step",
+      "element_id": "5863fb39a955382f3fbfb1e7",
+      "motion": {
+        "type": "rotate_z",
+        "ratio": 1.0
+      },
+      "instance_id": "MRNoN4+FPmljUTeEE"
+    },
+    {
+      "name": "orbit_pinion",
+      "role": "orbit_pinion",
+      "file": "C:/Users/diobrando/Documents/New project/tourbillon_v7_step/04_orbit_pinion_24t_v7.step",
+      "element_id": "2e61bb1f34725da1d0cf656c",
+      "motion": {
+        "type": "orbit_and_spin_z",
+        "center_mm": [
+          37.0,
+          0.0
+        ],
+        "orbit_ratio": 1.0,
+        "spin_ratio": -4.0
+      },
+      "instance_id": "M1UpMv3NXRSgL8+d6"
+    },
+    {
+      "name": "balance_wheel",
+      "role": "balance_wheel",
+      "file": "C:/Users/diobrando/Documents/New project/tourbillon_v7_step/05_balance_wheel_v7.step",
+      "element_id": "a4c589e40d8ae05b4e539e61",
+      "motion": {
+        "type": "rotate_z",
+        "ratio": 1.0
+      },
+      "instance_id": "MIpNCnYBtt2XTYmjm"
+    },
+    {
+      "name": "escape_wheel",
+      "role": "escape_wheel",
+      "file": "C:/Users/diobrando/Documents/New project/tourbillon_v7_step/06_escape_wheel_30t_v7.step",
+      "element_id": "d42d74b2d9afb5a2bce1927d",
+      "motion": {
+        "type": "rotate_z",
+        "ratio": 1.0
+      },
+      "instance_id": "MLZDiSDPcLNWkrHQ9"
+    },
+    {
+      "name": "hand_crank",
+      "role": "hand_crank",
+      "file": "C:/Users/diobrando/Documents/New project/tourbillon_v7_step/07_hand_crank_knob_v7.step",
+      "element_id": "aa26f8a87999c248c75f7ae9",
+      "instance_id": "M2ePidZrU2dz5ar3O"
+    }
+  ],
+  "last_pose_deg": 90.0,
+  "verification_runs": [
+    {
+      "kind": "pose",
+      "theta_deg": 90.0,
+      "transform_count": 4,
+      "timestamp": "2026-04-26T04:50:07.269953+00:00"
+    }
+  ]
+}

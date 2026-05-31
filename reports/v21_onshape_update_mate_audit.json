@@ -1,0 +1,81 @@
+﻿{
+  "manifest": "manifests/tourbillon_v21_onshape_run.json",
+  "status": "pass",
+  "assembly_element_id": "ed96fa6ecf577942b84738b4",
+  "document_url": "https://cad.onshape.com/documents/0222fa90c0584ca0727f31d2/w/0cb8dde2f58aafcc165e983c/e/ed96fa6ecf577942b84738b4",
+  "error_relation_count": 0,
+  "results": [
+    {
+      "name": "Codex V20 MC base center",
+      "feature_type": "mateConnector",
+      "feature_id": "MroeVzpzN3nCa+R3Q",
+      "status": "OK"
+    },
+    {
+      "name": "Codex V20 MC cage center",
+      "feature_type": "mateConnector",
+      "feature_id": "M5LTd6qB64ABHfnzJ",
+      "status": "OK"
+    },
+    {
+      "name": "Codex V20 MC base ring ground",
+      "feature_type": "mateConnector",
+      "feature_id": "MUb8kLnvDCHT7mhEG",
+      "status": "OK"
+    },
+    {
+      "name": "Codex V20 MC fixed ring ground",
+      "feature_type": "mateConnector",
+      "feature_id": "MXGXfER0JTUl7TuYD",
+      "status": "OK"
+    },
+    {
+      "name": "Codex V20 MC base hand axis",
+      "feature_type": "mateConnector",
+      "feature_id": "McydHpJYBw1EVQXk7",
+      "status": "OK"
+    },
+    {
+      "name": "Codex V20 MC hand crank axis",
+      "feature_type": "mateConnector",
+      "feature_id": "M87pLnq4scS2gmWqh",
+      "status": "OK"
+    },
+    {
+      "name": "Codex V20 MC cage orbit pinion axis",
+      "feature_type": "mateConnector",
+      "feature_id": "MdNVyKWY/clNHMZ5G",
+      "status": "OK"
+    },
+    {
+      "name": "Codex V20 MC orbit pinion axis",
+      "feature_type": "mateConnector",
+      "feature_id": "MleBKM6Jmidv3V95g",
+      "status": "OK"
+    },
+    {
+      "name": "Codex V20 Fastened fixed ring to base",
+      "feature_type": "mate",
+      "feature_id": "M8nDmq4BB8ouRnuqC",
+      "status": "OK"
+    },
+    {
+      "name": "Codex V20 Revolute cage about center",
+      "feature_type": "mate",
+      "feature_id": "MENbwQQXyRO25Tkex",
+      "status": "OK"
+    },
+    {
+      "name": "Codex V20 Revolute hand crank",
+      "feature_type": "mate",
+      "feature_id": "MvZTEvjkUbtEZDvMY",
+      "status": "OK"
+    },
+    {
+      "name": "Codex V20 Revolute orbit pinion on cage",
+      "feature_type": "mate",
+      "feature_id": "MLVol3S+u4FmV5f9u",
+      "status": "OK"
+    }
+  ]
+}

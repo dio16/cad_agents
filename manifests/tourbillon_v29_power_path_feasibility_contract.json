@@ -1,0 +1,66 @@
+{
+  "version": "V29",
+  "status": "power_path_feasibility_ready",
+  "source_contracts": [
+    "manifests/tourbillon_v29_full_assembly_contract.json",
+    "manifests/tourbillon_v29_kinematic_dimension_contract.json"
+  ],
+  "motor_candidate": {
+    "family": "20D metal gearmotor",
+    "reference_model": "Pololu 313:1 Metal Gearmotor 20Dx46L mm 12V CB",
+    "body_envelope_mm": [20, 20, 47.7],
+    "shaft_diameter_mm": 4,
+    "design_speed_rpm": 38,
+    "design_torque_nmm": 255,
+    "evidence_note": "max-efficiency operating point, used as the conservative design point rather than stall"
+  },
+  "spring_candidate": {
+    "reference_model": "Lee Spring LTML200Y 02 M",
+    "outside_diameter_mm": 27,
+    "body_length_mm": 26.01,
+    "max_torque_nmm": 978.788,
+    "max_deflection_deg": 323,
+    "working_band_nmm": [200, 800],
+    "working_energy_j": 1.7278757455
+  },
+  "winding_path": [
+    {
+      "name": "motor_to_winding_drum",
+      "speed_ratio": -0.1666666667,
+      "ideal_torque_ratio": 6.0
+    },
+    {
+      "name": "drum_to_barrel",
+      "relation": "coaxial one-way ratchet",
+      "speed_ratio": 1.0,
+      "ideal_torque_ratio": 1.0
+    }
+  ],
+  "display_output_target": {
+    "carrier_speed_rpm": 1.0,
+    "carrier_input_torque_nmm": 25,
+    "design_loss_factor": 10,
+    "holdover_target_s": 60,
+    "required_energy_j": 1.5707963268
+  },
+  "derived_budget": {
+    "winding_drum_speed_rpm": 6.3333333333,
+    "available_winding_torque_nmm": 1530,
+    "working_upper_torque_nmm": 800,
+    "winding_torque_margin": 1.9125,
+    "energy_margin": 1.1
+  },
+  "control_concept": {
+    "recharge_trigger": "barrel cam or angle flag at 200 Nmm equivalent low threshold",
+    "stop_trigger": "barrel cam or angle flag at 800 Nmm equivalent high threshold",
+    "overwind_protection": "slip clutch set below spring max torque plus electrical motor cutoff",
+    "reverse_flow_protection": "one-way ratchet from drum to barrel"
+  },
+  "required_gates": [
+    "motor_envelope_pass",
+    "winding_torque_margin_pass",
+    "energy_holdover_pass",
+    "control_closure_pass",
+    "spring_envelope_pass"
+  ]
+}

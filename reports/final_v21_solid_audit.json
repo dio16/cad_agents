@@ -1,0 +1,232 @@
+{
+  "manifest": "manifests/tourbillon_v21_onshape_run.json",
+  "name": "tourbillon_v21_hardware_in_context",
+  "status": "pass",
+  "sample_step_deg": 15.0,
+  "failure_count": 0,
+  "results": [
+    {
+      "name": "fixed_base step body",
+      "type": "solid_body_loaded",
+      "status": "pass",
+      "role": "fixed_base",
+      "volume_mm3": 221493.959,
+      "bbox_mm": {
+        "xmin": -92.0,
+        "xmax": 92.0,
+        "ymin": -92.0,
+        "ymax": 92.0,
+        "zmin": 0.0,
+        "zmax": 38.0
+      }
+    },
+    {
+      "name": "fixed_ring step body",
+      "type": "solid_body_loaded",
+      "status": "pass",
+      "role": "fixed_ring",
+      "volume_mm3": 37203.438,
+      "bbox_mm": {
+        "xmin": -77.0,
+        "xmax": 77.0,
+        "ymin": -77.0,
+        "ymax": 77.0,
+        "zmin": 38.0,
+        "zmax": 42.0
+      }
+    },
+    {
+      "name": "rotating_cage step body",
+      "type": "solid_body_loaded",
+      "status": "pass",
+      "role": "rotating_cage",
+      "volume_mm3": 52789.929,
+      "bbox_mm": {
+        "xmin": -45.947,
+        "xmax": 45.947,
+        "ymin": -45.947,
+        "ymax": 45.947,
+        "zmin": 0.8,
+        "zmax": 53.0
+      }
+    },
+    {
+      "name": "orbit_pinion step body",
+      "type": "solid_body_loaded",
+      "status": "pass",
+      "role": "orbit_pinion",
+      "volume_mm3": 2289.355,
+      "bbox_mm": {
+        "xmin": 26.059,
+        "xmax": 54.941,
+        "ymin": -14.309,
+        "ymax": 14.309,
+        "zmin": 37.0,
+        "zmax": 43.0
+      }
+    },
+    {
+      "name": "hand_crank step body",
+      "type": "solid_body_loaded",
+      "status": "pass",
+      "role": "hand_crank",
+      "volume_mm3": 2772.605,
+      "bbox_mm": {
+        "xmin": -14.441,
+        "xmax": 14.441,
+        "ymin": -97.7,
+        "ymax": -44.191,
+        "zmin": 24.0,
+        "zmax": 34.0
+      }
+    },
+    {
+      "name": "sampled pair clearance summary",
+      "type": "solid_clearance_summary",
+      "status": "pass",
+      "sampled_pair_count": 240,
+      "closest_pairs": [
+        {
+          "name": "fixed_base to fixed_ring at 0 deg",
+          "theta_deg": 0.0,
+          "left_role": "fixed_base",
+          "right_role": "fixed_ring",
+          "bbox_clearance_mm": 0.0
+        },
+        {
+          "name": "fixed_base to rotating_cage at 0 deg",
+          "theta_deg": 0.0,
+          "left_role": "fixed_base",
+          "right_role": "rotating_cage",
+          "bbox_clearance_mm": 0.0
+        },
+        {
+          "name": "fixed_base to orbit_pinion at 0 deg",
+          "theta_deg": 0.0,
+          "left_role": "fixed_base",
+          "right_role": "orbit_pinion",
+          "bbox_clearance_mm": 0.0
+        },
+        {
+          "name": "fixed_base to hand_crank at 0 deg",
+          "theta_deg": 0.0,
+          "left_role": "fixed_base",
+          "right_role": "hand_crank",
+          "bbox_clearance_mm": 0.0
+        },
+        {
+          "name": "fixed_ring to rotating_cage at 0 deg",
+          "theta_deg": 0.0,
+          "left_role": "fixed_ring",
+          "right_role": "rotating_cage",
+          "bbox_clearance_mm": 0.0
+        },
+        {
+          "name": "fixed_ring to orbit_pinion at 0 deg",
+          "theta_deg": 0.0,
+          "left_role": "fixed_ring",
+          "right_role": "orbit_pinion",
+          "bbox_clearance_mm": 0.0
+        },
+        {
+          "name": "rotating_cage to orbit_pinion at 0 deg",
+          "theta_deg": 0.0,
+          "left_role": "rotating_cage",
+          "right_role": "orbit_pinion",
+          "bbox_clearance_mm": 0.0
+        },
+        {
+          "name": "rotating_cage to hand_crank at 0 deg",
+          "theta_deg": 0.0,
+          "left_role": "rotating_cage",
+          "right_role": "hand_crank",
+          "bbox_clearance_mm": 0.0
+        },
+        {
+          "name": "fixed_base to fixed_ring at 15 deg",
+          "theta_deg": 15.0,
+          "left_role": "fixed_base",
+          "right_role": "fixed_ring",
+          "bbox_clearance_mm": 0.0
+        },
+        {
+          "name": "fixed_base to rotating_cage at 15 deg",
+          "theta_deg": 15.0,
+          "left_role": "fixed_base",
+          "right_role": "rotating_cage",
+          "bbox_clearance_mm": 0.0
+        },
+        {
+          "name": "fixed_base to orbit_pinion at 15 deg",
+          "theta_deg": 15.0,
+          "left_role": "fixed_base",
+          "right_role": "orbit_pinion",
+          "bbox_clearance_mm": 0.0
+        },
+        {
+          "name": "fixed_base to hand_crank at 15 deg",
+          "theta_deg": 15.0,
+          "left_role": "fixed_base",
+          "right_role": "hand_crank",
+          "bbox_clearance_mm": 0.0
+        },
+        {
+          "name": "fixed_ring to rotating_cage at 15 deg",
+          "theta_deg": 15.0,
+          "left_role": "fixed_ring",
+          "right_role": "rotating_cage",
+          "bbox_clearance_mm": 0.0
+        },
+        {
+          "name": "fixed_ring to orbit_pinion at 15 deg",
+          "theta_deg": 15.0,
+          "left_role": "fixed_ring",
+          "right_role": "orbit_pinion",
+          "bbox_clearance_mm": 0.0
+        },
+        {
+          "name": "rotating_cage to orbit_pinion at 15 deg",
+          "theta_deg": 15.0,
+          "left_role": "rotating_cage",
+          "right_role": "orbit_pinion",
+          "bbox_clearance_mm": 0.0
+        },
+        {
+          "name": "rotating_cage to hand_crank at 15 deg",
+          "theta_deg": 15.0,
+          "left_role": "rotating_cage",
+          "right_role": "hand_crank",
+          "bbox_clearance_mm": 0.0
+        },
+        {
+          "name": "fixed_base to fixed_ring at 30 deg",
+          "theta_deg": 30.0,
+          "left_role": "fixed_base",
+          "right_role": "fixed_ring",
+          "bbox_clearance_mm": 0.0
+        },
+        {
+          "name": "fixed_base to rotating_cage at 30 deg",
+          "theta_deg": 30.0,
+          "left_role": "fixed_base",
+          "right_role": "rotating_cage",
+          "bbox_clearance_mm": 0.0
+        },
+        {
+          "name": "fixed_base to orbit_pinion at 30 deg",
+          "theta_deg": 30.0,
+          "left_role": "fixed_base",
+          "right_role": "orbit_pinion",
+          "bbox_clearance_mm": 0.0
+        },
+        {
+          "name": "fixed_base to hand_crank at 30 deg",
+          "theta_deg": 30.0,
+          "left_role": "fixed_base",
+          "right_role": "hand_crank",
+          "bbox_clearance_mm": 0.0
+        }
+      ]
+    }
+  ]
+}

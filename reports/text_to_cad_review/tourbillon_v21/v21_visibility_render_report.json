@@ -1,0 +1,75 @@
+{
+  "status": "pass",
+  "created_at": "2026-04-30T01:10:35.684880+00:00",
+  "artifact": "/mnt/c/Users/diobrando/Documents/New project/cad_agent_framework/reports/text_to_cad_review/tourbillon_v21/snapshots/v21_motion_visibility_contact_sheet.png",
+  "source_manifest": "/mnt/c/Users/diobrando/Documents/New project/cad_agent_framework/manifests/tourbillon_v21.json",
+  "geometry_source": "V21 audits the V20 mechanically closed STEP set; rendered panels use V20 STEP-derived GLB sidecars.",
+  "text_to_cad_root": "/mnt/c/Users/diobrando/Documents/New project/external/text-to-cad",
+  "text_to_cad_commit": "1d2285cd0473f5aaf3303e442c828c7084d5bec0",
+  "source_review_status": "pass",
+  "input_glbs": {
+    "fixed_base": "/mnt/c/Users/diobrando/Documents/New project/cad_agent_framework/reports/text_to_cad_review/tourbillon_v20/step/.01_base_608zz_bearing_pocket_v20.step/model.glb",
+    "fixed_ring": "/mnt/c/Users/diobrando/Documents/New project/cad_agent_framework/reports/text_to_cad_review/tourbillon_v20/step/.02_fixed_internal_ring_clearance_teeth_v20.step/model.glb",
+    "rotating_cage": "/mnt/c/Users/diobrando/Documents/New project/cad_agent_framework/reports/text_to_cad_review/tourbillon_v20/step/.03_rotating_cage_bearing_journal_shaft_retainer_v20.step/model.glb",
+    "orbit_pinion": "/mnt/c/Users/diobrando/Documents/New project/cad_agent_framework/reports/text_to_cad_review/tourbillon_v20/step/.04_orbit_pinion_3mm_bore_backlash_teeth_v20.step/model.glb",
+    "hand_crank": "/mnt/c/Users/diobrando/Documents/New project/cad_agent_framework/reports/text_to_cad_review/tourbillon_v20/step/.05_hand_crank_3mm_shaft_bore_retained_pinion_v20.step/model.glb",
+    "central_bearing_608zz": "/mnt/c/Users/diobrando/Documents/New project/cad_agent_framework/reports/text_to_cad_review/tourbillon_v20/step/.06_ref_608zz_bearing.step/model.glb",
+    "orbit_3mm_shaft": "/mnt/c/Users/diobrando/Documents/New project/cad_agent_framework/reports/text_to_cad_review/tourbillon_v20/step/.07_ref_orbit_3mm_shaft.step/model.glb",
+    "hand_3mm_shaft": "/mnt/c/Users/diobrando/Documents/New project/cad_agent_framework/reports/text_to_cad_review/tourbillon_v20/step/.08_ref_hand_3mm_shaft.step/model.glb",
+    "m3_ring_screws": "/mnt/c/Users/diobrando/Documents/New project/cad_agent_framework/reports/text_to_cad_review/tourbillon_v20/step/.09_ref_m3_ring_screws.step/model.glb"
+  },
+  "angles_deg": [
+    0,
+    90,
+    180,
+    270
+  ],
+  "views": [
+    "top",
+    "isometric"
+  ],
+  "panel_count": 8,
+  "panels": [
+    {
+      "theta_deg": 0.0,
+      "view": "top",
+      "file": "/mnt/c/Users/diobrando/Documents/New project/cad_agent_framework/reports/text_to_cad_review/tourbillon_v21/snapshots/geometry_panels/v21_top_0000.00.png"
+    },
+    {
+      "theta_deg": 90.0,
+      "view": "top",
+      "file": "/mnt/c/Users/diobrando/Documents/New project/cad_agent_framework/reports/text_to_cad_review/tourbillon_v21/snapshots/geometry_panels/v21_top_0090.00.png"
+    },
+    {
+      "theta_deg": 180.0,
+      "view": "top",
+      "file": "/mnt/c/Users/diobrando/Documents/New project/cad_agent_framework/reports/text_to_cad_review/tourbillon_v21/snapshots/geometry_panels/v21_top_0180.00.png"
+    },
+    {
+      "theta_deg": 270.0,
+      "view": "top",
+      "file": "/mnt/c/Users/diobrando/Documents/New project/cad_agent_framework/reports/text_to_cad_review/tourbillon_v21/snapshots/geometry_panels/v21_top_0270.00.png"
+    },
+    {
+      "theta_deg": 0.0,
+      "view": "isometric",
+      "file": "/mnt/c/Users/diobrando/Documents/New project/cad_agent_framework/reports/text_to_cad_review/tourbillon_v21/snapshots/geometry_panels/v21_isometric_0000.00.png"
+    },
+    {
+      "theta_deg": 90.0,
+      "view": "isometric",
+      "file": "/mnt/c/Users/diobrando/Documents/New project/cad_agent_framework/reports/text_to_cad_review/tourbillon_v21/snapshots/geometry_panels/v21_isometric_0090.00.png"
+    },
+    {
+      "theta_deg": 180.0,
+      "view": "isometric",
+      "file": "/mnt/c/Users/diobrando/Documents/New project/cad_agent_framework/reports/text_to_cad_review/tourbillon_v21/snapshots/geometry_panels/v21_isometric_0180.00.png"
+    },
+    {
+      "theta_deg": 270.0,
+      "view": "isometric",
+      "file": "/mnt/c/Users/diobrando/Documents/New project/cad_agent_framework/reports/text_to_cad_review/tourbillon_v21/snapshots/geometry_panels/v21_isometric_0270.00.png"
+    }
+  ],
+  "limitation": "No standalone V21 STEP directory was present. The rendered artifact is geometry-derived from the V20 STEP-generated GLB sidecars referenced by the V21 hardware-in-context audit, with local motion-contract transforms applied outside Onshape."
+}

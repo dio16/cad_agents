@@ -1,0 +1,20 @@
+{
+  "design_id": "v31_ratchet_barrel_vertical_lift_to_elevated_core",
+  "hero_view_required_roles": [
+    "ratchet_winding_wheel",
+    "spring_barrel",
+    "vertical_lift_shaft",
+    "carrier",
+    "orbit_escape_pinion",
+    "escape_wheel",
+    "pallet_fork",
+    "balance_wheel"
+  ],
+  "motion_layers": [
+    "slow_macro",
+    "medium_transfer",
+    "fast_fine"
+  ],
+  "occlusion_budget_percent_max": 35,
+  "spatial_value": "visible lower-to-upper torque transfer"
+}

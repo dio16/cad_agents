@@ -1,0 +1,79 @@
+{
+  "manifest": "manifests/tourbillon_v21_onshape_run.json",
+  "name": "tourbillon_v21_hardware_in_context",
+  "status": "pass",
+  "results": [
+    {
+      "name": "hand crank drives the model",
+      "type": "driver_motion",
+      "status": "pass",
+      "role": "hand_crank",
+      "motion": {
+        "type": "spin_about_point_z",
+        "center_mm": [
+          0.0,
+          -58.5
+        ],
+        "ratio": -3.3333333333333335
+      },
+      "message": ""
+    },
+    {
+      "name": "hand crank gear meshes with cage drive gear",
+      "type": "functional_connection",
+      "status": "pass",
+      "from_role": "hand_crank",
+      "to_role": "rotating_cage",
+      "message": ""
+    },
+    {
+      "name": "fixed ring forces orbit pinion spin",
+      "type": "functional_connection",
+      "status": "pass",
+      "from_role": "fixed_ring",
+      "to_role": "orbit_pinion",
+      "message": ""
+    },
+    {
+      "name": "orbit pinion internal rolling ratio",
+      "type": "internal_gear_spin_ratio",
+      "status": "pass",
+      "expected_spin_ratio": -3.0,
+      "actual_spin_ratio": -3.0,
+      "error": 0.0,
+      "tolerance": 0.02
+    },
+    {
+      "name": "orbit pinion shaft bore clearance",
+      "type": "radial_clearance",
+      "status": "pass",
+      "clearance_mm": 0.25,
+      "min_clearance_mm": 0.2,
+      "message": ""
+    },
+    {
+      "name": "hand crank shaft bore clearance",
+      "type": "radial_clearance",
+      "status": "pass",
+      "clearance_mm": 0.25,
+      "min_clearance_mm": 0.2,
+      "message": ""
+    },
+    {
+      "name": "central bearing journal clearance",
+      "type": "radial_clearance",
+      "status": "pass",
+      "clearance_mm": 0.45,
+      "min_clearance_mm": 0.35,
+      "message": ""
+    },
+    {
+      "name": "central bearing actual 8mm bore clearance",
+      "type": "radial_clearance",
+      "status": "pass",
+      "clearance_mm": 0.05,
+      "min_clearance_mm": 0.03,
+      "message": ""
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "status": "pass",
+  "created_at": "2026-05-01T02:20:42.727894+00:00",
+  "contract": "C:\\Users\\diobrando\\Documents\\New project\\cad_agent_framework\\manifests\\tourbillon_v25_engineering_contract.json",
+  "workflow": "C:\\Users\\diobrando\\Documents\\New project\\cad_agent_framework\\docs\\v25_mechanical_design_workflow_ja.md",
+  "reports": {
+    "v25_involute_stress_validation.json": "C:\\Users\\diobrando\\Documents\\New project\\cad_agent_framework\\reports\\design_contract_v25\\v25_involute_stress_validation.json",
+    "v25_support_validation.json": "C:\\Users\\diobrando\\Documents\\New project\\cad_agent_framework\\reports\\design_contract_v25\\v25_support_validation.json",
+    "v25_escapement_validation.json": "C:\\Users\\diobrando\\Documents\\New project\\cad_agent_framework\\reports\\design_contract_v25\\v25_escapement_validation.json",
+    "v25_motion_validation.json": "C:\\Users\\diobrando\\Documents\\New project\\cad_agent_framework\\reports\\design_contract_v25\\v25_motion_validation.json",
+    "v25_requirements_traceability.json": "C:\\Users\\diobrando\\Documents\\New project\\cad_agent_framework\\reports\\design_contract_v25\\v25_requirements_traceability.json"
+  },
+  "dimension_table": "C:\\Users\\diobrando\\Documents\\New project\\cad_agent_framework\\reports\\design_contract_v25\\v25_dimension_tolerance_table.csv",
+  "cad_generation_gate": "pass",
+  "completion_wording": "V25 engineering contract and validation gates pass; CAD generation is allowed next. Native Onshape Gear Relation remains blocked."
+}

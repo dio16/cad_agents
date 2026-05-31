@@ -1,0 +1,55 @@
+{
+  "version": "V29",
+  "status": "component_selection_ready",
+  "source_contracts": [
+    "manifests/tourbillon_v29_power_path_feasibility_contract.json",
+    "manifests/tourbillon_v29_pre_cad_buildability_contract.json"
+  ],
+  "purchased_parts": [
+    {
+      "role": "winding_motor",
+      "item": "20D 313:1 12V metal gearmotor family",
+      "selection_level": "dimensionally checked",
+      "envelope_mm": [20, 20, 47.7],
+      "shaft_mm": 4,
+      "mounting": "M2.5 face holes",
+      "reason": "fits base chamber and closes the winding torque budget"
+    },
+    {
+      "role": "energy_storage",
+      "item": "Lee Spring LTML200Y 02 M or equivalent torsion spring",
+      "selection_level": "dimensionally checked",
+      "envelope_mm": [27, 27, 26.01],
+      "reason": "fits storage barrel budget and closes 60 s holdover target"
+    },
+    {
+      "role": "primary shafts",
+      "item": "3 mm steel shaft stock",
+      "selection_level": "declared",
+      "envelope_mm": [3, 3, 42],
+      "reason": "matches the current two-point-support concept"
+    },
+    {
+      "role": "fasteners",
+      "item": "M3 socket screws + washers",
+      "selection_level": "declared",
+      "reason": "matches current carrier / bridge retention concept"
+    },
+    {
+      "role": "motor_mount_fasteners",
+      "item": "M2.5 screws",
+      "selection_level": "declared",
+      "reason": "matches selected 20D motor family mounting face"
+    }
+  ],
+  "printed_fit_assumptions": {
+    "shaft_radial_clearance_mm": 0.2,
+    "torsion_spring_barrel_clearance_mm": 1.5,
+    "minimum_wall_mm": 2.4
+  },
+  "bom_policy": {
+    "printed_and_purchased_parts_separate": true,
+    "vendor_exact_models_required_now": false,
+    "reference_solids_required_before_fabrication_claim": true
+  }
+}

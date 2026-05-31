@@ -1,0 +1,136 @@
+{
+  "created_at": "2026-05-17T03:44:13.007990+00:00",
+  "status": "pass",
+  "claim": "concept-only local subsystem package; not full-assembly, motion-complete, or fabrication-complete",
+  "source_contract": "/home/diobrando/codex_wsl/cad_agent_framework/manifests/tourbillon_v29_risky_subsystems_contract.json",
+  "source_summary": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v29_risky_subsystems/v29_risky_subsystems_summary.json",
+  "what_this_proves": [
+    "the selected V29 concept has explicit concept-only modules for the three expensive unknowns",
+    "each module has declared learning objectives, roles, and local artifacts",
+    "the package is now contract-traceable instead of being shape-only"
+  ],
+  "what_this_does_not_prove": [
+    "full sculpture geometry",
+    "full drive ratios or torque reserve",
+    "fabrication completion",
+    "final object-value pass"
+  ],
+  "checks": [
+    {
+      "name": "summary references risky-subsystems contract",
+      "status": "pass",
+      "source_contract": "manifests/tourbillon_v29_risky_subsystems_contract.json"
+    },
+    {
+      "name": "all contracted modules exist",
+      "status": "pass",
+      "expected": [
+        "01_autonomous_power_module_concept",
+        "02_spatial_riser_concept",
+        "03_canted_cage_sightline_concept"
+      ],
+      "actual": [
+        "01_autonomous_power_module_concept",
+        "02_spatial_riser_concept",
+        "03_canted_cage_sightline_concept"
+      ]
+    },
+    {
+      "name": "01_autonomous_power_module_concept STEP exists",
+      "status": "pass",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v29_risky_subsystems/step/01_autonomous_power_module_concept.step"
+    },
+    {
+      "name": "01_autonomous_power_module_concept STL exists",
+      "status": "pass",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v29_risky_subsystems/stl/01_autonomous_power_module_concept.stl"
+    },
+    {
+      "name": "01_autonomous_power_module_concept declares required roles",
+      "status": "pass",
+      "expected": [
+        "motor_chamber",
+        "visible_winding_drum",
+        "storage_barrel",
+        "output_shaft"
+      ],
+      "actual": [
+        "motor_chamber",
+        "visible_winding_drum",
+        "storage_barrel",
+        "output_shaft"
+      ]
+    },
+    {
+      "name": "02_spatial_riser_concept STEP exists",
+      "status": "pass",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v29_risky_subsystems/step/02_spatial_riser_concept.step"
+    },
+    {
+      "name": "02_spatial_riser_concept STL exists",
+      "status": "pass",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v29_risky_subsystems/stl/02_spatial_riser_concept.stl"
+    },
+    {
+      "name": "02_spatial_riser_concept declares required roles",
+      "status": "pass",
+      "expected": [
+        "horizontal_input_shaft",
+        "lower_hub",
+        "vertical_transfer_shaft",
+        "upper_hub",
+        "elevated_output"
+      ],
+      "actual": [
+        "horizontal_input_shaft",
+        "lower_hub",
+        "vertical_transfer_shaft",
+        "upper_hub",
+        "elevated_output"
+      ]
+    },
+    {
+      "name": "03_canted_cage_sightline_concept STEP exists",
+      "status": "pass",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v29_risky_subsystems/step/03_canted_cage_sightline_concept.step"
+    },
+    {
+      "name": "03_canted_cage_sightline_concept STL exists",
+      "status": "pass",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v29_risky_subsystems/stl/03_canted_cage_sightline_concept.stl"
+    },
+    {
+      "name": "03_canted_cage_sightline_concept declares required roles",
+      "status": "pass",
+      "expected": [
+        "open_cage",
+        "spokes",
+        "fast_fine_zone"
+      ],
+      "actual": [
+        "open_cage",
+        "spokes",
+        "fast_fine_zone"
+      ]
+    },
+    {
+      "name": "power module summary passes macro-motion envelope check",
+      "status": "pass"
+    },
+    {
+      "name": "spatial riser summary passes axis-height check",
+      "status": "pass",
+      "spatial_riser_axis_lift_mm": 42
+    },
+    {
+      "name": "canted cage summary preserves bounded tilt concept",
+      "status": "pass",
+      "canted_cage_tilt_deg": 30
+    },
+    {
+      "name": "review contact sheet exists",
+      "status": "pass",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v29_risky_subsystems/v29_risky_subsystems_contact_sheet.png"
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "version": "V31",
+  "status": "selected_concept_after_three_option_review",
+  "design_id": "v31_ratchet_barrel_vertical_lift_to_elevated_core",
+  "goal_profile": "spatial-kinetic-sculpture-object",
+  "claim": "stationary-autonomous-winding spatial kinetic sculpture object candidate with a real ratchet-wound spring barrel, visible lower power module, vertical lift shaft, and elevated fine-motion core",
+  "proposal_artifact": "docs/v31_architecture_options_ja.md",
+  "required_pre_geometry_gates": [
+    "fifty_point_feasibility_sweep_pass",
+    "selected_design_feasibility_pass",
+    "geometry_contract_handoff_pass"
+  ],
+  "selected_architecture": {
+    "name": "ratchet_barrel_vertical_lift_to_elevated_core",
+    "drive_chain": [
+      "motor_pinion",
+      "ratchet_winding_wheel",
+      "spring_barrel",
+      "spring_barrel_output_gear",
+      "lower_transfer_pinion",
+      "vertical_lift_shaft",
+      "upper_transfer_pinion",
+      "carrier_drive_gear",
+      "fixed_internal_ring",
+      "orbit_escape_pinion",
+      "escape_wheel",
+      "pallet_fork",
+      "balance_wheel"
+    ],
+    "spatial_transition": {
+      "kind": "same-axis vertical lift",
+      "via": "vertical_lift_shaft"
+    }
+  },
+  "non_claims": [
+    "watch-grade escapement",
+    "regulating balance",
+    "native CAD animation",
+    "physical endurance",
+    "production-grade electronics"
+  ]
+}

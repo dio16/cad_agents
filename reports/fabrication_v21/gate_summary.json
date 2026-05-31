@@ -1,0 +1,26 @@
+{
+  "created_at": "2026-04-30T17:00:46.073674+00:00",
+  "status": "fabrication_package_created_from_verified_fallback_design",
+  "native_gear_relation": {
+    "status": "blocked",
+    "reason": "blocked_on_onshape_gear_relation_solver_use_transform_contract",
+    "production_relation_count": 0
+  },
+  "onshape": {
+    "mated_assembly_url": "https://cad.onshape.com/documents/0222fa90c0584ca0727f31d2/w/0cb8dde2f58aafcc165e983c/e/ed96fa6ecf577942b84738b4",
+    "pose_snapshot_url": "https://cad.onshape.com/documents/0222fa90c0584ca0727f31d2/w/0cb8dde2f58aafcc165e983c/e/9d5a5dcebd96c3492b7d3cd7",
+    "standard_hardware_url": "https://cad.onshape.com/documents/0222fa90c0584ca0727f31d2/w/0cb8dde2f58aafcc165e983c/e/71082fad2ecbb26f6b474b06"
+  },
+  "gates": {
+    "design_check": "pass",
+    "mechanism_audit": "pass",
+    "motion_check": "pass",
+    "solid_interference_audit": "pass",
+    "hardware_context_audit": "pass",
+    "hardware_failure_count": 0,
+    "hardware_allowed_pair_count": 18,
+    "onshape_geometry_audit": "pass",
+    "onshape_mate_audit": "pass",
+    "visibility_artifact": "reports/text_to_cad_review/tourbillon_v21/snapshots/v21_motion_visibility_contact_sheet.png"
+  }
+}

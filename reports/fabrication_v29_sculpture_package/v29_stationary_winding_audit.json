@@ -1,0 +1,23 @@
+{
+  "created_at": "2026-05-17T07:33:28.500490+00:00",
+  "status": "pass",
+  "evidence_kind": "contract_plus_generated_package",
+  "checks": [
+    {
+      "name": "powered winding path closes before display output",
+      "status": "pass"
+    },
+    {
+      "name": "visible drum and barrel are generated",
+      "status": "pass"
+    },
+    {
+      "name": "motor and torsion spring are in purchased BOM",
+      "status": "pass"
+    },
+    {
+      "name": "control closure exists",
+      "status": "pass"
+    }
+  ]
+}

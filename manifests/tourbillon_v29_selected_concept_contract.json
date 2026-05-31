@@ -1,0 +1,141 @@
+{
+  "version": "V29",
+  "status": "selected_concept_contract_ready_for_pre_geometry_review",
+  "goal_profile": "spatial-kinetic-sculpture-object",
+  "concept_id": "A_powered_winding_drum_bevel_riser_canted_cage",
+  "claim": "stationary-autonomous-winding spatial kinetic sculpture with a bold macro silhouette, watch-like fine-motion zone, and physically meaningful 3D drive path",
+  "non_claims": [
+    "batteryless autonomous winding without an external low-voltage power source",
+    "watch-grade escapement",
+    "regulating balance",
+    "self-sustaining oscillation",
+    "timekeeping accuracy",
+    "physical print proven"
+  ],
+  "value_brief": {
+    "far_view": "large visible winding drum and canted cage create immediate sculptural presence",
+    "mid_view": "the viewer can trace winding drum -> storage -> riser -> carrier -> escapement in one hero view",
+    "near_view": "fine fast-moving balance / pallet / escape details reward close inspection",
+    "layered_rhythm": [
+      "slow macro rotor motion",
+      "medium transmission motion",
+      "fast fine escapement motion"
+    ],
+    "avoid": [
+      "large opaque carrier hiding the fine-motion zone",
+      "flat watch enlargement with no spatial transition",
+      "decorative autonomous-winding parts without force-path truth"
+    ]
+  },
+  "autonomous_winding_architecture": {
+    "input": "low-voltage geared motor",
+    "visible_energy_role": "large winding drum",
+    "storage": "spring barrel or equivalent elastic energy store",
+    "output": "regulated drive into the display train",
+    "claim_boundary": "stationary autonomous winding architecture with external low-voltage power; real-world winding efficiency and endurance require later physical evidence"
+  },
+  "drive_chain": [
+    {
+      "from": "low_voltage_motor",
+      "to": "visible_winding_drum",
+      "relation": "powered winding input"
+    },
+    {
+      "from": "visible_winding_drum",
+      "to": "spring_barrel",
+      "relation": "winding train"
+    },
+    {
+      "from": "spring_barrel",
+      "to": "horizontal_transfer_shaft",
+      "relation": "stored-energy output"
+    },
+    {
+      "from": "horizontal_transfer_shaft",
+      "to": "bevel_riser",
+      "relation": "axis transition"
+    },
+    {
+      "from": "bevel_riser",
+      "to": "canted_carrier_drive",
+      "relation": "elevated gear mesh"
+    },
+    {
+      "from": "canted_carrier_drive",
+      "to": "tourbillon_carrier",
+      "relation": "carrier drive"
+    },
+    {
+      "from": "tourbillon_carrier",
+      "to": "orbit_escape_pinion",
+      "relation": "fixed ring relative spin"
+    },
+    {
+      "from": "orbit_escape_pinion",
+      "to": "escape_wheel",
+      "relation": "coaxial shaft"
+    },
+    {
+      "from": "escape_wheel",
+      "to": "pallet_fork",
+      "relation": "physical contact"
+    },
+    {
+      "from": "pallet_fork",
+      "to": "balance_wheel",
+      "relation": "physical contact"
+    }
+  ],
+  "spatial_drive_transitions": [
+    {
+      "name": "horizontal_to_elevated_axis",
+      "via": "bevel_riser",
+      "why_it_exists": "moves force from the lower winding plane into the elevated canted display plane"
+    },
+    {
+      "name": "display_plane_to_canted_carrier",
+      "via": "canted_carrier_drive",
+      "why_it_exists": "turns the tourbillon into a spatial focal object rather than a flat disk"
+    }
+  ],
+  "preliminary_dimension_budget": {
+    "winding_drum_visual_share_percent": [
+      35,
+      45
+    ],
+    "cage_tilt_deg_initial_target": 30,
+    "required_motion_classes": [
+      "slow_macro",
+      "medium_transfer",
+      "fast_fine"
+    ],
+    "fine_motion_zone_visibility": "must remain open in hero view"
+  },
+  "required_pre_cad_gates": [
+    "value_brief_pass",
+    "concept_selection_record_pass",
+    "autonomous_winding_architecture_pass",
+    "spatial_drive_map_pass",
+    "drive_chain_continuity_pass",
+    "support_concept_pass",
+    "first_pass_dimension_budget_pass",
+    "dfam_concept_pass",
+    "assembly_concept_pass",
+    "hero_view_legibility_pass",
+    "failure_premortem_pass"
+  ],
+  "required_future_evidence": [
+    "stationary_autonomous_winding_evidence",
+    "spatial_drive_evidence",
+    "object_value_evidence",
+    "mechanical_truth_evidence",
+    "deliverable_package_evidence"
+  ],
+  "source_docs": [
+    "docs/kinetic_object_value_framework_ja.md",
+    "docs/front_loaded_design_framework_ja.md",
+    "docs/v29_spatial_kinetic_sculpture_work_plan_ja.md",
+    "docs/v29_pre_cad_feasibility_package_ja.md",
+    "docs/v29_detailed_dimensioning_package_ja.md"
+  ]
+}

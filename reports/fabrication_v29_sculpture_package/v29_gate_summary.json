@@ -1,0 +1,39 @@
+{
+  "created_at": "2026-05-17T09:18:57.343028+00:00",
+  "status": "blocked",
+  "completion_wording": "blocked: V29 object-level evidence has not fully passed",
+  "checks": [
+    {
+      "name": "package validation passes",
+      "status": "pass"
+    },
+    {
+      "name": "motion validation passes",
+      "status": "pass"
+    },
+    {
+      "name": "stationary winding evidence passes",
+      "status": "pass"
+    },
+    {
+      "name": "spatial drive evidence passes",
+      "status": "pass"
+    },
+    {
+      "name": "object value evidence passes",
+      "status": "pass"
+    },
+    {
+      "name": "mechanical truth evidence passes",
+      "status": "fail"
+    },
+    {
+      "name": "continuous viewer smoke passes",
+      "status": "pass"
+    },
+    {
+      "name": "user deliverable passes",
+      "status": "pass"
+    }
+  ]
+}

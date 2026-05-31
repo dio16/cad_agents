@@ -1,0 +1,59 @@
+{
+  "created_at": "2026-05-17T07:33:28.323160+00:00",
+  "status": "pass",
+  "type": "continuous_fallback_transform_motion",
+  "sampled_angles_deg": [
+    0,
+    15,
+    30,
+    45,
+    60,
+    75,
+    90,
+    105,
+    120,
+    135,
+    150,
+    165,
+    180,
+    195,
+    210,
+    225,
+    240,
+    255,
+    270,
+    285,
+    300,
+    315,
+    330,
+    345
+  ],
+  "relations": [
+    {
+      "from": "visible_winding_drum",
+      "to": "horizontal_transfer",
+      "ratio": -6.0
+    },
+    {
+      "from": "horizontal_transfer",
+      "to": "vertical_riser",
+      "ratio": -1.0
+    },
+    {
+      "from": "vertical_riser",
+      "to": "carrier",
+      "ratio": -0.3333333333
+    },
+    {
+      "from": "carrier",
+      "to": "orbit_escape_pinion",
+      "ratio": -3.0
+    }
+  ],
+  "motion_layers": [
+    "slow_macro",
+    "medium_transfer",
+    "fast_fine"
+  ],
+  "viewer": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v29_sculpture_package/v29_3d_cad_motion_viewer.html"
+}

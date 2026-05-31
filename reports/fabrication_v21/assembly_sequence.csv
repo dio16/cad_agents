@@ -1,0 +1,7 @@
+step,operation,uses,gate
+1,Press or drop 608ZZ bearing into base pocket,central_bearing_608zz,608ZZ bearing OD pocket clearance
+2,Insert cage journal through bearing bore and verify free rotation,"rotating_cage, central_bearing_608zz",608ZZ actual 8mm bore to cage journal clearance
+3,Fasten fixed internal ring to base standoffs,"fixed_ring, m3_ring_screws",fastener engagement allowed in hardware-context audit
+4,Install orbit pinion on cage orbit shaft with retainers/spacers,"orbit_pinion, orbit_3mm_shaft",orbit 3mm shaft bore clearance
+5,Install hand crank shaft and retained pinion,"hand_crank, hand_3mm_shaft",hand crank shaft bore clearance
+6,Rotate fallback poses and inspect gear visibility,"motion_preview, visibility_preview",motion visibility contact sheet

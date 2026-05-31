@@ -1,0 +1,109 @@
+{
+  "created_at": "2026-05-17T01:46:18.939032+00:00",
+  "status": "pass",
+  "completion_allowed": true,
+  "completion_wording": "V28 object-level evidence passes for a mechanically driven tabletop tourbillon mechanism with a non-regulating demonstrative escapement; watch-grade escapement, regulating balance, self-sustaining oscillation, native CAD animation, and physical print evidence are not claimed",
+  "limitation": "Local viewer evidence is continuous fallback transform motion, not native-CAD animation proof.",
+  "checks": [
+    {
+      "name": "role manifest names every visible moving role with parent/support/motion/axis metadata",
+      "status": "pass",
+      "source": "reports/fabrication_v28_mechanism_package/v28_role_manifest.json",
+      "axis_complete_roles": [
+        "balance_wheel",
+        "carrier",
+        "escape_wheel",
+        "hand_input_pinion",
+        "orbit_escape_pinion",
+        "pallet_fork"
+      ]
+    },
+    {
+      "name": "fallback transform motion artifact is present",
+      "status": "pass",
+      "source": "reports/fabrication_v28_mechanism_package/v28_motion_validation.json",
+      "motion_type": "fallback_transform_motion_with_physical_pallet_to_balance_linkage"
+    },
+    {
+      "name": "mechanical truth audit passes",
+      "status": "pass",
+      "source": "reports/fabrication_v28_mechanism_package/v28_mechanical_truth_audit.json"
+    },
+    {
+      "name": "sampled motion audit passes",
+      "status": "pass",
+      "source": "reports/fabrication_v28_mechanism_package/v28_sampled_motion_audit.json",
+      "undeclared_collision_count": 0
+    },
+    {
+      "name": "declared contact audit passes",
+      "status": "pass",
+      "source": "reports/fabrication_v28_mechanism_package/v28_declared_contact_audit.json"
+    },
+    {
+      "name": "sampled local-geometry visibility evidence passes",
+      "status": "pass",
+      "source": "reports/fabrication_v28_mechanism_package/v28_visibility_audit.json",
+      "contact_sheet": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v28_mechanism_package/v28_visibility_contact_sheet.png",
+      "artifact_kind": "deterministic_top_view_contact_sheet_from_local_step_geometry"
+    },
+    {
+      "name": "continuous local motion viewer smoke passes",
+      "status": "pass",
+      "source": "reports/fabrication_v28_mechanism_package/v28_wsl_http_viewer_smoke.json"
+    },
+    {
+      "name": "drive chain closes from hand input through pallet into balance",
+      "status": "pass",
+      "source": "manifests/tourbillon_v28_mechanism_contract.json",
+      "actual_chain": [
+        [
+          "hand_input_pinion",
+          "carrier"
+        ],
+        [
+          "carrier",
+          "orbit_escape_pinion"
+        ],
+        [
+          "orbit_escape_pinion",
+          "escape_wheel"
+        ],
+        [
+          "escape_wheel",
+          "pallet_fork"
+        ],
+        [
+          "pallet_fork",
+          "balance_wheel"
+        ]
+      ]
+    },
+    {
+      "name": "claim boundary remains explicitly non-watch-grade",
+      "status": "pass",
+      "source": "manifests/tourbillon_v28_mechanism_contract.json",
+      "blocked_claims": [
+        "lock/drop/impulse verified",
+        "regulating balance",
+        "self-sustaining oscillation",
+        "watch-grade escapement"
+      ]
+    },
+    {
+      "name": "claim-transition reports are fresh against the current V28 manifest",
+      "status": "pass",
+      "source": "manifest/report timestamps",
+      "manifest_created_at": "2026-05-17T01:43:26.640220+00:00",
+      "report_freshness": {
+        "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v28_mechanism_package/v28_role_manifest.json": true,
+        "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v28_mechanism_package/v28_motion_validation.json": true,
+        "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v28_mechanism_package/v28_mechanical_truth_audit.json": true,
+        "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v28_mechanism_package/v28_sampled_motion_audit.json": true,
+        "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v28_mechanism_package/v28_declared_contact_audit.json": true,
+        "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v28_mechanism_package/v28_visibility_audit.json": true,
+        "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v28_mechanism_package/v28_wsl_http_viewer_smoke.json": true
+      }
+    }
+  ]
+}

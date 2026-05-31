@@ -1,0 +1,26 @@
+{
+  "created_at": "2026-05-01T02:20:42.726967+00:00",
+  "status": "pass",
+  "matrix": [
+    {
+      "requirement": "fixed internal gear, not external gear inside external gear",
+      "evidence": "v25_involute_stress_validation.json: mesh type internal_ring_to_external_pinion"
+    },
+    {
+      "requirement": "all red jewel parts supported",
+      "evidence": "v25_support_validation.json: jewel_pivots support"
+    },
+    {
+      "requirement": "involute/stress checks before CAD completion",
+      "evidence": "v25_involute_stress_validation.json"
+    },
+    {
+      "requirement": "escapement roles mounted to carrier",
+      "evidence": "v25_escapement_validation.json"
+    },
+    {
+      "requirement": "motion ratios separated by relative and absolute frames",
+      "evidence": "v25_motion_validation.json"
+    }
+  ]
+}

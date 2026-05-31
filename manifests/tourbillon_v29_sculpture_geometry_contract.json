@@ -1,0 +1,66 @@
+{
+  "version": "V29",
+  "status": "geometry_contract_ready_after_feasibility",
+  "source_contracts": [
+    "manifests/tourbillon_v29_full_assembly_contract.json",
+    "manifests/tourbillon_v29_kinematic_dimension_contract.json",
+    "manifests/tourbillon_v29_component_selection_contract.json"
+  ],
+  "design_claim": "stationary-autonomous-winding spatial kinetic sculpture object candidate with visible winding drum, spring barrel, spatial riser, canted carrier, and demonstrative non-regulating tourbillon-style fine-motion zone",
+  "printable_parts": [
+    "01_base_plinth_v29",
+    "02_visible_winding_drum_v29",
+    "03_spring_barrel_housing_v29",
+    "04_horizontal_transfer_gear_v29",
+    "05_spatial_riser_bridge_v29",
+    "06_vertical_riser_gear_v29",
+    "07_canted_carrier_drive_gear_v29",
+    "08_fixed_internal_ring_72t_v29",
+    "09_canted_carrier_frame_v29",
+    "10_orbit_escape_pinion_18t_v29",
+    "11_escape_wheel_v29",
+    "12_pallet_fork_v29",
+    "13_balance_wheel_v29"
+  ],
+  "frames": [
+    "base_frame",
+    "riser_frame",
+    "carrier_frame_30deg"
+  ],
+  "role_groups": {
+    "slow_macro": [
+      "visible_winding_drum"
+    ],
+    "medium_transfer": [
+      "spring_barrel",
+      "horizontal_transfer",
+      "spatial_riser",
+      "canted_carrier_drive"
+    ],
+    "fast_fine": [
+      "carrier",
+      "orbit_escape_pinion",
+      "escape_wheel",
+      "pallet_fork",
+      "balance_wheel"
+    ]
+  },
+  "required_artifacts": [
+    "step_parts",
+    "stl_parts",
+    "role_manifest",
+    "motion_viewer",
+    "visibility_contact_sheet",
+    "printed_bom",
+    "purchased_bom",
+    "assembly_sequence"
+  ],
+  "required_gates": [
+    "selected_design_feasibility_closure_pass",
+    "component_selection_pass",
+    "generated_part_set_pass",
+    "stationary_autonomous_winding_evidence_pass",
+    "spatial_drive_evidence_pass",
+    "object_value_evidence_pass"
+  ]
+}

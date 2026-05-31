@@ -1,0 +1,79 @@
+{
+  "manifest": "manifests/tourbillon_v21_onshape_run.json",
+  "name": "tourbillon_v21_hardware_in_context",
+  "status": "fallback motion verified with Onshape pose snapshots, hardware-in-context audit, and visibility gate; native Gear Relation blocked",
+  "document_url": "https://cad.onshape.com/documents/0222fa90c0584ca0727f31d2/w/0cb8dde2f58aafcc165e983c/e/ed96fa6ecf577942b84738b4",
+  "gates": [
+    {
+      "gate": "manifest_loaded",
+      "status": "pass",
+      "evidence": "manifests/tourbillon_v21_onshape_run.json"
+    },
+    {
+      "gate": "local_design_passed",
+      "status": "pass"
+    },
+    {
+      "gate": "mechanism_audit_passed",
+      "status": "pass"
+    },
+    {
+      "gate": "motion_contract_passed",
+      "status": "pass"
+    },
+    {
+      "gate": "solid_interference_passed",
+      "status": "pass"
+    },
+    {
+      "gate": "hardware_context_audit_passed",
+      "status": "pass",
+      "failure_count": 0,
+      "allowed_pair_count": 18
+    },
+    {
+      "gate": "visibility_gate_passed",
+      "status": "pass",
+      "artifact": "reports/text_to_cad_review/tourbillon_v21/snapshots/v21_motion_visibility_contact_sheet.png",
+      "pass_condition": "gear mesh motion remains visible with standard hardware/retainers transparent or hidden"
+    },
+    {
+      "gate": "onshape_imported",
+      "status": "pass"
+    },
+    {
+      "gate": "geometry_audit_passed",
+      "status": "pass"
+    },
+    {
+      "gate": "basic_mates_passed",
+      "status": "pass",
+      "assembly_element_id": "ed96fa6ecf577942b84738b4"
+    },
+    {
+      "gate": "gear_relation_probe_passed",
+      "status": "blocked",
+      "relation_count": 0,
+      "ok_relation_count": 0,
+      "error_relation_count": 0,
+      "blocked_reason": "blocked_on_onshape_gear_relation_solver_use_transform_contract"
+    },
+    {
+      "gate": "fallback_animation_passed",
+      "status": "pass",
+      "file": "reports/tourbillon_v20_mechanically_closed_motion_preview.html"
+    },
+    {
+      "gate": "onshape_pose_snapshots_passed",
+      "status": "pass",
+      "assembly_element_id": "9d5a5dcebd96c3492b7d3cd7",
+      "pose_count": 5
+    },
+    {
+      "gate": "standard_hardware_instantiated",
+      "status": "pass",
+      "assembly_element_id": "71082fad2ecbb26f6b474b06",
+      "blocked_reason": null
+    }
+  ]
+}

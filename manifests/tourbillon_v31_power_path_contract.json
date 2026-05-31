@@ -1,0 +1,22 @@
+{
+  "design_id": "v31_ratchet_barrel_vertical_lift_to_elevated_core",
+  "motor_available_torque_nm": 0.4,
+  "required_carrier_torque_nm": 0.03,
+  "barrel_stored_energy_j": 1.2,
+  "required_output_power_w": 0.02,
+  "target_holdover_s": 30,
+  "controls": {
+    "ratchet": true,
+    "one_way_clutch": true,
+    "overwind_protection": "slip_clutch",
+    "slip_clutch_release_torque_nm": 0.45
+  },
+  "spring_barrel": {
+    "outer_diameter_mm": 50,
+    "usable_inner_diameter_mm": 38,
+    "height_mm": 12,
+    "arbor_diameter_mm": 3,
+    "usable_turns": 3,
+    "packaging_margin_mm": 2
+  }
+}

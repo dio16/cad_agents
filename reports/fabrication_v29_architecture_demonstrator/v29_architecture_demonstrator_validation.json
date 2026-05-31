@@ -1,0 +1,65 @@
+{
+  "created_at": "2026-05-17T03:59:39.899242+00:00",
+  "status": "pass",
+  "source_summary": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v29_architecture_demonstrator/v29_architecture_demonstrator_summary.json",
+  "checks": [
+    {
+      "name": "all source contracts exist",
+      "status": "pass",
+      "source_contracts": [
+        "manifests/tourbillon_v29_full_assembly_contract.json",
+        "manifests/tourbillon_v29_kinematic_dimension_contract.json"
+      ]
+    },
+    {
+      "name": "step artifact exists",
+      "status": "pass",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v29_architecture_demonstrator/step/v29_architecture_demonstrator.step"
+    },
+    {
+      "name": "stl artifact exists",
+      "status": "pass",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v29_architecture_demonstrator/stl/v29_architecture_demonstrator.stl"
+    },
+    {
+      "name": "contact_sheet artifact exists",
+      "status": "pass",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v29_architecture_demonstrator/v29_architecture_demonstrator_contact_sheet.png"
+    },
+    {
+      "name": "all three motion classes are represented",
+      "status": "pass",
+      "represented_motion_classes": [
+        "slow_macro",
+        "medium_transfer",
+        "fast_fine"
+      ]
+    },
+    {
+      "name": "both spatial transitions are represented",
+      "status": "pass",
+      "represented_spatial_transitions": [
+        "low_plane_to_elevated_plane",
+        "elevated_plane_to_canted_display"
+      ]
+    },
+    {
+      "name": "architecture demonstrator spans the raised silhouette budget",
+      "status": "pass",
+      "bbox_mm": {
+        "x": [
+          -80.02,
+          78.03
+        ],
+        "y": [
+          -40.0,
+          40.02
+        ],
+        "z": [
+          -0.01,
+          87.36
+        ]
+      }
+    }
+  ]
+}

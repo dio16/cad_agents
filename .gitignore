@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# Virtual environment
+.venv/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Legacy / quarantined
+onshape/
+*.ps1
+
+# Large generated artifacts (tracked separately via releases if needed)
+reports/fabrication_*/assets/
+reports/fabrication_*/stl/
+reports/text_to_cad_reports/

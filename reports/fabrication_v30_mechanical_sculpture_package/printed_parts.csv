@@ -1,0 +1,15 @@
+part,qty
+01_lower_base_plinth_v30,1
+02_lower_support_bridge_v30,1
+03_upper_tourbillon_deck_v30,1
+04_fixed_internal_ring_72t_v30,1
+05_rotating_carrier_drive_gear_v30,1
+06_orbit_escape_pinion_18t_v30,1
+07_balance_wheel_v30,1
+08_escape_wheel_15t_v30,1
+09_pallet_fork_bridge_v30,1
+11_visible_winding_drum_gear_108t_v30,1
+12_spring_barrel_output_gear_36t_v30,1
+13_lower_transfer_pinion_18t_v30,1
+14_upper_transfer_pinion_18t_v30,1
+15_spring_barrel_housing_v30,1

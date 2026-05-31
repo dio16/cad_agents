@@ -1,0 +1,20 @@
+{
+  "created_at": "2026-05-17T07:33:28.592562+00:00",
+  "status": "pass",
+  "checks": [
+    {
+      "name": "riser spans materially different heights",
+      "status": "pass",
+      "z_span_mm": 65.467
+    },
+    {
+      "name": "carrier occupies a canted elevated frame",
+      "status": "pass",
+      "z_span_mm": 50.674
+    },
+    {
+      "name": "both riser and canted-drive parts exist",
+      "status": "pass"
+    }
+  ]
+}

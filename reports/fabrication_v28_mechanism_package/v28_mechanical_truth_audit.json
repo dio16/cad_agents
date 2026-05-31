@@ -1,0 +1,230 @@
+{
+  "created_at": "2026-05-17T01:43:46.177093+00:00",
+  "status": "pass",
+  "checks": [
+    {
+      "name": "01_base_plinth_bearing_pocket_v28 STEP exists",
+      "status": "pass",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v28_mechanism_package/step/01_base_plinth_bearing_pocket_v28.step"
+    },
+    {
+      "name": "01_base_plinth_bearing_pocket_v28 STL exists",
+      "status": "pass",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v28_mechanism_package/stl/01_base_plinth_bearing_pocket_v28.stl"
+    },
+    {
+      "name": "01_base_plinth_bearing_pocket_v28 imports as one OCP solid",
+      "status": "pass",
+      "solid_count": 1
+    },
+    {
+      "name": "02_fixed_internal_ring_72t_v28 STEP exists",
+      "status": "pass",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v28_mechanism_package/step/02_fixed_internal_ring_72t_v28.step"
+    },
+    {
+      "name": "02_fixed_internal_ring_72t_v28 STL exists",
+      "status": "pass",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v28_mechanism_package/stl/02_fixed_internal_ring_72t_v28.stl"
+    },
+    {
+      "name": "02_fixed_internal_ring_72t_v28 imports as one OCP solid",
+      "status": "pass",
+      "solid_count": 1
+    },
+    {
+      "name": "03_rotating_carrier_drive_gear_v28 STEP exists",
+      "status": "pass",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v28_mechanism_package/step/03_rotating_carrier_drive_gear_v28.step"
+    },
+    {
+      "name": "03_rotating_carrier_drive_gear_v28 STL exists",
+      "status": "pass",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v28_mechanism_package/stl/03_rotating_carrier_drive_gear_v28.stl"
+    },
+    {
+      "name": "03_rotating_carrier_drive_gear_v28 imports as one OCP solid",
+      "status": "pass",
+      "solid_count": 1
+    },
+    {
+      "name": "04_orbit_escape_pinion_18t_v28 STEP exists",
+      "status": "pass",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v28_mechanism_package/step/04_orbit_escape_pinion_18t_v28.step"
+    },
+    {
+      "name": "04_orbit_escape_pinion_18t_v28 STL exists",
+      "status": "pass",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v28_mechanism_package/stl/04_orbit_escape_pinion_18t_v28.stl"
+    },
+    {
+      "name": "04_orbit_escape_pinion_18t_v28 imports as one OCP solid",
+      "status": "pass",
+      "solid_count": 1
+    },
+    {
+      "name": "05_hand_crank_pinion_v28 STEP exists",
+      "status": "pass",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v28_mechanism_package/step/05_hand_crank_pinion_v28.step"
+    },
+    {
+      "name": "05_hand_crank_pinion_v28 STL exists",
+      "status": "pass",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v28_mechanism_package/stl/05_hand_crank_pinion_v28.stl"
+    },
+    {
+      "name": "05_hand_crank_pinion_v28 imports as one OCP solid",
+      "status": "pass",
+      "solid_count": 1
+    },
+    {
+      "name": "06_balance_wheel_v28 STEP exists",
+      "status": "pass",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v28_mechanism_package/step/06_balance_wheel_v28.step"
+    },
+    {
+      "name": "06_balance_wheel_v28 STL exists",
+      "status": "pass",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v28_mechanism_package/stl/06_balance_wheel_v28.stl"
+    },
+    {
+      "name": "06_balance_wheel_v28 imports as one OCP solid",
+      "status": "pass",
+      "solid_count": 1
+    },
+    {
+      "name": "07_escape_wheel_15t_v28 STEP exists",
+      "status": "pass",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v28_mechanism_package/step/07_escape_wheel_15t_v28.step"
+    },
+    {
+      "name": "07_escape_wheel_15t_v28 STL exists",
+      "status": "pass",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v28_mechanism_package/stl/07_escape_wheel_15t_v28.stl"
+    },
+    {
+      "name": "07_escape_wheel_15t_v28 imports as one OCP solid",
+      "status": "pass",
+      "solid_count": 1
+    },
+    {
+      "name": "08_pallet_fork_bridge_v28 STEP exists",
+      "status": "pass",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v28_mechanism_package/step/08_pallet_fork_bridge_v28.step"
+    },
+    {
+      "name": "08_pallet_fork_bridge_v28 STL exists",
+      "status": "pass",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v28_mechanism_package/stl/08_pallet_fork_bridge_v28.stl"
+    },
+    {
+      "name": "08_pallet_fork_bridge_v28 imports as one OCP solid",
+      "status": "pass",
+      "solid_count": 1
+    },
+    {
+      "name": "09_crank_knob_v28 STEP exists",
+      "status": "pass",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v28_mechanism_package/step/09_crank_knob_v28.step"
+    },
+    {
+      "name": "09_crank_knob_v28 STL exists",
+      "status": "pass",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v28_mechanism_package/stl/09_crank_knob_v28.stl"
+    },
+    {
+      "name": "09_crank_knob_v28 imports as one OCP solid",
+      "status": "pass",
+      "solid_count": 1
+    },
+    {
+      "name": "fixed internal ring has 72 occupied tooth probes",
+      "status": "pass",
+      "occupied_tooth_probes": 72
+    },
+    {
+      "name": "fixed internal ring has open gaps between teeth",
+      "status": "pass",
+      "occupied_gap_probes": 0
+    },
+    {
+      "name": "internal-ring center distance matches contract",
+      "status": "pass"
+    },
+    {
+      "name": "internal-ring ratio matches contract",
+      "status": "pass"
+    },
+    {
+      "name": "hand mesh center distance matches contract",
+      "status": "pass"
+    },
+    {
+      "name": "hand mesh ratio matches contract",
+      "status": "pass"
+    },
+    {
+      "name": "balance receiver slot captures pallet output pin radial travel",
+      "status": "pass",
+      "min_radius_mm": 10.1221,
+      "max_radius_mm": 13.0692,
+      "slot_span_mm": [
+        8.2,
+        13.5
+      ]
+    },
+    {
+      "name": "balance receiver slot width captures output pin diameter",
+      "status": "pass",
+      "slot_width_mm": 3.2,
+      "pin_diameter_mm": 2.4
+    },
+    {
+      "name": "balance linkage predicts bounded oscillation",
+      "status": "pass",
+      "computed_half_swing_deg": 33.649,
+      "contract_half_swing_deg": 33.6489
+    },
+    {
+      "name": "claim remains non-watch-grade",
+      "status": "pass",
+      "blocked_claims": [
+        "watch-grade escapement",
+        "regulating balance",
+        "self-sustaining oscillation",
+        "lock/drop/impulse verified"
+      ]
+    },
+    {
+      "name": "drive chain closes from hand input through pallet into balance",
+      "status": "pass",
+      "drive_chain": [
+        {
+          "from": "hand_input_pinion",
+          "to": "carrier",
+          "relation": "external gear mesh"
+        },
+        {
+          "from": "carrier",
+          "to": "orbit_escape_pinion",
+          "relation": "fixed internal ring generates relative spin"
+        },
+        {
+          "from": "orbit_escape_pinion",
+          "to": "escape_wheel",
+          "relation": "coaxial rigid shaft"
+        },
+        {
+          "from": "escape_wheel",
+          "to": "pallet_fork",
+          "relation": "eccentric pin captured by pallet slot"
+        },
+        {
+          "from": "pallet_fork",
+          "to": "balance_wheel",
+          "relation": "output pin captured by balance radial slot"
+        }
+      ]
+    }
+  ]
+}

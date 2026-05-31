@@ -1,0 +1,229 @@
+{
+  "created_at": "2026-05-17T15:54:49.112383+00:00",
+  "generation_id": "v31::2026-05-17T15:50:56.648915+00:00",
+  "status": "pass",
+  "visible_moving_roles": [
+    "motor_pinion",
+    "ratchet_winding_wheel",
+    "spring_barrel_output",
+    "lower_transfer_pinion",
+    "vertical_lift_shaft",
+    "upper_transfer_pinion",
+    "carrier",
+    "orbit_escape_pinion",
+    "escape_wheel",
+    "pallet_fork",
+    "balance_wheel"
+  ],
+  "roles": {
+    "motor_pinion": {
+      "parent": "lower_frame",
+      "support": "motor output shaft",
+      "motion": "revolute_z",
+      "axis": {
+        "name": "motor_axis",
+        "origin_mm": [
+          0,
+          -135.9,
+          0
+        ],
+        "direction": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "frame": "lower_frame"
+      }
+    },
+    "ratchet_winding_wheel": {
+      "parent": "lower_frame",
+      "support": "winding arbor with pawl restraint",
+      "motion": "revolute_z_one_way",
+      "axis": {
+        "name": "winding_axis",
+        "origin_mm": [
+          0,
+          -85.5,
+          0
+        ],
+        "direction": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "frame": "lower_frame"
+      }
+    },
+    "spring_barrel_output": {
+      "parent": "lower_frame",
+      "support": "spring barrel axis with two seats",
+      "motion": "revolute_z",
+      "axis": {
+        "name": "barrel_axis",
+        "origin_mm": [
+          0,
+          -85.5,
+          0
+        ],
+        "direction": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "frame": "lower_frame"
+      }
+    },
+    "lower_transfer_pinion": {
+      "parent": "lower_frame",
+      "support": "vertical lift shaft lower seat",
+      "motion": "revolute_z",
+      "axis": {
+        "name": "lift_axis",
+        "origin_mm": [
+          0,
+          -63.9,
+          0
+        ],
+        "direction": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "frame": "lower_frame"
+      }
+    },
+    "vertical_lift_shaft": {
+      "parent": "lower_frame_to_upper_frame",
+      "support": "lower bridge + upper deck seats",
+      "motion": "coaxial_torque_transfer",
+      "axis": {
+        "name": "lift_axis",
+        "origin_mm": [
+          0,
+          -63.9,
+          0
+        ],
+        "direction": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "frame": "lower_frame"
+      }
+    },
+    "upper_transfer_pinion": {
+      "parent": "upper_frame",
+      "support": "vertical lift shaft upper seat",
+      "motion": "revolute_z",
+      "axis": {
+        "name": "upper_transfer_axis",
+        "origin_mm": [
+          0,
+          -58.5,
+          40
+        ],
+        "direction": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "frame": "upper_frame"
+      }
+    },
+    "carrier": {
+      "parent": "upper_frame",
+      "support": "608ZZ-equivalent carrier journal",
+      "motion": "revolute_z",
+      "axis": {
+        "name": "carrier_axis",
+        "origin_mm": [
+          0,
+          0,
+          40
+        ],
+        "direction": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "frame": "upper_frame"
+      }
+    },
+    "orbit_escape_pinion": {
+      "parent": "carrier",
+      "support": "carrier bridge seats",
+      "motion": "orbit_plus_spin",
+      "axis": {
+        "name": "orbit_axis",
+        "origin_mm": [
+          40.5,
+          0,
+          40
+        ],
+        "direction": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "frame": "carrier"
+      }
+    },
+    "escape_wheel": {
+      "parent": "orbit_escape_pinion",
+      "support": "coaxial orbit shaft",
+      "motion": "coaxial_spin",
+      "axis": {
+        "name": "orbit_axis",
+        "origin_mm": [
+          40.5,
+          0,
+          40
+        ],
+        "direction": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "frame": "carrier"
+      }
+    },
+    "pallet_fork": {
+      "parent": "carrier",
+      "support": "pallet arbor seats",
+      "motion": "eccentric_pin_slot_drive",
+      "axis": {
+        "name": "pallet_axis",
+        "origin_mm": [
+          -18,
+          10,
+          40
+        ],
+        "direction": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "frame": "carrier"
+      }
+    },
+    "balance_wheel": {
+      "parent": "carrier",
+      "support": "balance staff seats",
+      "motion": "pallet_output_pin_drive",
+      "axis": {
+        "name": "balance_axis",
+        "origin_mm": [
+          26,
+          0,
+          40
+        ],
+        "direction": [
+          0.0,
+          0.0,
+          1.0
+        ],
+        "frame": "carrier"
+      }
+    }
+  }
+}

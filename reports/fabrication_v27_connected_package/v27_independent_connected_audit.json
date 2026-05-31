@@ -1,0 +1,726 @@
+{
+  "created_at": "2026-05-16T13:12:25.239666+00:00",
+  "generation_id": "2026-05-16T13:12:01.537997+00:00",
+  "input_manifest_sha256": "538917edf59d9d44fc3a62ba5d6d8d13216206e6b45cc9fde2bb0c3af0710c65",
+  "input_artifact_set_sha256": "dab3fee722fca31dec10c0f121cd3ea8eaef3dc630907ba0ab4b70478ea7bc0b",
+  "status": "pass",
+  "completion_allowed": false,
+  "fail_count": 0,
+  "p0_fail_count": 0,
+  "checks": [
+    {
+      "name": "audit is running inside WSL",
+      "status": "pass",
+      "severity": "P0"
+    },
+    {
+      "name": "V27 manifest remains non-completion candidate",
+      "status": "pass",
+      "severity": "P0",
+      "manifest_status": "connected_cadquery_contract_ready_for_independent_validation"
+    },
+    {
+      "name": "01_base_plinth_bearing_pocket_v27 STEP exists",
+      "status": "pass",
+      "severity": "P0",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v27_connected_package/step/01_base_plinth_bearing_pocket_v27.step",
+      "bytes": 102617
+    },
+    {
+      "name": "01_base_plinth_bearing_pocket_v27 STL exists",
+      "status": "pass",
+      "severity": "P0",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v27_connected_package/stl/01_base_plinth_bearing_pocket_v27.stl",
+      "bytes": 374884
+    },
+    {
+      "name": "01_base_plinth_bearing_pocket_v27 imports as one OCP solid",
+      "status": "pass",
+      "severity": "P0",
+      "solid_count": 1
+    },
+    {
+      "name": "01_base_plinth_bearing_pocket_v27 STL has one connected triangle component",
+      "status": "pass",
+      "severity": "P0",
+      "connected_triangle_components": 1
+    },
+    {
+      "name": "01_base_plinth_bearing_pocket_v27 STL has no open or nonmanifold edges",
+      "status": "pass",
+      "severity": "P0",
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0
+    },
+    {
+      "name": "02_fixed_internal_ring_72t_v27 STEP exists",
+      "status": "pass",
+      "severity": "P0",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v27_connected_package/step/02_fixed_internal_ring_72t_v27.step",
+      "bytes": 1408185
+    },
+    {
+      "name": "02_fixed_internal_ring_72t_v27 STL exists",
+      "status": "pass",
+      "severity": "P0",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v27_connected_package/stl/02_fixed_internal_ring_72t_v27.stl",
+      "bytes": 580484
+    },
+    {
+      "name": "02_fixed_internal_ring_72t_v27 imports as one OCP solid",
+      "status": "pass",
+      "severity": "P0",
+      "solid_count": 1
+    },
+    {
+      "name": "02_fixed_internal_ring_72t_v27 STL has one connected triangle component",
+      "status": "pass",
+      "severity": "P0",
+      "connected_triangle_components": 1
+    },
+    {
+      "name": "02_fixed_internal_ring_72t_v27 STL has no open or nonmanifold edges",
+      "status": "pass",
+      "severity": "P0",
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0
+    },
+    {
+      "name": "03_rotating_carrier_drive_gear_v27 STEP exists",
+      "status": "pass",
+      "severity": "P0",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v27_connected_package/step/03_rotating_carrier_drive_gear_v27.step",
+      "bytes": 1240671
+    },
+    {
+      "name": "03_rotating_carrier_drive_gear_v27 STL exists",
+      "status": "pass",
+      "severity": "P0",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v27_connected_package/stl/03_rotating_carrier_drive_gear_v27.stl",
+      "bytes": 785284
+    },
+    {
+      "name": "03_rotating_carrier_drive_gear_v27 imports as one OCP solid",
+      "status": "pass",
+      "severity": "P0",
+      "solid_count": 1
+    },
+    {
+      "name": "03_rotating_carrier_drive_gear_v27 STL has one connected triangle component",
+      "status": "pass",
+      "severity": "P0",
+      "connected_triangle_components": 1
+    },
+    {
+      "name": "03_rotating_carrier_drive_gear_v27 STL has no open or nonmanifold edges",
+      "status": "pass",
+      "severity": "P0",
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0
+    },
+    {
+      "name": "04_orbit_escape_pinion_18t_v27 STEP exists",
+      "status": "pass",
+      "severity": "P0",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v27_connected_package/step/04_orbit_escape_pinion_18t_v27.step",
+      "bytes": 300506
+    },
+    {
+      "name": "04_orbit_escape_pinion_18t_v27 STL exists",
+      "status": "pass",
+      "severity": "P0",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v27_connected_package/stl/04_orbit_escape_pinion_18t_v27.stl",
+      "bytes": 151484
+    },
+    {
+      "name": "04_orbit_escape_pinion_18t_v27 imports as one OCP solid",
+      "status": "pass",
+      "severity": "P0",
+      "solid_count": 1
+    },
+    {
+      "name": "04_orbit_escape_pinion_18t_v27 STL has one connected triangle component",
+      "status": "pass",
+      "severity": "P0",
+      "connected_triangle_components": 1
+    },
+    {
+      "name": "04_orbit_escape_pinion_18t_v27 STL has no open or nonmanifold edges",
+      "status": "pass",
+      "severity": "P0",
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0
+    },
+    {
+      "name": "05_hand_crank_pinion_v27 STEP exists",
+      "status": "pass",
+      "severity": "P0",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v27_connected_package/step/05_hand_crank_pinion_v27.step",
+      "bytes": 300466
+    },
+    {
+      "name": "05_hand_crank_pinion_v27 STL exists",
+      "status": "pass",
+      "severity": "P0",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v27_connected_package/stl/05_hand_crank_pinion_v27.stl",
+      "bytes": 158684
+    },
+    {
+      "name": "05_hand_crank_pinion_v27 imports as one OCP solid",
+      "status": "pass",
+      "severity": "P0",
+      "solid_count": 1
+    },
+    {
+      "name": "05_hand_crank_pinion_v27 STL has one connected triangle component",
+      "status": "pass",
+      "severity": "P0",
+      "connected_triangle_components": 1
+    },
+    {
+      "name": "05_hand_crank_pinion_v27 STL has no open or nonmanifold edges",
+      "status": "pass",
+      "severity": "P0",
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0
+    },
+    {
+      "name": "06_balance_wheel_v27 STEP exists",
+      "status": "pass",
+      "severity": "P0",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v27_connected_package/step/06_balance_wheel_v27.step",
+      "bytes": 88480
+    },
+    {
+      "name": "06_balance_wheel_v27 STL exists",
+      "status": "pass",
+      "severity": "P0",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v27_connected_package/stl/06_balance_wheel_v27.stl",
+      "bytes": 171284
+    },
+    {
+      "name": "06_balance_wheel_v27 imports as one OCP solid",
+      "status": "pass",
+      "severity": "P0",
+      "solid_count": 1
+    },
+    {
+      "name": "06_balance_wheel_v27 STL has one connected triangle component",
+      "status": "pass",
+      "severity": "P0",
+      "connected_triangle_components": 1
+    },
+    {
+      "name": "06_balance_wheel_v27 STL has no open or nonmanifold edges",
+      "status": "pass",
+      "severity": "P0",
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0
+    },
+    {
+      "name": "07_escape_wheel_15t_v27 STEP exists",
+      "status": "pass",
+      "severity": "P0",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v27_connected_package/step/07_escape_wheel_15t_v27.step",
+      "bytes": 284224
+    },
+    {
+      "name": "07_escape_wheel_15t_v27 STL exists",
+      "status": "pass",
+      "severity": "P0",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v27_connected_package/stl/07_escape_wheel_15t_v27.stl",
+      "bytes": 144184
+    },
+    {
+      "name": "07_escape_wheel_15t_v27 imports as one OCP solid",
+      "status": "pass",
+      "severity": "P0",
+      "solid_count": 1
+    },
+    {
+      "name": "07_escape_wheel_15t_v27 STL has one connected triangle component",
+      "status": "pass",
+      "severity": "P0",
+      "connected_triangle_components": 1
+    },
+    {
+      "name": "07_escape_wheel_15t_v27 STL has no open or nonmanifold edges",
+      "status": "pass",
+      "severity": "P0",
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0
+    },
+    {
+      "name": "08_pallet_fork_bridge_v27 STEP exists",
+      "status": "pass",
+      "severity": "P0",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v27_connected_package/step/08_pallet_fork_bridge_v27.step",
+      "bytes": 74280
+    },
+    {
+      "name": "08_pallet_fork_bridge_v27 STL exists",
+      "status": "pass",
+      "severity": "P0",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v27_connected_package/stl/08_pallet_fork_bridge_v27.stl",
+      "bytes": 35184
+    },
+    {
+      "name": "08_pallet_fork_bridge_v27 imports as one OCP solid",
+      "status": "pass",
+      "severity": "P0",
+      "solid_count": 1
+    },
+    {
+      "name": "08_pallet_fork_bridge_v27 STL has one connected triangle component",
+      "status": "pass",
+      "severity": "P0",
+      "connected_triangle_components": 1
+    },
+    {
+      "name": "08_pallet_fork_bridge_v27 STL has no open or nonmanifold edges",
+      "status": "pass",
+      "severity": "P0",
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0
+    },
+    {
+      "name": "09_crank_knob_v27 STEP exists",
+      "status": "pass",
+      "severity": "P0",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v27_connected_package/step/09_crank_knob_v27.step",
+      "bytes": 24043
+    },
+    {
+      "name": "09_crank_knob_v27 STL exists",
+      "status": "pass",
+      "severity": "P0",
+      "path": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v27_connected_package/stl/09_crank_knob_v27.stl",
+      "bytes": 157884
+    },
+    {
+      "name": "09_crank_knob_v27 imports as one OCP solid",
+      "status": "pass",
+      "severity": "P0",
+      "solid_count": 1
+    },
+    {
+      "name": "09_crank_knob_v27 STL has one connected triangle component",
+      "status": "pass",
+      "severity": "P0",
+      "connected_triangle_components": 1
+    },
+    {
+      "name": "09_crank_knob_v27 STL has no open or nonmanifold edges",
+      "status": "pass",
+      "severity": "P0",
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0
+    },
+    {
+      "name": "carrier clears tabletop plane",
+      "status": "pass",
+      "severity": "P0",
+      "carrier_z": [
+        1.0,
+        56.0
+      ]
+    },
+    {
+      "name": "escapement has explicit physical drive model or remains blocked",
+      "status": "pass",
+      "severity": "P0",
+      "drive_model": {
+        "type": "eccentric_pin_slot_pallet_display",
+        "claim": "escape shaft carries an eccentric drive pin captured by a pallet slot, producing a bounded carrier-mounted display motion; this is not a regulating lever escapement.",
+        "escape_pin_radius_mm": 1.5,
+        "escape_pin_offset_mm": 3.0,
+        "escape_axis_mm": [
+          40.5,
+          0.0
+        ],
+        "pallet_axis_mm": [
+          26.0,
+          0.0
+        ],
+        "slot_centerline_span_mm": [
+          10.7,
+          18.3
+        ],
+        "slot_void_span_mm": [
+          9.8,
+          19.2
+        ],
+        "slot_width_mm": 4.2,
+        "predicted_pallet_half_swing_deg": 11.941,
+        "blocked_claims": [
+          "watch-grade escapement",
+          "regulating balance",
+          "lock/drop/impulse verified"
+        ]
+      }
+    },
+    {
+      "name": "escapement drive claim is limited to tabletop display mechanism",
+      "status": "pass",
+      "severity": "P0",
+      "blocked_claims": [
+        "watch-grade escapement",
+        "regulating balance",
+        "lock/drop/impulse verified"
+      ]
+    }
+  ],
+  "part_mesh_stats": {
+    "01_base_plinth_bearing_pocket_v27": {
+      "triangle_count": 7496,
+      "connected_triangle_components": 1,
+      "component_summaries": [
+        {
+          "triangle_count": 7496,
+          "bbox_mm": {
+            "x": [
+              -71.0,
+              71.0
+            ],
+            "y": [
+              -71.0,
+              71.0
+            ],
+            "z": [
+              0.0,
+              37.5
+            ]
+          }
+        }
+      ],
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "bbox_mm": {
+        "x": [
+          -71.0,
+          71.0
+        ],
+        "y": [
+          -71.0,
+          71.0
+        ],
+        "z": [
+          0.0,
+          37.5
+        ]
+      }
+    },
+    "02_fixed_internal_ring_72t_v27": {
+      "triangle_count": 11608,
+      "connected_triangle_components": 1,
+      "component_summaries": [
+        {
+          "triangle_count": 11608,
+          "bbox_mm": {
+            "x": [
+              -63.98783493041992,
+              63.98783493041992
+            ],
+            "y": [
+              -63.98783493041992,
+              63.98783493041992
+            ],
+            "z": [
+              37.5,
+              43.5
+            ]
+          }
+        }
+      ],
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "bbox_mm": {
+        "x": [
+          -63.98783493041992,
+          63.98783493041992
+        ],
+        "y": [
+          -63.98783493041992,
+          63.98783493041992
+        ],
+        "z": [
+          37.5,
+          43.5
+        ]
+      }
+    },
+    "03_rotating_carrier_drive_gear_v27": {
+      "triangle_count": 15704,
+      "connected_triangle_components": 1,
+      "component_summaries": [
+        {
+          "triangle_count": 15704,
+          "bbox_mm": {
+            "x": [
+              -45.75,
+              46.0
+            ],
+            "y": [
+              -45.75,
+              45.75
+            ],
+            "z": [
+              1.0,
+              56.0
+            ]
+          }
+        }
+      ],
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "bbox_mm": {
+        "x": [
+          -45.75,
+          46.0
+        ],
+        "y": [
+          -45.75,
+          45.75
+        ],
+        "z": [
+          1.0,
+          56.0
+        ]
+      }
+    },
+    "04_orbit_escape_pinion_18t_v27": {
+      "triangle_count": 3028,
+      "connected_triangle_components": 1,
+      "component_summaries": [
+        {
+          "triangle_count": 3028,
+          "bbox_mm": {
+            "x": [
+              -14.850000381469727,
+              14.850000381469727
+            ],
+            "y": [
+              -14.832773208618164,
+              14.832773208618164
+            ],
+            "z": [
+              36.0,
+              45.0
+            ]
+          }
+        }
+      ],
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "bbox_mm": {
+        "x": [
+          -14.850000381469727,
+          14.850000381469727
+        ],
+        "y": [
+          -14.832773208618164,
+          14.832773208618164
+        ],
+        "z": [
+          36.0,
+          45.0
+        ]
+      }
+    },
+    "05_hand_crank_pinion_v27": {
+      "triangle_count": 3172,
+      "connected_triangle_components": 1,
+      "component_summaries": [
+        {
+          "triangle_count": 3172,
+          "bbox_mm": {
+            "x": [
+              -14.649999618530273,
+              14.649999618530273
+            ],
+            "y": [
+              -73.06635284423828,
+              -43.93364715576172
+            ],
+            "z": [
+              20.0,
+              33.0
+            ]
+          }
+        }
+      ],
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "bbox_mm": {
+        "x": [
+          -14.649999618530273,
+          14.649999618530273
+        ],
+        "y": [
+          -73.06635284423828,
+          -43.93364715576172
+        ],
+        "z": [
+          20.0,
+          33.0
+        ]
+      }
+    },
+    "06_balance_wheel_v27": {
+      "triangle_count": 3424,
+      "connected_triangle_components": 1,
+      "component_summaries": [
+        {
+          "triangle_count": 3424,
+          "bbox_mm": {
+            "x": [
+              -13.0,
+              13.0
+            ],
+            "y": [
+              -12.997429847717285,
+              12.997429847717285
+            ],
+            "z": [
+              49.0,
+              53.0
+            ]
+          }
+        }
+      ],
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "bbox_mm": {
+        "x": [
+          -13.0,
+          13.0
+        ],
+        "y": [
+          -12.997429847717285,
+          12.997429847717285
+        ],
+        "z": [
+          49.0,
+          53.0
+        ]
+      }
+    },
+    "07_escape_wheel_15t_v27": {
+      "triangle_count": 2882,
+      "connected_triangle_components": 1,
+      "component_summaries": [
+        {
+          "triangle_count": 2882,
+          "bbox_mm": {
+            "x": [
+              -8.344257354736328,
+              8.350000381469727
+            ],
+            "y": [
+              -8.393107414245605,
+              8.393107414245605
+            ],
+            "z": [
+              45.04999923706055,
+              50.20000076293945
+            ]
+          }
+        }
+      ],
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "bbox_mm": {
+        "x": [
+          -8.344257354736328,
+          8.350000381469727
+        ],
+        "y": [
+          -8.393107414245605,
+          8.393107414245605
+        ],
+        "z": [
+          45.04999923706055,
+          50.20000076293945
+        ]
+      }
+    },
+    "08_pallet_fork_bridge_v27": {
+      "triangle_count": 702,
+      "connected_triangle_components": 1,
+      "component_summaries": [
+        {
+          "triangle_count": 702,
+          "bbox_mm": {
+            "x": [
+              -14.281271934509277,
+              18.0
+            ],
+            "y": [
+              -4.919227600097656,
+              4.919227600097656
+            ],
+            "z": [
+              48.099998474121094,
+              53.0
+            ]
+          }
+        }
+      ],
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "bbox_mm": {
+        "x": [
+          -14.281271934509277,
+          18.0
+        ],
+        "y": [
+          -4.919227600097656,
+          4.919227600097656
+        ],
+        "z": [
+          48.099998474121094,
+          53.0
+        ]
+      }
+    },
+    "09_crank_knob_v27": {
+      "triangle_count": 3156,
+      "connected_triangle_components": 1,
+      "component_summaries": [
+        {
+          "triangle_count": 3156,
+          "bbox_mm": {
+            "x": [
+              -8.0,
+              8.0
+            ],
+            "y": [
+              -7.998418807983398,
+              7.998418807983398
+            ],
+            "z": [
+              -2.0,
+              11.0
+            ]
+          }
+        }
+      ],
+      "boundary_edges": 0,
+      "nonmanifold_edges": 0,
+      "bbox_mm": {
+        "x": [
+          -8.0,
+          8.0
+        ],
+        "y": [
+          -7.998418807983398,
+          7.998418807983398
+        ],
+        "z": [
+          -2.0,
+          11.0
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,452 @@
+{
+  "name": "tourbillon_v16_mechanism_first",
+  "document_url": "https://cad.onshape.com/documents/0222fa90c0584ca0727f31d2/w/0cb8dde2f58aafcc165e983c/e/02ec794d33363341f7b5c182",
+  "assembly": {
+    "name": "Tourbillon V16 mechanism-first functional object",
+    "element_id": "4ec4652f29b90ba4f3b4a3e8"
+  },
+  "mechanism_spec": {
+    "name": "tourbillon_v16_mechanism_first",
+    "design_rule": "mechanism_graph_first",
+    "standard_components": [
+      {
+        "name": "central bearing",
+        "type": "608ZZ",
+        "bore_mm": 8.0,
+        "od_mm": 22.0,
+        "width_mm": 7.0,
+        "qty": 1
+      },
+      {
+        "name": "orbit pinion bearings",
+        "type": "623ZZ",
+        "bore_mm": 3.0,
+        "od_mm": 10.0,
+        "width_mm": 4.0,
+        "qty": 2
+      },
+      {
+        "name": "hand crank bearing",
+        "type": "623ZZ",
+        "bore_mm": 3.0,
+        "od_mm": 10.0,
+        "width_mm": 4.0,
+        "qty": 1
+      },
+      {
+        "name": "shafts",
+        "type": "MISUMI or equivalent precision round shaft",
+        "diameter_mm": 3.0,
+        "qty": 3
+      },
+      {
+        "name": "central shoulder shaft",
+        "type": "M8 shoulder bolt or 8 mm shaft",
+        "diameter_mm": 8.0,
+        "qty": 1
+      },
+      {
+        "name": "fasteners",
+        "type": "M3 socket head screws",
+        "qty": 12
+      }
+    ],
+    "nodes": {
+      "ground": {
+        "role": "fixed base and fixed internal ring"
+      },
+      "cage": {
+        "joint": "revolute_z",
+        "axis": [
+          0.0,
+          0.0
+        ],
+        "bearing": "608ZZ"
+      },
+      "hand_crank": {
+        "joint": "revolute_z",
+        "axis": [
+          0.0,
+          -55.0
+        ],
+        "bearing": "623ZZ"
+      },
+      "orbit_pinion": {
+        "joint": "revolute_on_cage_z",
+        "axis": [
+          44.0,
+          0.0
+        ],
+        "bearing": "623ZZ"
+      },
+      "escapement_display": {
+        "joint": "carried_by_cage",
+        "axis": [
+          -22.0,
+          0.0
+        ]
+      }
+    },
+    "gears": {
+      "fixed_ring": {
+        "type": "internal_pin_ring",
+        "pitch_radius_mm": 58.0,
+        "teeth": 116
+      },
+      "orbit_pinion": {
+        "type": "external_rounded",
+        "pitch_radius_mm": 14.0,
+        "teeth": 28,
+        "center_radius_mm": 44.0
+      },
+      "cage_drive": {
+        "type": "external_rounded",
+        "pitch_radius_mm": 44.0,
+        "teeth": 88
+      },
+      "hand_crank_pinion": {
+        "type": "external_rounded",
+        "pitch_radius_mm": 11.0,
+        "teeth": 22,
+        "center_distance_mm": 55.0
+      }
+    },
+    "fits": {
+      "bearing_seat_clearance_diameter_mm": 0.2,
+      "rotating_shaft_radial_clearance_mm": 0.3,
+      "printed_tooth_backlash_mm": 0.25
+    }
+  },
+  "design_checks": [
+    {
+      "name": "fixed internal ring to orbit compound pinion",
+      "type": "gear_mesh",
+      "center_distance_mm": 44.0,
+      "pinion_pitch_radius_mm": 14.0,
+      "ring_pitch_radius_mm": 58.0,
+      "max_pitch_error_mm": 0.1
+    },
+    {
+      "name": "hand crank pinion to cage drive gear",
+      "type": "external_gear_mesh",
+      "center_distance_mm": 55.0,
+      "first_pitch_radius_mm": 11.0,
+      "second_pitch_radius_mm": 44.0,
+      "max_pitch_error_mm": 0.1
+    }
+  ],
+  "mechanism_requirements": [
+    {
+      "name": "hand crank drives the model",
+      "type": "driver_motion",
+      "role": "hand_crank"
+    },
+    {
+      "name": "hand crank gear meshes with cage drive gear",
+      "type": "functional_connection",
+      "from_role": "hand_crank",
+      "to_role": "rotating_cage",
+      "connected": true,
+      "message": "Mechanism graph defines hand crank pinion to cage external gear before CAD generation."
+    },
+    {
+      "name": "fixed ring forces orbit pinion spin",
+      "type": "functional_connection",
+      "from_role": "fixed_ring",
+      "to_role": "orbit_pinion",
+      "connected": true,
+      "message": "Orbit compound pinion is carried by cage and meshes with fixed internal ring."
+    },
+    {
+      "name": "cage carries visible escapement",
+      "type": "functional_connection",
+      "from_role": "rotating_cage",
+      "to_role": "escapement_display",
+      "connected": true,
+      "message": "Escapement display axes are part of the rotating cage coordinate system."
+    },
+    {
+      "name": "orbit pinion internal rolling ratio",
+      "type": "internal_gear_spin_ratio",
+      "pinion_role": "orbit_pinion",
+      "center_distance_mm": 44.0,
+      "pinion_pitch_radius_mm": 14.0,
+      "tolerance": 0.02
+    },
+    {
+      "name": "orbit pinion shaft clears 623ZZ bore",
+      "type": "radial_clearance",
+      "inner_radius_mm": 1.8,
+      "shaft_radius_mm": 1.5,
+      "min_clearance_mm": 0.2,
+      "message": "3 mm shaft through printed bore clearance before 623ZZ bearing seats."
+    }
+  ],
+  "parts": [
+    {
+      "name": "base",
+      "role": "fixed_base",
+      "file": "C:/Users/diobrando/Documents/New project/tourbillon_v16_step/01_printed_base_bearing_frame_v16.step",
+      "element_id": "2d540c3f0a1940ab7155dac1",
+      "translation_id": "69edb7fc1bbb40071cbcabd1",
+      "part_id": "JFD",
+      "instance_id": "MhKOUZb+1q1ZKL+ny"
+    },
+    {
+      "name": "fixed_internal_ring",
+      "role": "fixed_ring",
+      "file": "C:/Users/diobrando/Documents/New project/tourbillon_v16_step/02_printed_fixed_internal_ring_v16.step",
+      "element_id": "cc1f0ec79558c14d026578bc",
+      "translation_id": "69edb8071bbb40071cbcabdf",
+      "part_id": "JFD",
+      "instance_id": "MHNDXaD+Uk/v9/zZN"
+    },
+    {
+      "name": "rotating_cage",
+      "role": "rotating_cage",
+      "file": "C:/Users/diobrando/Documents/New project/tourbillon_v16_step/03_printed_rotating_cage_with_drive_gear_v16.step",
+      "motion": {
+        "type": "rotate_z",
+        "ratio": 1.0
+      },
+      "element_id": "dddf6a36bea550fe76d6a67d",
+      "translation_id": "69edb8131bbb40071cbcabf4",
+      "part_id": "JFD",
+      "instance_id": "MIFL8QqHk4bieTWnz"
+    },
+    {
+      "name": "orbit_compound_pinion",
+      "role": "orbit_pinion",
+      "file": "C:/Users/diobrando/Documents/New project/tourbillon_v16_step/04_printed_orbit_compound_pinion_v16.step",
+      "motion": {
+        "type": "orbit_and_spin_z",
+        "center_mm": [
+          44.0,
+          0.0
+        ],
+        "orbit_ratio": 1.0,
+        "spin_ratio": -3.142857142857143
+      },
+      "element_id": "3152cd57e0c2abf0a90a9839",
+      "translation_id": "69edb8231bbb40071cbcac0d",
+      "part_id": "JFD",
+      "instance_id": "Mh6cbIrBgj0PALRYk"
+    },
+    {
+      "name": "carried_escapement_display",
+      "role": "escapement_display",
+      "file": "C:/Users/diobrando/Documents/New project/tourbillon_v16_step/05_printed_carried_escapement_display_v16.step",
+      "motion": {
+        "type": "rotate_z",
+        "ratio": 1.0
+      },
+      "element_id": "2e1f00be2281cd3295996261",
+      "translation_id": "69edb82e1bbb40071cbcac24",
+      "part_id": "JFD",
+      "instance_id": "MQJruAjS+u603hxpo"
+    },
+    {
+      "name": "hand_crank",
+      "role": "hand_crank",
+      "file": "C:/Users/diobrando/Documents/New project/tourbillon_v16_step/06_printed_hand_crank_drive_pinion_v16.step",
+      "motion": {
+        "type": "spin_about_point_z",
+        "center_mm": [
+          0.0,
+          -55.0
+        ],
+        "ratio": -4.0
+      },
+      "element_id": "a420e0866547e6de88ae2685",
+      "translation_id": "69edb8391bbb40071cbcac57",
+      "part_id": "JFD",
+      "instance_id": "MmrfH/2ZQeUMlka1S"
+    },
+    {
+      "name": "hardware_reference",
+      "role": "hardware_reference",
+      "file": "C:/Users/diobrando/Documents/New project/tourbillon_v16_step/07_standard_hardware_reference_not_printed_v16.step",
+      "element_id": "e80ac4757081b9e61323f12e",
+      "translation_id": "69edb8491bbb40071cbcac6f",
+      "part_id": "JFD",
+      "instance_id": "MrOpM9hrEsYanNJnU"
+    }
+  ],
+  "verification_runs": [
+    {
+      "kind": "design_check",
+      "status": "pass",
+      "timestamp": "2026-04-26T06:59:50.308960+00:00",
+      "results": [
+        {
+          "name": "fixed internal ring to orbit compound pinion",
+          "type": "gear_mesh",
+          "status": "pass",
+          "pitch_error_mm": 0.0,
+          "max_pitch_error_mm": 0.1
+        },
+        {
+          "name": "hand crank pinion to cage drive gear",
+          "type": "external_gear_mesh",
+          "status": "pass",
+          "pitch_error_mm": 0.0,
+          "max_pitch_error_mm": 0.1
+        }
+      ]
+    },
+    {
+      "kind": "mechanism_audit",
+      "status": "pass",
+      "timestamp": "2026-04-26T06:59:51.108674+00:00",
+      "results": [
+        {
+          "name": "hand crank drives the model",
+          "type": "driver_motion",
+          "status": "pass",
+          "role": "hand_crank",
+          "motion": {
+            "type": "spin_about_point_z",
+            "center_mm": [
+              0.0,
+              -55.0
+            ],
+            "ratio": -4.0
+          },
+          "message": ""
+        },
+        {
+          "name": "hand crank gear meshes with cage drive gear",
+          "type": "functional_connection",
+          "status": "pass",
+          "from_role": "hand_crank",
+          "to_role": "rotating_cage",
+          "message": "Mechanism graph defines hand crank pinion to cage external gear before CAD generation."
+        },
+        {
+          "name": "fixed ring forces orbit pinion spin",
+          "type": "functional_connection",
+          "status": "pass",
+          "from_role": "fixed_ring",
+          "to_role": "orbit_pinion",
+          "message": "Orbit compound pinion is carried by cage and meshes with fixed internal ring."
+        },
+        {
+          "name": "cage carries visible escapement",
+          "type": "functional_connection",
+          "status": "pass",
+          "from_role": "rotating_cage",
+          "to_role": "escapement_display",
+          "message": "Escapement display axes are part of the rotating cage coordinate system."
+        },
+        {
+          "name": "orbit pinion internal rolling ratio",
+          "type": "internal_gear_spin_ratio",
+          "status": "pass",
+          "expected_spin_ratio": -3.1429,
+          "actual_spin_ratio": -3.1429,
+          "error": 0.0,
+          "tolerance": 0.02
+        },
+        {
+          "name": "orbit pinion shaft clears 623ZZ bore",
+          "type": "radial_clearance",
+          "status": "pass",
+          "clearance_mm": 0.3,
+          "min_clearance_mm": 0.2,
+          "message": "3 mm shaft through printed bore clearance before 623ZZ bearing seats."
+        }
+      ]
+    },
+    {
+      "kind": "pose",
+      "theta_deg": 120.0,
+      "transform_count": 4,
+      "timestamp": "2026-04-26T07:02:08.027032+00:00"
+    },
+    {
+      "kind": "design_check",
+      "status": "pass",
+      "timestamp": "2026-04-26T07:03:32.190091+00:00",
+      "results": [
+        {
+          "name": "fixed internal ring to orbit compound pinion",
+          "type": "gear_mesh",
+          "status": "pass",
+          "pitch_error_mm": 0.0,
+          "max_pitch_error_mm": 0.1
+        },
+        {
+          "name": "hand crank pinion to cage drive gear",
+          "type": "external_gear_mesh",
+          "status": "pass",
+          "pitch_error_mm": 0.0,
+          "max_pitch_error_mm": 0.1
+        }
+      ]
+    },
+    {
+      "kind": "mechanism_audit",
+      "status": "pass",
+      "timestamp": "2026-04-26T07:03:33.016961+00:00",
+      "results": [
+        {
+          "name": "hand crank drives the model",
+          "type": "driver_motion",
+          "status": "pass",
+          "role": "hand_crank",
+          "motion": {
+            "type": "spin_about_point_z",
+            "center_mm": [
+              0.0,
+              -55.0
+            ],
+            "ratio": -4.0
+          },
+          "message": ""
+        },
+        {
+          "name": "hand crank gear meshes with cage drive gear",
+          "type": "functional_connection",
+          "status": "pass",
+          "from_role": "hand_crank",
+          "to_role": "rotating_cage",
+          "message": "Mechanism graph defines hand crank pinion to cage external gear before CAD generation."
+        },
+        {
+          "name": "fixed ring forces orbit pinion spin",
+          "type": "functional_connection",
+          "status": "pass",
+          "from_role": "fixed_ring",
+          "to_role": "orbit_pinion",
+          "message": "Orbit compound pinion is carried by cage and meshes with fixed internal ring."
+        },
+        {
+          "name": "cage carries visible escapement",
+          "type": "functional_connection",
+          "status": "pass",
+          "from_role": "rotating_cage",
+          "to_role": "escapement_display",
+          "message": "Escapement display axes are part of the rotating cage coordinate system."
+        },
+        {
+          "name": "orbit pinion internal rolling ratio",
+          "type": "internal_gear_spin_ratio",
+          "status": "pass",
+          "expected_spin_ratio": -3.1429,
+          "actual_spin_ratio": -3.1429,
+          "error": 0.0,
+          "tolerance": 0.02
+        },
+        {
+          "name": "orbit pinion shaft clears 623ZZ bore",
+          "type": "radial_clearance",
+          "status": "pass",
+          "clearance_mm": 0.3,
+          "min_clearance_mm": 0.2,
+          "message": "3 mm shaft through printed bore clearance before 623ZZ bearing seats."
+        }
+      ]
+    }
+  ],
+  "last_pose_deg": 120.0
+}

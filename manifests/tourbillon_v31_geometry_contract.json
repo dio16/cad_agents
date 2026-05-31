@@ -1,0 +1,41 @@
+{
+  "version": "V31",
+  "status": "geometry_contract_ready_after_selected_design_feasibility",
+  "source_contracts": [
+    "manifests/tourbillon_v31_selected_concept_contract.json",
+    "manifests/tourbillon_v31_fifty_point_feasibility_contract.json",
+    "manifests/tourbillon_v31_power_path_contract.json",
+    "manifests/tourbillon_v31_kinematic_contract.json",
+    "manifests/tourbillon_v31_buildability_contract.json",
+    "manifests/tourbillon_v31_object_value_contract.json"
+  ],
+  "design_claim": "stationary-autonomous-winding spatial kinetic sculpture candidate with ratchet-wound spring barrel, vertical lift shaft, and elevated fine-motion core",
+  "required_artifacts": [
+    "role_manifest",
+    "sampled_motion_audit",
+    "declared_contact_audit",
+    "visibility_contact_sheet",
+    "dfam_audit",
+    "motion_viewer",
+    "printed_bom",
+    "purchased_bom",
+    "assembly_sequence"
+  ],
+  "required_gates": [
+    "fifty_point_feasibility_sweep_pass",
+    "selected_design_feasibility_pass",
+    "geometry_contract_handoff_pass",
+    "stationary_autonomous_winding_evidence_pass",
+    "spatial_drive_evidence_pass",
+    "object_value_evidence_pass",
+    "mechanical_truth_evidence_pass"
+  ],
+  "must_preserve": [
+    "ratchet winding wheel",
+    "spring barrel",
+    "reverse-flow protection",
+    "overwind protection",
+    "vertical lift shaft",
+    "elevated visible fine-motion core"
+  ]
+}

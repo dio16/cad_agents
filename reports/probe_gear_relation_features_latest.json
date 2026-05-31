@@ -1,0 +1,909 @@
+{
+  "probe": {
+    "assembly_element_id": "5ecbdb5885398904da070a0c",
+    "document_url": "https://cad.onshape.com/documents/0222fa90c0584ca0727f31d2/w/0cb8dde2f58aafcc165e983c/e/5ecbdb5885398904da070a0c",
+    "created_at": "2026-04-29T18:03:56.550513+00:00",
+    "relation_filter": "hand_to_cage",
+    "results": [
+      {
+        "kind": "mateRelation",
+        "key": "hand_to_cage",
+        "name": "Codex V20 Gear relation hand crank to cage",
+        "feature_id": "M9Nl/cSeEbnxttr1B",
+        "status": "ERROR",
+        "readback_status": "ERROR",
+        "payload": {
+          "btType": "BTMMateRelation-1412",
+          "featureType": "mateRelation",
+          "version": 0,
+          "name": "Codex V20 Gear relation hand crank to cage",
+          "parameters": [
+            {
+              "btType": "BTMParameterEnum-145",
+              "namespace": "",
+              "enumName": "Relation type",
+              "value": "GEAR",
+              "parameterId": "relationType"
+            },
+            {
+              "btType": "BTMParameterQueryWithOccurrenceList-67",
+              "queries": [
+                {
+                  "btType": "BTMFeatureQueryWithOccurrence-157",
+                  "path": [],
+                  "featureId": "M7aQtn8adaJsXQT5F",
+                  "queryData": "Rz"
+                },
+                {
+                  "btType": "BTMFeatureQueryWithOccurrence-157",
+                  "path": [],
+                  "featureId": "MhdEakudCZrDEkbar",
+                  "queryData": "Rz"
+                }
+              ],
+              "parameterId": "matesQuery"
+            },
+            {
+              "btType": "BTMParameterQuantity-147",
+              "namespace": "",
+              "expression": "3.3333333333333335",
+              "isInteger": false,
+              "parameterId": "relationRatio"
+            },
+            {
+              "btType": "BTMParameterBoolean-144",
+              "namespace": "",
+              "value": true,
+              "parameterId": "reverseDirection"
+            }
+          ],
+          "suppressed": false
+        },
+        "feature_state": {
+          "btType": "BTFeatureState-1688",
+          "featureStatus": "ERROR",
+          "inactive": false
+        }
+      }
+    ],
+    "status": "blocked"
+  },
+  "features": {
+    "btType": "BTAssemblyFeatureListResponse-1174",
+    "rejectMicroversionSkew": false,
+    "microversionSkew": false,
+    "featureStates": {
+      "MKg0p85ePiCeSayRL": {
+        "btType": "BTFeatureState-1688",
+        "featureStatus": "OK",
+        "inactive": false
+      },
+      "MP5Es7lQDP6Vloz5F": {
+        "btType": "BTFeatureState-1688",
+        "featureStatus": "OK",
+        "inactive": false
+      },
+      "M9Nl/cSeEbnxttr1B": {
+        "btType": "BTFeatureState-1688",
+        "featureStatus": "ERROR",
+        "inactive": false
+      },
+      "MzBDXsCaN1TD7UXeV": {
+        "btType": "BTFeatureState-1688",
+        "featureStatus": "OK",
+        "inactive": false
+      },
+      "MZypNxRlRHRBTqpSf": {
+        "btType": "BTFeatureState-1688",
+        "featureStatus": "OK",
+        "inactive": false
+      },
+      "MsbBP5ez4IkpRYJXX": {
+        "btType": "BTFeatureState-1688",
+        "featureStatus": "OK",
+        "inactive": false
+      },
+      "MjuedyegwevQg2x5R": {
+        "btType": "BTFeatureState-1688",
+        "featureStatus": "OK",
+        "inactive": false
+      },
+      "M7aQtn8adaJsXQT5F": {
+        "btType": "BTFeatureState-1688",
+        "featureStatus": "OK",
+        "inactive": false
+      },
+      "MoY5WLosU6bKl+qH0": {
+        "btType": "BTFeatureState-1688",
+        "featureStatus": "OK",
+        "inactive": false
+      },
+      "MRNWUsuUMz/Tzu6QU": {
+        "btType": "BTFeatureState-1688",
+        "featureStatus": "OK",
+        "inactive": false
+      },
+      "Mt/FY+CTG0A2Y8prd": {
+        "btType": "BTFeatureState-1688",
+        "featureStatus": "OK",
+        "inactive": false
+      },
+      "MGGoZ6kj9C9KDAHMV": {
+        "btType": "BTFeatureState-1688",
+        "featureStatus": "OK",
+        "inactive": false
+      },
+      "MhdEakudCZrDEkbar": {
+        "btType": "BTFeatureState-1688",
+        "featureStatus": "OK",
+        "inactive": false
+      }
+    },
+    "isComplete": true,
+    "features": [
+      {
+        "btType": "BTMMateConnector-66",
+        "featureType": "mateConnector",
+        "implicit": false,
+        "subFeatures": [],
+        "parameterLibraries": [],
+        "returnAfterSubfeatures": false,
+        "isAuxiliaryTreeMateConnector": false,
+        "namespace": "",
+        "version": 9,
+        "name": "Codex V20 MC base center",
+        "parameters": [
+          {
+            "btType": "BTMParameterEnum-145",
+            "namespace": "",
+            "nodeId": "MCcznQskz6lAOQ1zI",
+            "enumName": "Origin type",
+            "value": "ON_ENTITY",
+            "parameterId": "originType",
+            "parameterName": "",
+            "libraryRelationType": "NONE"
+          },
+          {
+            "btType": "BTMParameterQueryWithOccurrenceList-67",
+            "queries": [
+              {
+                "btType": "BTMInferenceQueryWithOccurrence-1083",
+                "secondDeterministicId": "",
+                "entityQuery": "query=qCompressed(1.0,\"%B5$QueryM5Sa$entityTypeBa$EntityTypeS4$EDGESb$historyTypeS8$CREATIONS9$importTagD245Sb$operationIdB2$IdA1Sf.8$FkH0T300tyWRnimimportOpS9$queryTypeS6$IMPORT\",id);",
+                "secondEntityQuery": "",
+                "inferenceType": "CENTER",
+                "path": [
+                  "MqF/f/Wvo06ADvdH6"
+                ],
+                "nodeId": "MIIC8+5BHJz6qX0OF",
+                "deterministicIds": [
+                  "JFJ"
+                ]
+              }
+            ],
+            "parameterId": "originQuery",
+            "nodeId": "MX/PFdaYD1GLkNLNA",
+            "parameterName": "",
+            "libraryRelationType": "NONE"
+          },
+          {
+            "btType": "BTMParameterBoolean-144",
+            "value": true,
+            "parameterId": "transform",
+            "nodeId": "MsUPm/Q9LQGzbP+p1",
+            "parameterName": "",
+            "libraryRelationType": "NONE"
+          },
+          {
+            "btType": "BTMParameterQuantity-147",
+            "isInteger": false,
+            "value": 0.0,
+            "units": "",
+            "parameterId": "translationZ",
+            "expression": "0.8 mm",
+            "nodeId": "Me1Flv2IWdvuiulaF",
+            "parameterName": "",
+            "libraryRelationType": "NONE"
+          }
+        ],
+        "featureId": "MZypNxRlRHRBTqpSf",
+        "nodeId": "MZypNxRlRHRBTqpSf",
+        "isHidden": false,
+        "suppressed": false,
+        "suppressionState": null
+      },
+      {
+        "btType": "BTMMateConnector-66",
+        "featureType": "mateConnector",
+        "implicit": false,
+        "subFeatures": [],
+        "parameterLibraries": [],
+        "returnAfterSubfeatures": false,
+        "isAuxiliaryTreeMateConnector": false,
+        "namespace": "",
+        "version": 9,
+        "name": "Codex V20 MC cage center",
+        "parameters": [
+          {
+            "btType": "BTMParameterEnum-145",
+            "namespace": "",
+            "nodeId": "MHOMXMHIQ9grL77gF",
+            "enumName": "Origin type",
+            "value": "ON_ENTITY",
+            "parameterId": "originType",
+            "parameterName": "",
+            "libraryRelationType": "NONE"
+          },
+          {
+            "btType": "BTMParameterQueryWithOccurrenceList-67",
+            "queries": [
+              {
+                "btType": "BTMInferenceQueryWithOccurrence-1083",
+                "secondDeterministicId": "",
+                "entityQuery": "query=qCompressed(1.0,\"%B5$QueryM5Sa$entityTypeBa$EntityTypeS4$EDGESb$historyTypeS8$CREATIONS9$importTagD1952Sb$operationIdB2$IdA1Sf.8$FImMR9FTpho7Gk1importOpS9$queryTypeS6$IMPORT\",id);",
+                "secondEntityQuery": "",
+                "inferenceType": "CENTER",
+                "path": [
+                  "MDRAEhBeC1DPqY4hO"
+                ],
+                "nodeId": "M80ElUZCvDKafm+pL",
+                "deterministicIds": [
+                  "LFN4C"
+                ]
+              }
+            ],
+            "parameterId": "originQuery",
+            "nodeId": "MF6FSpiAiUCZrrvhq",
+            "parameterName": "",
+            "libraryRelationType": "NONE"
+          }
+        ],
+        "featureId": "MjuedyegwevQg2x5R",
+        "nodeId": "MjuedyegwevQg2x5R",
+        "isHidden": false,
+        "suppressed": false,
+        "suppressionState": null
+      },
+      {
+        "btType": "BTMMateConnector-66",
+        "featureType": "mateConnector",
+        "implicit": false,
+        "subFeatures": [],
+        "parameterLibraries": [],
+        "returnAfterSubfeatures": false,
+        "isAuxiliaryTreeMateConnector": false,
+        "namespace": "",
+        "version": 9,
+        "name": "Codex V20 MC base ring ground",
+        "parameters": [
+          {
+            "btType": "BTMParameterEnum-145",
+            "namespace": "",
+            "nodeId": "MD60ECtFA9+//FxKt",
+            "enumName": "Origin type",
+            "value": "ON_ENTITY",
+            "parameterId": "originType",
+            "parameterName": "",
+            "libraryRelationType": "NONE"
+          },
+          {
+            "btType": "BTMParameterQueryWithOccurrenceList-67",
+            "queries": [
+              {
+                "btType": "BTMInferenceQueryWithOccurrence-1083",
+                "secondDeterministicId": "",
+                "entityQuery": "query=qCompressed(1.0,\"%B5$QueryM5Sa$entityTypeBa$EntityTypeS4$EDGESb$historyTypeS8$CREATIONS9$importTagD245Sb$operationIdB2$IdA1Sf.8$FkH0T300tyWRnimimportOpS9$queryTypeS6$IMPORT\",id);",
+                "secondEntityQuery": "",
+                "inferenceType": "CENTER",
+                "path": [
+                  "MqF/f/Wvo06ADvdH6"
+                ],
+                "nodeId": "M/GWXbUMw+nP0o7RN",
+                "deterministicIds": [
+                  "JFJ"
+                ]
+              }
+            ],
+            "parameterId": "originQuery",
+            "nodeId": "MVlyxHlj8inwSEwh0",
+            "parameterName": "",
+            "libraryRelationType": "NONE"
+          },
+          {
+            "btType": "BTMParameterBoolean-144",
+            "value": true,
+            "parameterId": "transform",
+            "nodeId": "MVYUjnMRLx2qTu985",
+            "parameterName": "",
+            "libraryRelationType": "NONE"
+          },
+          {
+            "btType": "BTMParameterQuantity-147",
+            "isInteger": false,
+            "value": 0.0,
+            "units": "",
+            "parameterId": "translationZ",
+            "expression": "38 mm",
+            "nodeId": "MEPq/iIvfJlPDL35B",
+            "parameterName": "",
+            "libraryRelationType": "NONE"
+          }
+        ],
+        "featureId": "MzBDXsCaN1TD7UXeV",
+        "nodeId": "MzBDXsCaN1TD7UXeV",
+        "isHidden": false,
+        "suppressed": false,
+        "suppressionState": null
+      },
+      {
+        "btType": "BTMMateConnector-66",
+        "featureType": "mateConnector",
+        "implicit": false,
+        "subFeatures": [],
+        "parameterLibraries": [],
+        "returnAfterSubfeatures": false,
+        "isAuxiliaryTreeMateConnector": false,
+        "namespace": "",
+        "version": 9,
+        "name": "Codex V20 MC fixed ring ground",
+        "parameters": [
+          {
+            "btType": "BTMParameterEnum-145",
+            "namespace": "",
+            "nodeId": "MIdVxDtkoFfS1SsQu",
+            "enumName": "Origin type",
+            "value": "ON_ENTITY",
+            "parameterId": "originType",
+            "parameterName": "",
+            "libraryRelationType": "NONE"
+          },
+          {
+            "btType": "BTMParameterQueryWithOccurrenceList-67",
+            "queries": [
+              {
+                "btType": "BTMInferenceQueryWithOccurrence-1083",
+                "secondDeterministicId": "",
+                "entityQuery": "query=qCompressed(1.0,\"%B5$QueryM5Sa$entityTypeBa$EntityTypeS4$EDGESb$historyTypeS8$CREATIONS9$importTagD4032Sb$operationIdB2$IdA1Sf.8$FdMY4pSj2sar0hIimportOpS9$queryTypeS6$IMPORT\",id);",
+                "secondEntityQuery": "",
+                "inferenceType": "CENTER",
+                "path": [
+                  "MsUoImi7MDFUn2ijl"
+                ],
+                "nodeId": "Ml+wz7wSiuZdobtqb",
+                "deterministicIds": [
+                  "KFF/"
+                ]
+              }
+            ],
+            "parameterId": "originQuery",
+            "nodeId": "M9+6SrjaR8iVCZLZW",
+            "parameterName": "",
+            "libraryRelationType": "NONE"
+          }
+        ],
+        "featureId": "MP5Es7lQDP6Vloz5F",
+        "nodeId": "MP5Es7lQDP6Vloz5F",
+        "isHidden": false,
+        "suppressed": false,
+        "suppressionState": null
+      },
+      {
+        "btType": "BTMMateConnector-66",
+        "featureType": "mateConnector",
+        "implicit": false,
+        "subFeatures": [],
+        "parameterLibraries": [],
+        "returnAfterSubfeatures": false,
+        "isAuxiliaryTreeMateConnector": false,
+        "namespace": "",
+        "version": 9,
+        "name": "Codex V20 MC base hand axis",
+        "parameters": [
+          {
+            "btType": "BTMParameterEnum-145",
+            "namespace": "",
+            "nodeId": "MMNxXM4hsEN/K3IhZ",
+            "enumName": "Origin type",
+            "value": "ON_ENTITY",
+            "parameterId": "originType",
+            "parameterName": "",
+            "libraryRelationType": "NONE"
+          },
+          {
+            "btType": "BTMParameterQueryWithOccurrenceList-67",
+            "queries": [
+              {
+                "btType": "BTMInferenceQueryWithOccurrence-1083",
+                "secondDeterministicId": "",
+                "entityQuery": "query=qCompressed(1.0,\"%B5$QueryM5Sa$entityTypeBa$EntityTypeS4$EDGESb$historyTypeS8$CREATIONS9$importTagD80Sb$operationIdB2$IdA1Sf.8$FkH0T300tyWRnimimportOpS9$queryTypeS6$IMPORT\",id);",
+                "secondEntityQuery": "",
+                "inferenceType": "CENTER",
+                "path": [
+                  "MqF/f/Wvo06ADvdH6"
+                ],
+                "nodeId": "Mvw+8PeDSAZf2qd0V",
+                "deterministicIds": [
+                  "KFdK"
+                ]
+              }
+            ],
+            "parameterId": "originQuery",
+            "nodeId": "MtLLNB9ajFThAiLfh",
+            "parameterName": "",
+            "libraryRelationType": "NONE"
+          },
+          {
+            "btType": "BTMParameterBoolean-144",
+            "value": true,
+            "parameterId": "transform",
+            "nodeId": "MROIxTtH9wUCabECi",
+            "parameterName": "",
+            "libraryRelationType": "NONE"
+          },
+          {
+            "btType": "BTMParameterQuantity-147",
+            "isInteger": false,
+            "value": 0.0,
+            "units": "",
+            "parameterId": "translationZ",
+            "expression": "16 mm",
+            "nodeId": "MqTfurJZi1kjIgPHU",
+            "parameterName": "",
+            "libraryRelationType": "NONE"
+          }
+        ],
+        "featureId": "MRNWUsuUMz/Tzu6QU",
+        "nodeId": "MRNWUsuUMz/Tzu6QU",
+        "isHidden": false,
+        "suppressed": false,
+        "suppressionState": null
+      },
+      {
+        "btType": "BTMMateConnector-66",
+        "featureType": "mateConnector",
+        "implicit": false,
+        "subFeatures": [],
+        "parameterLibraries": [],
+        "returnAfterSubfeatures": false,
+        "isAuxiliaryTreeMateConnector": false,
+        "namespace": "",
+        "version": 9,
+        "name": "Codex V20 MC hand crank axis",
+        "parameters": [
+          {
+            "btType": "BTMParameterEnum-145",
+            "namespace": "",
+            "nodeId": "M9yS6YDEyeoFWaidp",
+            "enumName": "Origin type",
+            "value": "ON_ENTITY",
+            "parameterId": "originType",
+            "parameterName": "",
+            "libraryRelationType": "NONE"
+          },
+          {
+            "btType": "BTMParameterQueryWithOccurrenceList-67",
+            "queries": [
+              {
+                "btType": "BTMInferenceQueryWithOccurrence-1083",
+                "secondDeterministicId": "",
+                "entityQuery": "query=qCompressed(1.0,\"%B5$QueryM5Sa$entityTypeBa$EntityTypeS4$EDGESb$historyTypeS8$CREATIONS9$importTagD578Sb$operationIdB2$IdA1Sf.8$FVkIBZu46wGEUzOimportOpS9$queryTypeS6$IMPORT\",id);",
+                "secondEntityQuery": "",
+                "inferenceType": "CENTER",
+                "path": [
+                  "McvqOCA/N9IUMj74w"
+                ],
+                "nodeId": "MygvLJw0SBfVkZmSz",
+                "deterministicIds": [
+                  "KFdv"
+                ]
+              }
+            ],
+            "parameterId": "originQuery",
+            "nodeId": "M0jNZT9D0Xn9r5P74",
+            "parameterName": "",
+            "libraryRelationType": "NONE"
+          }
+        ],
+        "featureId": "MsbBP5ez4IkpRYJXX",
+        "nodeId": "MsbBP5ez4IkpRYJXX",
+        "isHidden": false,
+        "suppressed": false,
+        "suppressionState": null
+      },
+      {
+        "btType": "BTMMateConnector-66",
+        "featureType": "mateConnector",
+        "implicit": false,
+        "subFeatures": [],
+        "parameterLibraries": [],
+        "returnAfterSubfeatures": false,
+        "isAuxiliaryTreeMateConnector": false,
+        "namespace": "",
+        "version": 9,
+        "name": "Codex V20 MC cage orbit pinion axis",
+        "parameters": [
+          {
+            "btType": "BTMParameterEnum-145",
+            "namespace": "",
+            "nodeId": "MEfXixy0hzIrJetz2",
+            "enumName": "Origin type",
+            "value": "ON_ENTITY",
+            "parameterId": "originType",
+            "parameterName": "",
+            "libraryRelationType": "NONE"
+          },
+          {
+            "btType": "BTMParameterQueryWithOccurrenceList-67",
+            "queries": [
+              {
+                "btType": "BTMInferenceQueryWithOccurrence-1083",
+                "secondDeterministicId": "",
+                "entityQuery": "query=qCompressed(1.0,\"%B5$QueryM5Sa$entityTypeBa$EntityTypeS4$EDGESb$historyTypeS8$CREATIONS9$importTagD2023Sb$operationIdB2$IdA1Sf.8$FImMR9FTpho7Gk1importOpS9$queryTypeS6$IMPORT\",id);",
+                "secondEntityQuery": "",
+                "inferenceType": "CENTER",
+                "path": [
+                  "MDRAEhBeC1DPqY4hO"
+                ],
+                "nodeId": "MB6nxK62jSIzsHbku",
+                "deterministicIds": [
+                  "LFxzC"
+                ]
+              }
+            ],
+            "parameterId": "originQuery",
+            "nodeId": "M24wSajuLAfHyb2+z",
+            "parameterName": "",
+            "libraryRelationType": "NONE"
+          },
+          {
+            "btType": "BTMParameterBoolean-144",
+            "value": true,
+            "parameterId": "transform",
+            "nodeId": "MELSumU1V5EXQLuro",
+            "parameterName": "",
+            "libraryRelationType": "NONE"
+          },
+          {
+            "btType": "BTMParameterQuantity-147",
+            "isInteger": false,
+            "value": 0.0,
+            "units": "",
+            "parameterId": "translationZ",
+            "expression": "19 mm",
+            "nodeId": "MAeDBf8DkYxBRtCvL",
+            "parameterName": "",
+            "libraryRelationType": "NONE"
+          }
+        ],
+        "featureId": "Mt/FY+CTG0A2Y8prd",
+        "nodeId": "Mt/FY+CTG0A2Y8prd",
+        "isHidden": false,
+        "suppressed": false,
+        "suppressionState": null
+      },
+      {
+        "btType": "BTMMateConnector-66",
+        "featureType": "mateConnector",
+        "implicit": false,
+        "subFeatures": [],
+        "parameterLibraries": [],
+        "returnAfterSubfeatures": false,
+        "isAuxiliaryTreeMateConnector": false,
+        "namespace": "",
+        "version": 9,
+        "name": "Codex V20 MC orbit pinion axis",
+        "parameters": [
+          {
+            "btType": "BTMParameterEnum-145",
+            "namespace": "",
+            "nodeId": "MIs+F9Nz72+seie5z",
+            "enumName": "Origin type",
+            "value": "ON_ENTITY",
+            "parameterId": "originType",
+            "parameterName": "",
+            "libraryRelationType": "NONE"
+          },
+          {
+            "btType": "BTMParameterQueryWithOccurrenceList-67",
+            "queries": [
+              {
+                "btType": "BTMInferenceQueryWithOccurrence-1083",
+                "secondDeterministicId": "",
+                "entityQuery": "query=qCompressed(1.0,\"%B5$QueryM5Sa$entityTypeBa$EntityTypeS4$EDGESb$historyTypeS8$CREATIONS9$importTagD676Sb$operationIdB2$IdA1Sf.8$FgFD20MmIeTMqNPimportOpS9$queryTypeS6$IMPORT\",id);",
+                "secondEntityQuery": "",
+                "inferenceType": "CENTER",
+                "path": [
+                  "Msw42YE3qLjVghVLa"
+                ],
+                "nodeId": "MKQaXQie+xxcb74gA",
+                "deterministicIds": [
+                  "KF1k"
+                ]
+              }
+            ],
+            "parameterId": "originQuery",
+            "nodeId": "MoRuylWXmoWiHPE7w",
+            "parameterName": "",
+            "libraryRelationType": "NONE"
+          }
+        ],
+        "featureId": "MKg0p85ePiCeSayRL",
+        "nodeId": "MKg0p85ePiCeSayRL",
+        "isHidden": false,
+        "suppressed": false,
+        "suppressionState": null
+      },
+      {
+        "btType": "BTMMate-64",
+        "featureType": "mate",
+        "subFeatures": [],
+        "parameterLibraries": [],
+        "returnAfterSubfeatures": false,
+        "namespace": "",
+        "version": 2,
+        "name": "Codex V20 Fastened fixed ring to base",
+        "parameters": [
+          {
+            "btType": "BTMParameterEnum-145",
+            "namespace": "",
+            "nodeId": "MC0LJdzliLu2dS0Wh",
+            "enumName": "Mate type",
+            "value": "FASTENED",
+            "parameterId": "mateType",
+            "parameterName": "",
+            "libraryRelationType": "NONE"
+          },
+          {
+            "btType": "BTMParameterQueryWithOccurrenceList-67",
+            "queries": [
+              {
+                "btType": "BTMFeatureQueryWithOccurrence-157",
+                "path": [],
+                "featureId": "MzBDXsCaN1TD7UXeV",
+                "nodeId": "MThhSSIH4zqLz6cpJ",
+                "queryData": ""
+              },
+              {
+                "btType": "BTMFeatureQueryWithOccurrence-157",
+                "path": [],
+                "featureId": "MP5Es7lQDP6Vloz5F",
+                "nodeId": "MjTfLqBtgyQJwokRr",
+                "queryData": ""
+              }
+            ],
+            "parameterId": "mateConnectorsQuery",
+            "nodeId": "M9WJTjuTOOWsBlsjk",
+            "parameterName": "",
+            "libraryRelationType": "NONE"
+          }
+        ],
+        "featureId": "MGGoZ6kj9C9KDAHMV",
+        "nodeId": "MGGoZ6kj9C9KDAHMV",
+        "suppressed": false,
+        "mateConnectors": [],
+        "suppressionState": null
+      },
+      {
+        "btType": "BTMMate-64",
+        "featureType": "mate",
+        "subFeatures": [],
+        "parameterLibraries": [],
+        "returnAfterSubfeatures": false,
+        "namespace": "",
+        "version": 2,
+        "name": "Codex V20 Revolute cage about center",
+        "parameters": [
+          {
+            "btType": "BTMParameterEnum-145",
+            "namespace": "",
+            "nodeId": "M6Dv1OFcaWWp9T3xK",
+            "enumName": "Mate type",
+            "value": "REVOLUTE",
+            "parameterId": "mateType",
+            "parameterName": "",
+            "libraryRelationType": "NONE"
+          },
+          {
+            "btType": "BTMParameterQueryWithOccurrenceList-67",
+            "queries": [
+              {
+                "btType": "BTMFeatureQueryWithOccurrence-157",
+                "path": [],
+                "featureId": "MZypNxRlRHRBTqpSf",
+                "nodeId": "M7gl8jmdT1WUDhNRQ",
+                "queryData": ""
+              },
+              {
+                "btType": "BTMFeatureQueryWithOccurrence-157",
+                "path": [],
+                "featureId": "MjuedyegwevQg2x5R",
+                "nodeId": "M1j1wSbNx09BLFMYN",
+                "queryData": ""
+              }
+            ],
+            "parameterId": "mateConnectorsQuery",
+            "nodeId": "MaBPEpfu5WIxUDc/t",
+            "parameterName": "",
+            "libraryRelationType": "NONE"
+          }
+        ],
+        "featureId": "MhdEakudCZrDEkbar",
+        "nodeId": "MhdEakudCZrDEkbar",
+        "suppressed": false,
+        "mateConnectors": [],
+        "suppressionState": null
+      },
+      {
+        "btType": "BTMMate-64",
+        "featureType": "mate",
+        "subFeatures": [],
+        "parameterLibraries": [],
+        "returnAfterSubfeatures": false,
+        "namespace": "",
+        "version": 2,
+        "name": "Codex V20 Revolute hand crank",
+        "parameters": [
+          {
+            "btType": "BTMParameterEnum-145",
+            "namespace": "",
+            "nodeId": "Mne3low+eoR2lvpR9",
+            "enumName": "Mate type",
+            "value": "REVOLUTE",
+            "parameterId": "mateType",
+            "parameterName": "",
+            "libraryRelationType": "NONE"
+          },
+          {
+            "btType": "BTMParameterQueryWithOccurrenceList-67",
+            "queries": [
+              {
+                "btType": "BTMFeatureQueryWithOccurrence-157",
+                "path": [],
+                "featureId": "MRNWUsuUMz/Tzu6QU",
+                "nodeId": "Mu+IpRwb7TO9pFFYR",
+                "queryData": ""
+              },
+              {
+                "btType": "BTMFeatureQueryWithOccurrence-157",
+                "path": [],
+                "featureId": "MsbBP5ez4IkpRYJXX",
+                "nodeId": "M4a8oLnX0emVo//Ch",
+                "queryData": ""
+              }
+            ],
+            "parameterId": "mateConnectorsQuery",
+            "nodeId": "MtJ04xKDOOWo9exKq",
+            "parameterName": "",
+            "libraryRelationType": "NONE"
+          }
+        ],
+        "featureId": "M7aQtn8adaJsXQT5F",
+        "nodeId": "M7aQtn8adaJsXQT5F",
+        "suppressed": false,
+        "mateConnectors": [],
+        "suppressionState": null
+      },
+      {
+        "btType": "BTMMate-64",
+        "featureType": "mate",
+        "subFeatures": [],
+        "parameterLibraries": [],
+        "returnAfterSubfeatures": false,
+        "namespace": "",
+        "version": 2,
+        "name": "Codex V20 Revolute orbit pinion on cage",
+        "parameters": [
+          {
+            "btType": "BTMParameterEnum-145",
+            "namespace": "",
+            "nodeId": "MLVRpGhuIqaANxdbq",
+            "enumName": "Mate type",
+            "value": "REVOLUTE",
+            "parameterId": "mateType",
+            "parameterName": "",
+            "libraryRelationType": "NONE"
+          },
+          {
+            "btType": "BTMParameterQueryWithOccurrenceList-67",
+            "queries": [
+              {
+                "btType": "BTMFeatureQueryWithOccurrence-157",
+                "path": [],
+                "featureId": "Mt/FY+CTG0A2Y8prd",
+                "nodeId": "MPfsnXyLDb53VozlC",
+                "queryData": ""
+              },
+              {
+                "btType": "BTMFeatureQueryWithOccurrence-157",
+                "path": [],
+                "featureId": "MKg0p85ePiCeSayRL",
+                "nodeId": "MUYsrY35F4LFJ4dXv",
+                "queryData": ""
+              }
+            ],
+            "parameterId": "mateConnectorsQuery",
+            "nodeId": "MSZmd8daey4gGWfxm",
+            "parameterName": "",
+            "libraryRelationType": "NONE"
+          }
+        ],
+        "featureId": "MoY5WLosU6bKl+qH0",
+        "nodeId": "MoY5WLosU6bKl+qH0",
+        "suppressed": false,
+        "mateConnectors": [],
+        "suppressionState": null
+      },
+      {
+        "btType": "BTMMateRelation-1412",
+        "featureType": "mateRelation",
+        "subFeatures": [],
+        "parameterLibraries": [],
+        "returnAfterSubfeatures": false,
+        "namespace": "",
+        "version": 0,
+        "name": "Codex V20 Gear relation hand crank to cage",
+        "parameters": [
+          {
+            "btType": "BTMParameterEnum-145",
+            "namespace": "",
+            "nodeId": "MX34MjP9W2iw9PoHN",
+            "enumName": "Relation type",
+            "value": "GEAR",
+            "parameterId": "relationType",
+            "parameterName": "",
+            "libraryRelationType": "NONE"
+          },
+          {
+            "btType": "BTMParameterQueryWithOccurrenceList-67",
+            "queries": [
+              {
+                "btType": "BTMFeatureQueryWithOccurrence-157",
+                "path": [],
+                "featureId": "M7aQtn8adaJsXQT5F",
+                "nodeId": "Mcs7MFn9V4LxDHmAH",
+                "queryData": "Rz"
+              },
+              {
+                "btType": "BTMFeatureQueryWithOccurrence-157",
+                "path": [],
+                "featureId": "MhdEakudCZrDEkbar",
+                "nodeId": "MX1f9fB3qkNmF0t5p",
+                "queryData": "Rz"
+              }
+            ],
+            "parameterId": "matesQuery",
+            "nodeId": "MaEGSv2PDxr7pv27s",
+            "parameterName": "",
+            "libraryRelationType": "NONE"
+          },
+          {
+            "btType": "BTMParameterQuantity-147",
+            "isInteger": false,
+            "value": 0.0,
+            "units": "",
+            "parameterId": "relationRatio",
+            "expression": "3.3333333333333335",
+            "nodeId": "MIF1E8VuKeRENgGuK",
+            "parameterName": "",
+            "libraryRelationType": "NONE"
+          },
+          {
+            "btType": "BTMParameterBoolean-144",
+            "value": true,
+            "parameterId": "reverseDirection",
+            "nodeId": "M/O4Y6CiQdHPdMDlP",
+            "parameterName": "",
+            "libraryRelationType": "NONE"
+          }
+        ],
+        "featureId": "M9Nl/cSeEbnxttr1B",
+        "nodeId": "M9Nl/cSeEbnxttr1B",
+        "suppressed": false,
+        "suppressionState": null
+      }
+    ],
+    "serializationVersion": "1.2.18",
+    "sourceMicroversion": "22d0a01de66d7ff428430be4",
+    "libraryVersion": 0
+  }
+}

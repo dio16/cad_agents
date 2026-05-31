@@ -1,0 +1,8 @@
+step,operation,uses,gate
+1,Insert 608ZZ bearing into base pocket and verify slip fit.,central_bearing,OD pocket clearance
+2,Install carrier journal through bearing and confirm free carrier rotation.,rotating_carrier_drive_gear_v26,central journal clearance
+3,Fasten fixed internal ring to the four base standoffs.,"fixed_internal_ring_72t_v26, M3 screws",ring seats and screw access
+4,Install orbit/escape shaft and orbit pinion in the carrier two-point support.,"orbit_escape_pinion_18t_v26, 3 mm shaft",orbit bore clearance
+5,"Install hand crank shaft, retained pinion, and knob.","hand_crank_pinion_v26, crank_knob_v26, 3 mm shaft",hand shaft clearance
+6,"Install balance, escape wheel, and pallet visual module on carrier seats.","balance_wheel_v26, escape_wheel_15t_v26, pallet_fork_bridge_v26",no floating visual roles
+7,Rotate hand crank slowly and inspect carrier/orbit/escapement motion.,live viewer and assembled model,fallback motion contract

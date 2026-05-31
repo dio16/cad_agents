@@ -1,0 +1,306 @@
+{
+  "created_at": "2026-05-16T13:13:52.758889+00:00",
+  "generation_id": "2026-05-16T13:12:01.537997+00:00",
+  "input_manifest_sha256": "538917edf59d9d44fc3a62ba5d6d8d13216206e6b45cc9fde2bb0c3af0710c65",
+  "input_artifact_set_sha256": "dab3fee722fca31dec10c0f121cd3ea8eaef3dc630907ba0ab4b70478ea7bc0b",
+  "status": "pass",
+  "sample_angles_deg": [
+    0,
+    15,
+    30,
+    45,
+    60,
+    75,
+    90,
+    105,
+    120,
+    135,
+    150,
+    165,
+    180,
+    195,
+    210,
+    225,
+    240,
+    255,
+    270,
+    285,
+    300,
+    315,
+    330,
+    345
+  ],
+  "undeclared_collision_count": 0,
+  "declared_drive_contact_count": 16,
+  "motion_contract_status": "pass",
+  "gear_relation_status": "pass",
+  "drive_geometry_status": "pass",
+  "checks": [
+    {
+      "name": "sampled motion reads orbit and hand ratios from contract gear meshes",
+      "status": "pass",
+      "relative_orbit_ratio": -4.0,
+      "expected_relative_orbit_ratio": -4.0,
+      "hand_ratio": -3.3333333333,
+      "expected_hand_ratio": -3.3333333333333335
+    },
+    {
+      "name": "sampled motion reads support axes from contract",
+      "status": "pass",
+      "orbit_axis_mm": [
+        40.5,
+        0.0
+      ],
+      "escape_axis_mm": [
+        40.5,
+        0.0
+      ],
+      "pallet_axis_mm": [
+        26.0,
+        0.0
+      ]
+    },
+    {
+      "name": "sampled motion uses full-cycle grid",
+      "status": "pass",
+      "sample_angles_deg": [
+        0,
+        15,
+        30,
+        45,
+        60,
+        75,
+        90,
+        105,
+        120,
+        135,
+        150,
+        165,
+        180,
+        195,
+        210,
+        225,
+        240,
+        255,
+        270,
+        285,
+        300,
+        315,
+        330,
+        345
+      ]
+    },
+    {
+      "name": "eccentric pin-slot pallet motion stays within predicted swing",
+      "status": "pass",
+      "pallet_angles": [
+        {
+          "carrier_deg": 0,
+          "pallet_relative_deg": -0.0
+        },
+        {
+          "carrier_deg": 15,
+          "pallet_relative_deg": -9.2232
+        },
+        {
+          "carrier_deg": 30,
+          "pallet_relative_deg": -11.3018
+        },
+        {
+          "carrier_deg": 45,
+          "pallet_relative_deg": -0.0
+        },
+        {
+          "carrier_deg": 60,
+          "pallet_relative_deg": 11.3018
+        },
+        {
+          "carrier_deg": 75,
+          "pallet_relative_deg": 9.2232
+        },
+        {
+          "carrier_deg": 90,
+          "pallet_relative_deg": 0.0
+        },
+        {
+          "carrier_deg": 105,
+          "pallet_relative_deg": -9.2232
+        },
+        {
+          "carrier_deg": 120,
+          "pallet_relative_deg": -11.3018
+        },
+        {
+          "carrier_deg": 135,
+          "pallet_relative_deg": -0.0
+        },
+        {
+          "carrier_deg": 150,
+          "pallet_relative_deg": 11.3018
+        },
+        {
+          "carrier_deg": 165,
+          "pallet_relative_deg": 9.2232
+        },
+        {
+          "carrier_deg": 180,
+          "pallet_relative_deg": 0.0
+        },
+        {
+          "carrier_deg": 195,
+          "pallet_relative_deg": -9.2232
+        },
+        {
+          "carrier_deg": 210,
+          "pallet_relative_deg": -11.3018
+        },
+        {
+          "carrier_deg": 225,
+          "pallet_relative_deg": -0.0
+        },
+        {
+          "carrier_deg": 240,
+          "pallet_relative_deg": 11.3018
+        },
+        {
+          "carrier_deg": 255,
+          "pallet_relative_deg": 9.2232
+        },
+        {
+          "carrier_deg": 270,
+          "pallet_relative_deg": 0.0
+        },
+        {
+          "carrier_deg": 285,
+          "pallet_relative_deg": -9.2232
+        },
+        {
+          "carrier_deg": 300,
+          "pallet_relative_deg": -11.3018
+        },
+        {
+          "carrier_deg": 315,
+          "pallet_relative_deg": -0.0
+        },
+        {
+          "carrier_deg": 330,
+          "pallet_relative_deg": 11.3018
+        },
+        {
+          "carrier_deg": 345,
+          "pallet_relative_deg": 9.2232
+        }
+      ]
+    },
+    {
+      "name": "sampled motion has no undeclared collisions",
+      "status": "pass",
+      "collision_count": 0,
+      "collisions": []
+    },
+    {
+      "name": "declared eccentric pin-slot drive contact stays bounded",
+      "status": "pass",
+      "contact_sample_count": 16,
+      "max_contact_volume_mm3": 1.1302,
+      "contacts": [
+        {
+          "carrier_deg": 15,
+          "a": "07_escape_wheel_15t_v27",
+          "b": "08_pallet_fork_bridge_v27",
+          "common_volume_mm3": 0.6415
+        },
+        {
+          "carrier_deg": 30,
+          "a": "07_escape_wheel_15t_v27",
+          "b": "08_pallet_fork_bridge_v27",
+          "common_volume_mm3": 1.1302
+        },
+        {
+          "carrier_deg": 60,
+          "a": "07_escape_wheel_15t_v27",
+          "b": "08_pallet_fork_bridge_v27",
+          "common_volume_mm3": 1.1302
+        },
+        {
+          "carrier_deg": 75,
+          "a": "07_escape_wheel_15t_v27",
+          "b": "08_pallet_fork_bridge_v27",
+          "common_volume_mm3": 0.6415
+        },
+        {
+          "carrier_deg": 105,
+          "a": "07_escape_wheel_15t_v27",
+          "b": "08_pallet_fork_bridge_v27",
+          "common_volume_mm3": 0.6415
+        },
+        {
+          "carrier_deg": 120,
+          "a": "07_escape_wheel_15t_v27",
+          "b": "08_pallet_fork_bridge_v27",
+          "common_volume_mm3": 1.1302
+        },
+        {
+          "carrier_deg": 150,
+          "a": "07_escape_wheel_15t_v27",
+          "b": "08_pallet_fork_bridge_v27",
+          "common_volume_mm3": 1.1302
+        },
+        {
+          "carrier_deg": 165,
+          "a": "07_escape_wheel_15t_v27",
+          "b": "08_pallet_fork_bridge_v27",
+          "common_volume_mm3": 0.6415
+        },
+        {
+          "carrier_deg": 195,
+          "a": "07_escape_wheel_15t_v27",
+          "b": "08_pallet_fork_bridge_v27",
+          "common_volume_mm3": 0.6415
+        },
+        {
+          "carrier_deg": 210,
+          "a": "07_escape_wheel_15t_v27",
+          "b": "08_pallet_fork_bridge_v27",
+          "common_volume_mm3": 1.1302
+        },
+        {
+          "carrier_deg": 240,
+          "a": "07_escape_wheel_15t_v27",
+          "b": "08_pallet_fork_bridge_v27",
+          "common_volume_mm3": 1.1302
+        },
+        {
+          "carrier_deg": 255,
+          "a": "07_escape_wheel_15t_v27",
+          "b": "08_pallet_fork_bridge_v27",
+          "common_volume_mm3": 0.6415
+        },
+        {
+          "carrier_deg": 285,
+          "a": "07_escape_wheel_15t_v27",
+          "b": "08_pallet_fork_bridge_v27",
+          "common_volume_mm3": 0.6415
+        },
+        {
+          "carrier_deg": 300,
+          "a": "07_escape_wheel_15t_v27",
+          "b": "08_pallet_fork_bridge_v27",
+          "common_volume_mm3": 1.1302
+        },
+        {
+          "carrier_deg": 330,
+          "a": "07_escape_wheel_15t_v27",
+          "b": "08_pallet_fork_bridge_v27",
+          "common_volume_mm3": 1.1302
+        },
+        {
+          "carrier_deg": 345,
+          "a": "07_escape_wheel_15t_v27",
+          "b": "08_pallet_fork_bridge_v27",
+          "common_volume_mm3": 0.6415
+        }
+      ]
+    }
+  ]
+}

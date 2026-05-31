@@ -1,0 +1,30 @@
+{
+  "created_at": "2026-04-30T17:00:46.082230+00:00",
+  "status": "pass",
+  "checks": [
+    {
+      "name": "five printed STL files exported",
+      "status": "pass"
+    },
+    {
+      "name": "printed STEP sources exist",
+      "status": "pass"
+    },
+    {
+      "name": "purchased hardware BOM present",
+      "status": "pass"
+    },
+    {
+      "name": "assembly sequence present",
+      "status": "pass"
+    },
+    {
+      "name": "verification gates remain pass",
+      "status": "pass"
+    },
+    {
+      "name": "native Gear Relation limitation is explicit",
+      "status": "pass"
+    }
+  ]
+}

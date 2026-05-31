@@ -1,0 +1,88 @@
+{
+  "status": "pass",
+  "created_at": "2026-05-08T16:04:17.604939+00:00",
+  "type": "fallback_transform_motion",
+  "input": "hand crank",
+  "joints": [
+    {
+      "role": "carrier",
+      "axis_mm": [
+        0.0,
+        0.0
+      ],
+      "motion": "rotate_z",
+      "ratio_to_carrier": 1.0
+    },
+    {
+      "role": "hand_crank",
+      "axis_mm": [
+        0.0,
+        -58.5
+      ],
+      "motion": "spin_about_point_z",
+      "ratio_to_carrier": -3.3333333333
+    },
+    {
+      "role": "orbit_escape_pinion",
+      "axis_mm": [
+        40.5,
+        0.0
+      ],
+      "parent": "carrier",
+      "motion": "relative_spin_z",
+      "relative_ratio_to_carrier": -4.0,
+      "absolute_ratio_to_carrier": -3.0
+    },
+    {
+      "role": "escape_wheel",
+      "axis_mm": [
+        40.5,
+        0.0
+      ],
+      "parent": "orbit_escape_pinion",
+      "motion": "coaxial_spin_z",
+      "relative_ratio_to_carrier": -4.0,
+      "absolute_ratio_to_carrier": -3.0
+    },
+    {
+      "role": "balance",
+      "parent": "carrier",
+      "motion": "visual_oscillation",
+      "amplitude_deg": 22.0
+    },
+    {
+      "role": "pallet",
+      "parent": "carrier",
+      "motion": "visual_oscillation",
+      "amplitude_deg": 12.0
+    }
+  ],
+  "sampled_angles_deg": [
+    0,
+    15,
+    30,
+    45,
+    60,
+    75,
+    90,
+    105,
+    120,
+    135,
+    150,
+    165,
+    180,
+    195,
+    210,
+    225,
+    240,
+    255,
+    270,
+    285,
+    300,
+    315,
+    330,
+    345
+  ],
+  "viewer": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v26_mechanical_package/v26_live_motion_viewer.html",
+  "cad_mesh_viewer": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v26_mechanical_package/v26_3d_cad_motion_viewer.html"
+}

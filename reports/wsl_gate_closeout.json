@@ -1,0 +1,163 @@
+{
+  "status": "pass",
+  "steps": [
+    {
+      "name": "wsl_runtime_proof",
+      "returncode": 0,
+      "status": "pass",
+      "stdout_tail": "{\n  \"created_at\": \"2026-05-16T13:11:24.023501+00:00\",\n  \"status\": \"pass\",\n  \"cwd\": \"/home/diobrando/codex_wsl/cad_agent_framework\",\n  \"platform\": \"Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39\",\n  \"python\": \"/home/diobrando/cad/tourbillon/.venv-cadquery/bin/python\",\n  \"approved_python_prefix\": \"/home/diobrando/cad/tourbillon/.venv-cadquery\",\n  \"approved_python\": \"/home/diobrando/cad/tourbillon/.venv-cadquery/bin/python\",\n  \"canonical_root\": \"/home/diobrando/codex_wsl/cad_agent_framework\",\n  \"sanctioned_entrypoint\": \"run_cad_agent.sh\",\n  \"sanctioned_runner\": \"/home/diobrando/codex_wsl/cad_agent_framework/run_cad_agent.sh\",\n  \"sanctioned_shell\": \"bash\",\n  \"local_only\": true,\n  \"requested_local_only\": true,\n  \"runner_local_only\": false,\n  \"checks\": [\n    {\n      \"name\": \"platform is WSL Linux\",\n      \"status\": \"pass\"\n    },\n    {\n      \"name\": \"python executable is approved WSL CAD runtime\",\n      \"status\": \"pass\",\n      \"python\": \"/home/diobrando/cad/tourbillon/.venv-cadquery/bin/python\"\n    },\n    {\n      \"name\": \"cwd is canonical WSL repo root\",\n      \"status\": \"pass\",\n      \"cwd\": \"/home/diobrando/codex_wsl/cad_agent_framework\",\n      \"canonical_root\": \"/home/diobrando/codex_wsl/cad_agent_framework\"\n    },\n    {\n      \"name\": \"sanctioned Bash runner provenance is present\",\n      \"status\": \"pass\",\n      \"entrypoint\": \"run_cad_agent.sh\",\n      \"runner\": \"/home/diobrando/codex_wsl/cad_agent_framework/run_cad_agent.sh\",\n      \"shell\": \"bash\",\n      \"expected_entrypoint\": \"run_cad_agent.sh\",\n      \"expected_runner\": \"/home/diobrando/codex_wsl/cad_agent_framework/run_cad_agent.sh\",\n      \"expected_shell\": \"bash\"\n    },\n    {\n      \"name\": \"CAD and mesh validation modules import\",\n      \"status\": \"pass\",\n      \"modules\": {\n        \"cadquery\": true,\n        \"OCP\": true,\n        \"build123d\": true,\n        \"trimesh\": true,\n        \"numpy\": true\n      }\n    },\n    {\n      \"name\": \"Onshape credentials present or explicitly waived\",\n      \"status\": \"pass\",\n      \"local_only\": true,\n      \"requested_local_only\": true,\n      \"runner_local_only\": false,\n      \"env\": {\n        \"ONSHAPE_ACCESS_KEY\": false,\n        \"ONSHAPE_SECRET_KEY\": false\n      }\n    }\n  ]\n}\n",
+      "stderr_tail": "",
+      "command": [
+        "bash",
+        "./run_cad_agent.sh",
+        "--script",
+        "scripts/assert_wsl_runtime.py",
+        "--local-only",
+        "--write"
+      ]
+    },
+    {
+      "name": "generate_v27_connected_candidate",
+      "returncode": 0,
+      "status": "pass",
+      "stdout_tail": "{\n  \"status\": \"candidate_generated\",\n  \"manifest\": \"/home/diobrando/codex_wsl/cad_agent_framework/manifests/tourbillon_v27_connected_contract.json\",\n  \"part_count\": 9\n}\n",
+      "stderr_tail": "",
+      "command": [
+        "bash",
+        "./run_cad_agent.sh",
+        "--script",
+        "scripts/create_v27_connected_cadquery_package.py"
+      ]
+    },
+    {
+      "name": "generate_v27_motion_artifacts",
+      "returncode": 0,
+      "status": "pass",
+      "stdout_tail": "{\n  \"status\": \"pass\",\n  \"viewer\": \"/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v27_connected_package/v27_3d_cad_motion_viewer.html\"\n}\n",
+      "stderr_tail": "",
+      "command": [
+        "bash",
+        "./run_cad_agent.sh",
+        "--script",
+        "scripts/create_v27_motion_artifacts.py"
+      ]
+    },
+    {
+      "name": "v27_wsl_http_viewer_smoke",
+      "returncode": 0,
+      "status": "pass",
+      "stdout_tail": "{\n  \"status\": \"pass\",\n  \"report\": \"/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v27_connected_package/v27_wsl_http_viewer_smoke.json\",\n  \"screenshot\": \"/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v27_connected_package/v27_wsl_http_viewer_smoke.png\"\n}\n",
+      "stderr_tail": "/home/diobrando/codex_wsl/cad_agent_framework/scripts/v27_wsl_http_viewer_smoke.py:39: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.\n  for r, g, b in img.getdata():\n/home/diobrando/codex_wsl/cad_agent_framework/scripts/v27_wsl_http_viewer_smoke.py:52: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.\n  for r, g, b in diff.getdata():\n",
+      "command": [
+        "bash",
+        "./run_cad_agent.sh",
+        "--script",
+        "scripts/v27_wsl_http_viewer_smoke.py"
+      ]
+    },
+    {
+      "name": "independent_v27_connected_audit",
+      "returncode": 0,
+      "status": "pass",
+      "stdout_tail": "{\n  \"status\": \"pass\",\n  \"fail_count\": 0,\n  \"p0_fail_count\": 0,\n  \"report\": \"/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v27_connected_package/v27_independent_connected_audit.json\"\n}\n",
+      "stderr_tail": "",
+      "command": [
+        "bash",
+        "./run_cad_agent.sh",
+        "--script",
+        "scripts/independent_v27_connected_audit.py"
+      ]
+    },
+    {
+      "name": "v27_step_interference_audit",
+      "returncode": 0,
+      "status": "pass",
+      "stdout_tail": "{\n  \"status\": \"pass\",\n  \"collision_count\": 0,\n  \"report\": \"/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v27_connected_package/v27_step_interference_audit.json\"\n}\n",
+      "stderr_tail": "",
+      "command": [
+        "bash",
+        "./run_cad_agent.sh",
+        "--script",
+        "scripts/v27_step_interference_audit.py"
+      ]
+    },
+    {
+      "name": "v27_mechanical_truth_audit",
+      "returncode": 0,
+      "status": "pass",
+      "stdout_tail": "{\n  \"status\": \"pass\",\n  \"fail_count\": 0,\n  \"report\": \"/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v27_connected_package/v27_mechanical_truth_audit.json\"\n}\n",
+      "stderr_tail": "",
+      "command": [
+        "bash",
+        "./run_cad_agent.sh",
+        "--script",
+        "scripts/v27_mechanical_truth_audit.py"
+      ]
+    },
+    {
+      "name": "v27_sampled_motion_audit",
+      "returncode": 0,
+      "status": "pass",
+      "stdout_tail": "{\n  \"status\": \"pass\",\n  \"collision_count\": 0,\n  \"report\": \"/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v27_connected_package/v27_sampled_motion_audit.json\"\n}\n",
+      "stderr_tail": "",
+      "command": [
+        "bash",
+        "./run_cad_agent.sh",
+        "--script",
+        "scripts/v27_sampled_motion_audit.py"
+      ]
+    },
+    {
+      "name": "v27_declared_mesh_contact_audit",
+      "returncode": 0,
+      "status": "pass",
+      "stdout_tail": "{\n  \"status\": \"pass\",\n  \"report\": \"/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v27_connected_package/v27_declared_mesh_contact_audit.json\"\n}\n",
+      "stderr_tail": "",
+      "command": [
+        "bash",
+        "./run_cad_agent.sh",
+        "--script",
+        "scripts/v27_declared_mesh_contact_audit.py"
+      ]
+    },
+    {
+      "name": "v27_visibility_audit",
+      "returncode": 0,
+      "status": "pass",
+      "stdout_tail": "{\n  \"status\": \"pass\",\n  \"report\": \"/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v27_connected_package/v27_visibility_audit.json\",\n  \"contact_sheet\": \"/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v27_connected_package/v27_visibility_contact_sheet.png\"\n}\n",
+      "stderr_tail": "/home/diobrando/codex_wsl/cad_agent_framework/scripts/v27_visibility_audit.py:46: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.\n  for r, g, b in img.crop((0, 0, min(940, img.width), img.height)).getdata():\n",
+      "command": [
+        "bash",
+        "./run_cad_agent.sh",
+        "--script",
+        "scripts/v27_visibility_audit.py"
+      ]
+    },
+    {
+      "name": "artifact_provenance",
+      "returncode": 0,
+      "status": "pass",
+      "stdout_tail": "{\n  \"status\": \"pass\",\n  \"file_count\": 68,\n  \"report\": \"/home/diobrando/codex_wsl/cad_agent_framework/reports/artifact_provenance.json\"\n}\n",
+      "stderr_tail": "",
+      "command": [
+        "bash",
+        "./run_cad_agent.sh",
+        "--script",
+        "scripts/write_artifact_provenance.py"
+      ]
+    },
+    {
+      "name": "current_gate_summary",
+      "returncode": 0,
+      "status": "pass",
+      "stdout_tail": "{\n  \"created_at\": \"2026-05-16T13:14:59.333317+00:00\",\n  \"generation_id\": \"2026-05-16T13:12:01.537997+00:00\",\n  \"manifest_sha256\": \"538917edf59d9d44fc3a62ba5d6d8d13216206e6b45cc9fde2bb0c3af0710c65\",\n  \"status\": \"pass\",\n  \"completion_allowed\": true,\n  \"completion_wording\": \"local fabrication complete for V27 tabletop gear-train demonstrator with eccentric pin-slot pallet display under fresh independent WSL validation; watch-grade escapement, native Onshape, and physical print evidence not claimed\",\n  \"checks\": [\n    {\n      \"name\": \"WSL runtime proof\",\n      \"status\": \"pass\",\n      \"source\": \"reports/wsl_runtime_proof.json\"\n    },\n    {\n      \"name\": \"artifact provenance\",\n      \"status\": \"pass\",\n      \"source\": \"reports/artifact_provenance.json\",\n      \"file_count\": 68\n    },\n    {\n      \"name\": \"V27 connected-solid candidate audit\",\n      \"status\": \"pass\",\n      \"source\": \"reports/fabrication_v27_connected_package/v27_independent_connected_audit.json\",\n      \"fail_count\": 0,\n      \"p0_fail_count\": 0\n    },\n    {\n      \"name\": \"V27 assembled STEP interference audit\",\n      \"status\": \"pass\",\n      \"source\": \"reports/fabrication_v27_connected_package/v27_step_interference_audit.json\"\n    },\n    {\n      \"name\": \"V27 mechanical truth audit\",\n      \"status\": \"pass\",\n      \"source\": \"reports/fabrication_v27_connected_package/v27_mechanical_truth_audit.json\",\n      \"fail_count\": 0\n    },\n    {\n      \"name\": \"V27 sampled motion audit\",\n      \"status\": \"pass\",\n      \"source\": \"reports/fabrication_v27_connected_package/v27_sampled_motion_audit.json\",\n      \"collision_count\": 0\n    },\n    {\n      \"name\": \"V27 declared mesh contact audit\",\n      \"status\": \"pass\",\n      \"source\": \"reports/fabrication_v27_connected_package/v27_declared_mesh_contact_audit.json\"\n    },\n    {\n      \"name\": \"V27 sampled visibility audit\",\n      \"status\": \"pass\",\n      \"source\": \"reports/fabrication_v27_connected_package/v27_visibility_audit.json\"\n    },\n    {\n      \"name\": \"V27 contract has no intrinsic blockers\",\n      \"status\": \"pass\",\n      \"source\": \"manifests/tourbillon_v27_connected_contract.json\",\n      \"manifest_status\": \"connected_cadquery_contract_ready_for_independent_validation\",\n      \"design_claim\": \"WSL-generated connected-solid candidate for a tabletop tourbillon-inspired gear-train demonstrator with explicit internal-ring geometry and a carrier-mounted eccentric pin-slot pallet display; completion wording must be derived from independent WSL gates.\",\n      \"known_blockers\": []\n    },\n    {\n      \"name\": \"V27 WSL HTTP viewer smoke\",\n      \"status\": \"pass\",\n      \"source\": \"reports/fabrication_v27_connected_package/v27_wsl_http_viewer_smoke.json\"\n    },\n    {\n      \"name\": \"V27 evidence reports are fresh against manifest\",\n      \"status\": \"pass\",\n      \"source\": \"manifest/report timestamps\",\n      \"manifest_created_at\": \"2026-05-16T13:12:01.537997+00:00\"\n    },\n    {\n      \"name\": \"artifact provenance is newer than required V27 reports\",\n      \"status\": \"pass\",\n      \"source\": \"reports/artifact_provenance.json\"\n    },\n    {\n      \"name\": \"V27 evidence chain uses one generation id\",\n      \"status\": \"pass\",\n      \"source\": \"manifest/report generation_id\",\n      \"generation_id\": \"2026-05-16T13:12:01.537997+00:00\"\n    },\n    {\n      \"name\": \"V27 reports match current manifest and artifact hashes\",\n      \"status\": \"pass\",\n      \"source\": \"report/provenance hashes\"\n    },\n    {\n      \"name\": \"V27 completion-critical derived artifacts match provenance hashes\",\n      \"status\": \"pass\",\n      \"source\": \"derived artifact hashes\"\n    },\n    {\n      \"name\": \"legacy validations quarantined\",\n      \"status\": \"pass\",\n      \"source\": \"reports/validation_quarantine.json\"\n    }\n  ]\n}\n",
+      "stderr_tail": "",
+      "command": [
+        "bash",
+        "./run_cad_agent.sh",
+        "--script",
+        "scripts/write_current_gate_summary.py"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,432 @@
+{
+  "status": "pass",
+  "created_at": "2026-04-30T18:01:35.013544+00:00",
+  "method": "pitch-line and sampled mesh-envelope clearance for rectangular visual teeth; not involute contact stress",
+  "required_min_backlash_mm": 0.25,
+  "pairs": [
+    {
+      "name": "fixed_ring_to_orbit_pinion",
+      "type": "internal",
+      "a_teeth": 64,
+      "b_teeth": 16,
+      "a_pitch_radius_mm": 50.0,
+      "b_pitch_radius_mm": 12.5,
+      "a_tooth_tangential_width_mm": 1.0,
+      "b_tooth_tangential_width_mm": 1.4,
+      "center_distance_mm": 37.5,
+      "expected_ratio": -3.0,
+      "pitch_arc_mm": 4.908739,
+      "pitch_arc_error_mm": 0.0,
+      "min_pitch_line_backlash_mm": 2.508739,
+      "min_visual_tip_clearance_mm": 1.254369,
+      "min_mesh_envelope_distance_mm": 0.0,
+      "samples": [
+        {
+          "theta_deg": 0,
+          "pitch_arc_error_mm": 0.0,
+          "pitch_line_backlash_mm": 2.508739,
+          "min_visual_tip_clearance_mm": 1.254369,
+          "mesh_envelope_min_distance_mm": 0.0,
+          "status": "pass"
+        },
+        {
+          "theta_deg": 15,
+          "pitch_arc_error_mm": 0.0,
+          "pitch_line_backlash_mm": 2.508739,
+          "min_visual_tip_clearance_mm": 1.254369,
+          "mesh_envelope_min_distance_mm": 0.062321,
+          "status": "pass"
+        },
+        {
+          "theta_deg": 30,
+          "pitch_arc_error_mm": 0.0,
+          "pitch_line_backlash_mm": 2.508739,
+          "min_visual_tip_clearance_mm": 1.254369,
+          "mesh_envelope_min_distance_mm": 0.062321,
+          "status": "pass"
+        },
+        {
+          "theta_deg": 45,
+          "pitch_arc_error_mm": 0.0,
+          "pitch_line_backlash_mm": 2.508739,
+          "min_visual_tip_clearance_mm": 1.254369,
+          "mesh_envelope_min_distance_mm": 0.0,
+          "status": "pass"
+        },
+        {
+          "theta_deg": 60,
+          "pitch_arc_error_mm": 0.0,
+          "pitch_line_backlash_mm": 2.508739,
+          "min_visual_tip_clearance_mm": 1.254369,
+          "mesh_envelope_min_distance_mm": 0.062321,
+          "status": "pass"
+        },
+        {
+          "theta_deg": 75,
+          "pitch_arc_error_mm": 0.0,
+          "pitch_line_backlash_mm": 2.508739,
+          "min_visual_tip_clearance_mm": 1.254369,
+          "mesh_envelope_min_distance_mm": 0.062321,
+          "status": "pass"
+        },
+        {
+          "theta_deg": 90,
+          "pitch_arc_error_mm": 0.0,
+          "pitch_line_backlash_mm": 2.508739,
+          "min_visual_tip_clearance_mm": 1.254369,
+          "mesh_envelope_min_distance_mm": 0.0,
+          "status": "pass"
+        },
+        {
+          "theta_deg": 105,
+          "pitch_arc_error_mm": 0.0,
+          "pitch_line_backlash_mm": 2.508739,
+          "min_visual_tip_clearance_mm": 1.254369,
+          "mesh_envelope_min_distance_mm": 0.062321,
+          "status": "pass"
+        },
+        {
+          "theta_deg": 120,
+          "pitch_arc_error_mm": 0.0,
+          "pitch_line_backlash_mm": 2.508739,
+          "min_visual_tip_clearance_mm": 1.254369,
+          "mesh_envelope_min_distance_mm": 0.062321,
+          "status": "pass"
+        },
+        {
+          "theta_deg": 135,
+          "pitch_arc_error_mm": 0.0,
+          "pitch_line_backlash_mm": 2.508739,
+          "min_visual_tip_clearance_mm": 1.254369,
+          "mesh_envelope_min_distance_mm": 0.0,
+          "status": "pass"
+        },
+        {
+          "theta_deg": 150,
+          "pitch_arc_error_mm": 0.0,
+          "pitch_line_backlash_mm": 2.508739,
+          "min_visual_tip_clearance_mm": 1.254369,
+          "mesh_envelope_min_distance_mm": 0.062321,
+          "status": "pass"
+        },
+        {
+          "theta_deg": 165,
+          "pitch_arc_error_mm": 0.0,
+          "pitch_line_backlash_mm": 2.508739,
+          "min_visual_tip_clearance_mm": 1.254369,
+          "mesh_envelope_min_distance_mm": 0.062321,
+          "status": "pass"
+        },
+        {
+          "theta_deg": 180,
+          "pitch_arc_error_mm": 0.0,
+          "pitch_line_backlash_mm": 2.508739,
+          "min_visual_tip_clearance_mm": 1.254369,
+          "mesh_envelope_min_distance_mm": 0.0,
+          "status": "pass"
+        },
+        {
+          "theta_deg": 195,
+          "pitch_arc_error_mm": 0.0,
+          "pitch_line_backlash_mm": 2.508739,
+          "min_visual_tip_clearance_mm": 1.254369,
+          "mesh_envelope_min_distance_mm": 0.062321,
+          "status": "pass"
+        },
+        {
+          "theta_deg": 210,
+          "pitch_arc_error_mm": 0.0,
+          "pitch_line_backlash_mm": 2.508739,
+          "min_visual_tip_clearance_mm": 1.254369,
+          "mesh_envelope_min_distance_mm": 0.062321,
+          "status": "pass"
+        },
+        {
+          "theta_deg": 225,
+          "pitch_arc_error_mm": 0.0,
+          "pitch_line_backlash_mm": 2.508739,
+          "min_visual_tip_clearance_mm": 1.254369,
+          "mesh_envelope_min_distance_mm": 0.0,
+          "status": "pass"
+        },
+        {
+          "theta_deg": 240,
+          "pitch_arc_error_mm": 0.0,
+          "pitch_line_backlash_mm": 2.508739,
+          "min_visual_tip_clearance_mm": 1.254369,
+          "mesh_envelope_min_distance_mm": 0.062321,
+          "status": "pass"
+        },
+        {
+          "theta_deg": 255,
+          "pitch_arc_error_mm": 0.0,
+          "pitch_line_backlash_mm": 2.508739,
+          "min_visual_tip_clearance_mm": 1.254369,
+          "mesh_envelope_min_distance_mm": 0.062321,
+          "status": "pass"
+        },
+        {
+          "theta_deg": 270,
+          "pitch_arc_error_mm": 0.0,
+          "pitch_line_backlash_mm": 2.508739,
+          "min_visual_tip_clearance_mm": 1.254369,
+          "mesh_envelope_min_distance_mm": 0.0,
+          "status": "pass"
+        },
+        {
+          "theta_deg": 285,
+          "pitch_arc_error_mm": 0.0,
+          "pitch_line_backlash_mm": 2.508739,
+          "min_visual_tip_clearance_mm": 1.254369,
+          "mesh_envelope_min_distance_mm": 0.062321,
+          "status": "pass"
+        },
+        {
+          "theta_deg": 300,
+          "pitch_arc_error_mm": 0.0,
+          "pitch_line_backlash_mm": 2.508739,
+          "min_visual_tip_clearance_mm": 1.254369,
+          "mesh_envelope_min_distance_mm": 0.062321,
+          "status": "pass"
+        },
+        {
+          "theta_deg": 315,
+          "pitch_arc_error_mm": 0.0,
+          "pitch_line_backlash_mm": 2.508739,
+          "min_visual_tip_clearance_mm": 1.254369,
+          "mesh_envelope_min_distance_mm": 0.0,
+          "status": "pass"
+        },
+        {
+          "theta_deg": 330,
+          "pitch_arc_error_mm": 0.0,
+          "pitch_line_backlash_mm": 2.508739,
+          "min_visual_tip_clearance_mm": 1.254369,
+          "mesh_envelope_min_distance_mm": 0.062321,
+          "status": "pass"
+        },
+        {
+          "theta_deg": 345,
+          "pitch_arc_error_mm": 0.0,
+          "pitch_line_backlash_mm": 2.508739,
+          "min_visual_tip_clearance_mm": 1.254369,
+          "mesh_envelope_min_distance_mm": 0.062321,
+          "status": "pass"
+        }
+      ],
+      "status": "pass"
+    },
+    {
+      "name": "hand_drive_to_carrier_drive",
+      "type": "external",
+      "a_teeth": 20,
+      "b_teeth": 40,
+      "a_pitch_radius_mm": 20.5,
+      "b_pitch_radius_mm": 41.0,
+      "a_tooth_tangential_width_mm": 1.5,
+      "b_tooth_tangential_width_mm": 1.4,
+      "center_distance_mm": 61.5,
+      "expected_ratio": -2.0,
+      "pitch_arc_mm": 6.440265,
+      "pitch_arc_error_mm": 0.0,
+      "min_pitch_line_backlash_mm": 3.540265,
+      "min_visual_tip_clearance_mm": 1.770132,
+      "min_mesh_envelope_distance_mm": 0.0,
+      "samples": [
+        {
+          "theta_deg": 0,
+          "pitch_arc_error_mm": 0.0,
+          "pitch_line_backlash_mm": 3.540265,
+          "min_visual_tip_clearance_mm": 1.770132,
+          "mesh_envelope_min_distance_mm": 0.0,
+          "status": "pass"
+        },
+        {
+          "theta_deg": 15,
+          "pitch_arc_error_mm": 0.0,
+          "pitch_line_backlash_mm": 3.540265,
+          "min_visual_tip_clearance_mm": 1.770132,
+          "mesh_envelope_min_distance_mm": 0.026948,
+          "status": "pass"
+        },
+        {
+          "theta_deg": 30,
+          "pitch_arc_error_mm": 0.0,
+          "pitch_line_backlash_mm": 3.540265,
+          "min_visual_tip_clearance_mm": 1.770132,
+          "mesh_envelope_min_distance_mm": 0.026948,
+          "status": "pass"
+        },
+        {
+          "theta_deg": 45,
+          "pitch_arc_error_mm": 0.0,
+          "pitch_line_backlash_mm": 3.540265,
+          "min_visual_tip_clearance_mm": 1.770132,
+          "mesh_envelope_min_distance_mm": 0.0,
+          "status": "pass"
+        },
+        {
+          "theta_deg": 60,
+          "pitch_arc_error_mm": 0.0,
+          "pitch_line_backlash_mm": 3.540265,
+          "min_visual_tip_clearance_mm": 1.770132,
+          "mesh_envelope_min_distance_mm": 0.026948,
+          "status": "pass"
+        },
+        {
+          "theta_deg": 75,
+          "pitch_arc_error_mm": 0.0,
+          "pitch_line_backlash_mm": 3.540265,
+          "min_visual_tip_clearance_mm": 1.770132,
+          "mesh_envelope_min_distance_mm": 0.026948,
+          "status": "pass"
+        },
+        {
+          "theta_deg": 90,
+          "pitch_arc_error_mm": 0.0,
+          "pitch_line_backlash_mm": 3.540265,
+          "min_visual_tip_clearance_mm": 1.770132,
+          "mesh_envelope_min_distance_mm": 0.0,
+          "status": "pass"
+        },
+        {
+          "theta_deg": 105,
+          "pitch_arc_error_mm": 0.0,
+          "pitch_line_backlash_mm": 3.540265,
+          "min_visual_tip_clearance_mm": 1.770132,
+          "mesh_envelope_min_distance_mm": 0.026948,
+          "status": "pass"
+        },
+        {
+          "theta_deg": 120,
+          "pitch_arc_error_mm": 0.0,
+          "pitch_line_backlash_mm": 3.540265,
+          "min_visual_tip_clearance_mm": 1.770132,
+          "mesh_envelope_min_distance_mm": 0.026948,
+          "status": "pass"
+        },
+        {
+          "theta_deg": 135,
+          "pitch_arc_error_mm": 0.0,
+          "pitch_line_backlash_mm": 3.540265,
+          "min_visual_tip_clearance_mm": 1.770132,
+          "mesh_envelope_min_distance_mm": 0.0,
+          "status": "pass"
+        },
+        {
+          "theta_deg": 150,
+          "pitch_arc_error_mm": 0.0,
+          "pitch_line_backlash_mm": 3.540265,
+          "min_visual_tip_clearance_mm": 1.770132,
+          "mesh_envelope_min_distance_mm": 0.026948,
+          "status": "pass"
+        },
+        {
+          "theta_deg": 165,
+          "pitch_arc_error_mm": 0.0,
+          "pitch_line_backlash_mm": 3.540265,
+          "min_visual_tip_clearance_mm": 1.770132,
+          "mesh_envelope_min_distance_mm": 0.026948,
+          "status": "pass"
+        },
+        {
+          "theta_deg": 180,
+          "pitch_arc_error_mm": 0.0,
+          "pitch_line_backlash_mm": 3.540265,
+          "min_visual_tip_clearance_mm": 1.770132,
+          "mesh_envelope_min_distance_mm": 0.0,
+          "status": "pass"
+        },
+        {
+          "theta_deg": 195,
+          "pitch_arc_error_mm": 0.0,
+          "pitch_line_backlash_mm": 3.540265,
+          "min_visual_tip_clearance_mm": 1.770132,
+          "mesh_envelope_min_distance_mm": 0.026948,
+          "status": "pass"
+        },
+        {
+          "theta_deg": 210,
+          "pitch_arc_error_mm": 0.0,
+          "pitch_line_backlash_mm": 3.540265,
+          "min_visual_tip_clearance_mm": 1.770132,
+          "mesh_envelope_min_distance_mm": 0.026948,
+          "status": "pass"
+        },
+        {
+          "theta_deg": 225,
+          "pitch_arc_error_mm": 0.0,
+          "pitch_line_backlash_mm": 3.540265,
+          "min_visual_tip_clearance_mm": 1.770132,
+          "mesh_envelope_min_distance_mm": 0.0,
+          "status": "pass"
+        },
+        {
+          "theta_deg": 240,
+          "pitch_arc_error_mm": 0.0,
+          "pitch_line_backlash_mm": 3.540265,
+          "min_visual_tip_clearance_mm": 1.770132,
+          "mesh_envelope_min_distance_mm": 0.026948,
+          "status": "pass"
+        },
+        {
+          "theta_deg": 255,
+          "pitch_arc_error_mm": 0.0,
+          "pitch_line_backlash_mm": 3.540265,
+          "min_visual_tip_clearance_mm": 1.770132,
+          "mesh_envelope_min_distance_mm": 0.026948,
+          "status": "pass"
+        },
+        {
+          "theta_deg": 270,
+          "pitch_arc_error_mm": 0.0,
+          "pitch_line_backlash_mm": 3.540265,
+          "min_visual_tip_clearance_mm": 1.770132,
+          "mesh_envelope_min_distance_mm": 0.0,
+          "status": "pass"
+        },
+        {
+          "theta_deg": 285,
+          "pitch_arc_error_mm": 0.0,
+          "pitch_line_backlash_mm": 3.540265,
+          "min_visual_tip_clearance_mm": 1.770132,
+          "mesh_envelope_min_distance_mm": 0.026948,
+          "status": "pass"
+        },
+        {
+          "theta_deg": 300,
+          "pitch_arc_error_mm": 0.0,
+          "pitch_line_backlash_mm": 3.540265,
+          "min_visual_tip_clearance_mm": 1.770132,
+          "mesh_envelope_min_distance_mm": 0.026948,
+          "status": "pass"
+        },
+        {
+          "theta_deg": 315,
+          "pitch_arc_error_mm": 0.0,
+          "pitch_line_backlash_mm": 3.540265,
+          "min_visual_tip_clearance_mm": 1.770132,
+          "mesh_envelope_min_distance_mm": 0.0,
+          "status": "pass"
+        },
+        {
+          "theta_deg": 330,
+          "pitch_arc_error_mm": 0.0,
+          "pitch_line_backlash_mm": 3.540265,
+          "min_visual_tip_clearance_mm": 1.770132,
+          "mesh_envelope_min_distance_mm": 0.026948,
+          "status": "pass"
+        },
+        {
+          "theta_deg": 345,
+          "pitch_arc_error_mm": 0.0,
+          "pitch_line_backlash_mm": 3.540265,
+          "min_visual_tip_clearance_mm": 1.770132,
+          "mesh_envelope_min_distance_mm": 0.026948,
+          "status": "pass"
+        }
+      ],
+      "status": "pass"
+    }
+  ]
+}

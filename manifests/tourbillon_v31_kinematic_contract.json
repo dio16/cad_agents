@@ -1,0 +1,20 @@
+{
+  "design_id": "v31_ratchet_barrel_vertical_lift_to_elevated_core",
+  "module_mm": 0.8,
+  "pressure_angle_deg": 20,
+  "backlash_allowance_mm": 0.25,
+  "minimum_no_undercut_teeth_20deg": 17,
+  "profile_shift_required": false,
+  "minimum_tip_root_clearance_mm": 0.2,
+  "meshes": [
+    {"name": "motor_to_winding", "driver_teeth": 18, "driven_teeth": 108, "driver_pitch_radius_mm": 7.2, "driven_pitch_radius_mm": 43.2, "center_distance_mm": 50.4},
+    {"name": "barrel_to_lower_transfer", "driver_teeth": 36, "driven_teeth": 18, "driver_pitch_radius_mm": 14.4, "driven_pitch_radius_mm": 7.2, "center_distance_mm": 21.6},
+    {"name": "upper_transfer_to_carrier", "driver_teeth": 18, "driven_teeth": 60, "driver_pitch_radius_mm": 12.7, "driven_pitch_radius_mm": 45.8, "center_distance_mm": 58.5}
+  ],
+  "minimum_pinion_teeth": 18,
+  "spatial_transition": {
+    "shaft": "vertical_lift_shaft",
+    "from_z_mm": 18,
+    "to_z_mm": 68
+  }
+}

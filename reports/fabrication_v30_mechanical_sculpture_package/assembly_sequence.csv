@@ -1,0 +1,7 @@
+step,operation
+1,install lower support bridge on lower base
+2,"install motor shaft, winding arbor, and vertical lift shaft"
+3,install lower winding / barrel / transfer gears
+4,mount upper tourbillon deck on the columns
+5,install elevated carrier core and upper transfer pinion
+6,verify full drive path from motor pinion to balance display

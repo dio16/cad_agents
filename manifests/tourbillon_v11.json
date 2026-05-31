@@ -1,0 +1,290 @@
+{
+  "name": "tourbillon_v11",
+  "document_url": "https://cad.onshape.com/documents/0222fa90c0584ca0727f31d2/w/0cb8dde2f58aafcc165e983c/e/51032f736d5308a396c05de4",
+  "assembly": {
+    "name": "Tourbillon V11 API workflow verification",
+    "element_id": "47455c94128d905048aeb521"
+  },
+  "design_checks": [
+    {
+      "name": "orbit pinion to fixed ring pitch",
+      "type": "gear_mesh",
+      "center_distance_mm": 39.5,
+      "pinion_pitch_radius_mm": 13.5,
+      "ring_pitch_radius_mm": 53.0,
+      "max_pitch_error_mm": 0.25
+    },
+    {
+      "name": "central sleeve bearing clearance",
+      "type": "radial_clearance",
+      "inner_radius_mm": 5.0,
+      "outer_radius_mm": 5.65,
+      "min_clearance_mm": 0.5
+    },
+    {
+      "name": "front crank connected to center drive",
+      "type": "connection",
+      "connected": true,
+      "message": "V11 keeps the crank linkage in the crank part and removes duplicate base linkage."
+    },
+    {
+      "name": "fixed ring visibility",
+      "type": "connection",
+      "connected": true,
+      "message": "V11 uses a raised 72/49.5 mm fixed annulus with larger pin teeth."
+    }
+  ],
+  "mechanism_requirements": [
+    {
+      "name": "Onshape assembly has functional mates",
+      "type": "assembly_mates",
+      "min_count": 4,
+      "message": "A working mechanism needs at least fixed/revolute/gear relation features, not only transformed instances."
+    },
+    {
+      "name": "hand crank drives the model",
+      "type": "driver_motion",
+      "role": "hand_crank",
+      "message": "The hand crank must be the driver or be coupled to the driver. V11 leaves it static."
+    },
+    {
+      "name": "hand crank is mechanically coupled to cage",
+      "type": "functional_connection",
+      "from_role": "hand_crank",
+      "to_role": "rotating_cage",
+      "connected": false,
+      "message": "The visible rod approaches the center but has no bearing, gear, key, or mate relation that transmits torque to the rotating cage."
+    },
+    {
+      "name": "orbit pinion internal rolling ratio",
+      "type": "internal_gear_spin_ratio",
+      "pinion_role": "orbit_pinion",
+      "center_distance_mm": 39.5,
+      "pinion_pitch_radius_mm": 13.5,
+      "tolerance": 0.05
+    },
+    {
+      "name": "orbit pinion bore clears cage axle",
+      "type": "radial_clearance",
+      "inner_radius_mm": 2.05,
+      "shaft_radius_mm": 2.2,
+      "min_clearance_mm": 0.25,
+      "message": "For FDM printing a free pinion needs positive radial clearance; V11 nominally interferes."
+    }
+  ],
+  "parts": [
+    {
+      "name": "base",
+      "role": "fixed_base",
+      "file": "C:/Users/diobrando/Documents/New project/tourbillon_v11_step/01_base_plinth_axis_v11.step",
+      "element_id": "87abd0709ad60a2f11493ff0",
+      "translation_id": "69eda1291bbb40071cbc8034",
+      "part_id": "JFD",
+      "instance_id": "MSgp9aUlRo5Lqastp"
+    },
+    {
+      "name": "fixed_internal_ring",
+      "role": "fixed_ring",
+      "file": "C:/Users/diobrando/Documents/New project/tourbillon_v11_step/02_fixed_internal_ring_96t_v11.step",
+      "element_id": "48ac431e0ffd633736e6c1f9",
+      "translation_id": "69eda1341bbb40071cbc8041",
+      "part_id": "JFD",
+      "instance_id": "MeLa4jhmGrWsSEvW/"
+    },
+    {
+      "name": "rotating_cage",
+      "role": "rotating_cage",
+      "file": "C:/Users/diobrando/Documents/New project/tourbillon_v11_step/03_rotating_cage_with_axles_v11.step",
+      "motion": {
+        "type": "rotate_z",
+        "ratio": 1.0
+      },
+      "element_id": "1802cecc5b7b844746a696b0",
+      "translation_id": "69eda13f1bbb40071cbc8066",
+      "part_id": "JFD",
+      "instance_id": "M4aNe7QDfHiwCgBWP"
+    },
+    {
+      "name": "orbit_pinion",
+      "role": "orbit_pinion",
+      "file": "C:/Users/diobrando/Documents/New project/tourbillon_v11_step/04_orbit_pinion_24t_v11.step",
+      "motion": {
+        "type": "orbit_and_spin_z",
+        "center_mm": [
+          39.5,
+          0.0
+        ],
+        "orbit_ratio": 1.0,
+        "spin_ratio": -4.0
+      },
+      "element_id": "531242cd2d2fa78658ac20e9",
+      "translation_id": "69eda14a1bbb40071cbc8072",
+      "part_id": "JFD",
+      "instance_id": "MORsrdll+nsVKAQgP"
+    },
+    {
+      "name": "balance_wheel",
+      "role": "balance_wheel",
+      "file": "C:/Users/diobrando/Documents/New project/tourbillon_v11_step/05_balance_wheel_v11.step",
+      "motion": {
+        "type": "rotate_z",
+        "ratio": 1.0
+      },
+      "element_id": "9c247979e9c395f9c31c879d",
+      "translation_id": "69eda1551bbb40071cbc8084",
+      "part_id": "JFD",
+      "instance_id": "MvEWaaCnivojFax+J"
+    },
+    {
+      "name": "escape_wheel",
+      "role": "escape_wheel",
+      "file": "C:/Users/diobrando/Documents/New project/tourbillon_v11_step/06_escape_wheel_30t_v11.step",
+      "motion": {
+        "type": "rotate_z",
+        "ratio": 1.0
+      },
+      "element_id": "3af34cc7c803c188ac3c3173",
+      "translation_id": "69eda1601bbb40071cbc8096",
+      "part_id": "JFD",
+      "instance_id": "MEPfcRvmiQK+BGTiK"
+    },
+    {
+      "name": "hand_crank",
+      "role": "hand_crank",
+      "file": "C:/Users/diobrando/Documents/New project/tourbillon_v11_step/07_hand_crank_knob_v11.step",
+      "element_id": "4420e3dc716076c04ff8d2a6",
+      "translation_id": "69eda16b1bbb40071cbc80a5",
+      "part_id": "JFD",
+      "instance_id": "MmBvU1BZWjLSF5ljr"
+    }
+  ],
+  "verification_runs": [
+    {
+      "kind": "design_check",
+      "status": "pass",
+      "timestamp": "2026-04-26T05:22:46.844556+00:00",
+      "results": [
+        {
+          "name": "orbit pinion to fixed ring pitch",
+          "type": "gear_mesh",
+          "status": "pass",
+          "pitch_error_mm": 0.0,
+          "max_pitch_error_mm": 0.25
+        },
+        {
+          "name": "central sleeve bearing clearance",
+          "type": "radial_clearance",
+          "status": "pass",
+          "clearance_mm": 0.65,
+          "min_clearance_mm": 0.5
+        },
+        {
+          "name": "front crank connected to center drive",
+          "type": "connection",
+          "status": "pass",
+          "message": "V11 keeps the crank linkage in the crank part and removes duplicate base linkage."
+        },
+        {
+          "name": "fixed ring visibility",
+          "type": "connection",
+          "status": "pass",
+          "message": "V11 uses a raised 72/49.5 mm fixed annulus with larger pin teeth."
+        }
+      ]
+    },
+    {
+      "kind": "pose",
+      "theta_deg": 90.0,
+      "transform_count": 4,
+      "timestamp": "2026-04-26T05:24:29.882069+00:00"
+    },
+    {
+      "kind": "design_check",
+      "status": "pass",
+      "timestamp": "2026-04-26T05:26:28.870808+00:00",
+      "results": [
+        {
+          "name": "orbit pinion to fixed ring pitch",
+          "type": "gear_mesh",
+          "status": "pass",
+          "pitch_error_mm": 0.0,
+          "max_pitch_error_mm": 0.25
+        },
+        {
+          "name": "central sleeve bearing clearance",
+          "type": "radial_clearance",
+          "status": "pass",
+          "clearance_mm": 0.65,
+          "min_clearance_mm": 0.5
+        },
+        {
+          "name": "front crank connected to center drive",
+          "type": "connection",
+          "status": "pass",
+          "message": "V11 keeps the crank linkage in the crank part and removes duplicate base linkage."
+        },
+        {
+          "name": "fixed ring visibility",
+          "type": "connection",
+          "status": "pass",
+          "message": "V11 uses a raised 72/49.5 mm fixed annulus with larger pin teeth."
+        }
+      ]
+    },
+    {
+      "kind": "pose",
+      "theta_deg": 180.0,
+      "transform_count": 4,
+      "timestamp": "2026-04-26T05:26:36.840627+00:00"
+    },
+    {
+      "kind": "mechanism_audit",
+      "status": "fail",
+      "timestamp": "2026-04-26T06:17:36.667061+00:00",
+      "results": [
+        {
+          "name": "Onshape assembly has functional mates",
+          "type": "assembly_mates",
+          "status": "fail",
+          "mate_feature_count": 0,
+          "min_count": 4,
+          "message": "A working mechanism needs at least fixed/revolute/gear relation features, not only transformed instances."
+        },
+        {
+          "name": "hand crank drives the model",
+          "type": "driver_motion",
+          "status": "fail",
+          "role": "hand_crank",
+          "motion": null,
+          "message": "The hand crank must be the driver or be coupled to the driver. V11 leaves it static."
+        },
+        {
+          "name": "hand crank is mechanically coupled to cage",
+          "type": "functional_connection",
+          "status": "fail",
+          "from_role": "hand_crank",
+          "to_role": "rotating_cage",
+          "message": "The visible rod approaches the center but has no bearing, gear, key, or mate relation that transmits torque to the rotating cage."
+        },
+        {
+          "name": "orbit pinion internal rolling ratio",
+          "type": "internal_gear_spin_ratio",
+          "status": "fail",
+          "expected_spin_ratio": -2.9259,
+          "actual_spin_ratio": -4.0,
+          "error": 1.0741,
+          "tolerance": 0.05
+        },
+        {
+          "name": "orbit pinion bore clears cage axle",
+          "type": "radial_clearance",
+          "status": "fail",
+          "clearance_mm": -0.15,
+          "min_clearance_mm": 0.25,
+          "message": "For FDM printing a free pinion needs positive radial clearance; V11 nominally interferes."
+        }
+      ]
+    }
+  ],
+  "last_pose_deg": 180.0
+}

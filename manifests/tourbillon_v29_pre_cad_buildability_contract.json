@@ -1,0 +1,62 @@
+{
+  "version": "V29",
+  "status": "pre_cad_buildability_ready",
+  "moving_roles": [
+    {
+      "role": "visible_winding_drum",
+      "support": "two-point axle support",
+      "retention": "shoulder plus washer",
+      "print_orientation": "flat split drum halves",
+      "tool_access": "front washer access"
+    },
+    {
+      "role": "horizontal_transfer_shaft",
+      "support": "two-point printed seats",
+      "retention": "washer plus screw",
+      "print_orientation": "base-up channels",
+      "tool_access": "side access"
+    },
+    {
+      "role": "vertical_riser_shaft",
+      "support": "lower and upper hub",
+      "retention": "upper cap plus lower shoulder",
+      "print_orientation": "upright bridge with accessible cap",
+      "tool_access": "top access"
+    },
+    {
+      "role": "canted_carrier",
+      "support": "bridge pair around 3 mm axis",
+      "retention": "bridge pair",
+      "print_orientation": "carrier ring flat, support bridge separate",
+      "tool_access": "front oblique access"
+    }
+  ],
+  "purchased_parts": [
+    "20D gearmotor",
+    "torsion spring",
+    "3 mm shafts",
+    "M3 screws",
+    "washers"
+  ],
+  "dfam_assumptions": {
+    "minimum_wall_mm": 2.4,
+    "shaft_radial_clearance_mm": 0.2,
+    "bearing_pocket_radial_clearance_mm": 0.2,
+    "support_required_for_overhang_deg_gt": 45
+  },
+  "assembly_sequence": [
+    "install power module and winding drum",
+    "install barrel / spring / ratchet",
+    "install horizontal transfer shaft",
+    "install vertical riser shaft and upper cap",
+    "install canted carrier bridge pair",
+    "install fine-motion train"
+  ],
+  "required_gates": [
+    "moving_role_support_pass",
+    "retention_pass",
+    "tool_access_pass",
+    "print_orientation_pass",
+    "assembly_sequence_pass"
+  ]
+}

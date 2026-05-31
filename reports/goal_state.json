@@ -1,0 +1,67 @@
+{
+  "created_at": "2026-05-17T16:36:32.879327+00:00",
+  "status": "blocked",
+  "task_ledger": {
+    "sha256": "9de54d39156eaaf566930fcdb82c4c35a5c0d6748345f9b9c3f4705720c57882",
+    "mtime_utc": "2026-05-17T16:33:24.691448+00:00"
+  },
+  "checks": [
+    {
+      "name": "current goal summary exists and passes",
+      "status": "fail",
+      "source": "reports/current_goal_summary.json"
+    },
+    {
+      "name": "trusted claim reaches spatial-kinetic-sculpture-object",
+      "status": "fail",
+      "claim_tier": null
+    },
+    {
+      "name": "stationary-autonomous-winding evidence passes",
+      "status": "fail",
+      "stationary_autonomous_winding_evidence": "blocked"
+    },
+    {
+      "name": "spatial-drive evidence passes",
+      "status": "fail",
+      "spatial_drive_evidence": "blocked"
+    },
+    {
+      "name": "object-value evidence passes",
+      "status": "fail",
+      "object_value_evidence": "blocked"
+    },
+    {
+      "name": "mechanical-truth evidence passes",
+      "status": "fail",
+      "mechanical_truth_evidence": "blocked"
+    },
+    {
+      "name": "object-level completion evidence passes",
+      "status": "fail",
+      "object_completion_evidence": "blocked"
+    },
+    {
+      "name": "user-consumable deliverable package passes",
+      "status": "pass",
+      "user_consumable_deliverable": "pass",
+      "deliverable_package_path": "deliverables/tourbillon_v30",
+      "viewer_entrypoint": "deliverables/tourbillon_v30/viewer.html"
+    },
+    {
+      "name": "user-facing entrypoint evidence passes",
+      "status": "pass",
+      "user_entrypoint_evidence": "pass"
+    },
+    {
+      "name": "no unresolved mission work remains across the task ledger",
+      "status": "fail",
+      "unresolved_active_tasks": [
+        {
+          "priority": "P3",
+          "task": "Produce the full V31 post-CAD proof bundle: role manifest, sampled motion, declared contacts, visibility, DFAM, autonomous-winding evidence, spatial-drive evidence, object-value review, user deliverable, and current goal closeout."
+        }
+      ]
+    }
+  ]
+}

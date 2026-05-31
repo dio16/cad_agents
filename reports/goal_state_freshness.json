@@ -1,0 +1,18 @@
+{
+  "created_at": "2026-05-17T16:36:33.011663+00:00",
+  "status": "pass",
+  "stored_task_ledger": {
+    "sha256": "9de54d39156eaaf566930fcdb82c4c35a5c0d6748345f9b9c3f4705720c57882",
+    "mtime_utc": "2026-05-17T16:33:24.691448+00:00"
+  },
+  "current_task_ledger": {
+    "sha256": "9de54d39156eaaf566930fcdb82c4c35a5c0d6748345f9b9c3f4705720c57882",
+    "mtime_utc": "2026-05-17T16:33:24.691448+00:00"
+  },
+  "checks": [
+    {
+      "name": "goal-state task-ledger digest matches current TASKS.md",
+      "status": "pass"
+    }
+  ]
+}

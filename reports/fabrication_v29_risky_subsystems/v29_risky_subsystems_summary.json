@@ -1,0 +1,98 @@
+{
+  "created_at": "2026-05-17T03:44:12.179508+00:00",
+  "status": "pass",
+  "claim": "concept geometry only; not fabrication complete",
+  "source_contract": "manifests/tourbillon_v29_risky_subsystems_contract.json",
+  "contact_sheet": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v29_risky_subsystems/v29_risky_subsystems_contact_sheet.png",
+  "parameters": {
+    "canted_cage_tilt_deg": 30,
+    "spatial_riser_axis_lift_mm": 42,
+    "visible_winding_drum_nominal_diameter_mm": 80
+  },
+  "module_roles": {
+    "01_autonomous_power_module_concept": [
+      "motor_chamber",
+      "visible_winding_drum",
+      "storage_barrel",
+      "output_shaft"
+    ],
+    "02_spatial_riser_concept": [
+      "horizontal_input_shaft",
+      "lower_hub",
+      "vertical_transfer_shaft",
+      "upper_hub",
+      "elevated_output"
+    ],
+    "03_canted_cage_sightline_concept": [
+      "open_cage",
+      "spokes",
+      "fast_fine_zone"
+    ]
+  },
+  "modules": [
+    {
+      "name": "01_autonomous_power_module_concept",
+      "step": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v29_risky_subsystems/step/01_autonomous_power_module_concept.step",
+      "stl": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v29_risky_subsystems/stl/01_autonomous_power_module_concept.stl",
+      "bbox_mm": {
+        "x": [
+          -55.0,
+          58.0
+        ],
+        "y": [
+          -40.0,
+          40.0
+        ],
+        "z": [
+          -4.02,
+          76.02
+        ]
+      }
+    },
+    {
+      "name": "02_spatial_riser_concept",
+      "step": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v29_risky_subsystems/step/02_spatial_riser_concept.step",
+      "stl": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v29_risky_subsystems/stl/02_spatial_riser_concept.stl",
+      "bbox_mm": {
+        "x": [
+          -35.0,
+          35.0
+        ],
+        "y": [
+          -12.0,
+          12.0
+        ],
+        "z": [
+          15.99,
+          66.0
+        ]
+      }
+    },
+    {
+      "name": "03_canted_cage_sightline_concept",
+      "step": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v29_risky_subsystems/step/03_canted_cage_sightline_concept.step",
+      "stl": "/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v29_risky_subsystems/stl/03_canted_cage_sightline_concept.stl",
+      "bbox_mm": {
+        "x": [
+          -45.0,
+          45.02
+        ],
+        "y": [
+          -41.49,
+          38.99
+        ],
+        "z": [
+          1.48,
+          50.85
+        ]
+      }
+    }
+  ],
+  "checks": {
+    "three_risky_subsystems_present": true,
+    "power_module_has_macro_motion_envelope": true,
+    "spatial_riser_changes_axis_height": true,
+    "canted_cage_has_tilted_envelope": true,
+    "contact_sheet_exists": true
+  }
+}

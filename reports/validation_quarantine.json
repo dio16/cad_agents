@@ -1,0 +1,19 @@
+{
+  "status": "legacy_reports_quarantined",
+  "created_at": "2026-05-09T00:00:00+09:00",
+  "reason": "The user rejected the V26 validation as mechanically insufficient. Pre-migration reports are observation-only until regenerated under WSL runtime proof and checked by an independent validator.",
+  "completion_evidence_policy": {
+    "trusted_summary": "reports/current_gate_summary.json",
+    "runtime_required": "reports/wsl_runtime_proof.json",
+    "independent_validator_required": "reports/fabrication_v26_mechanical_package/v26_independent_mechanical_truth_audit.json",
+    "legacy_reports_may_not_emit_completion": true
+  },
+  "quarantined_patterns": [
+    "reports/fabrication_v26_mechanical_package/v26_package_validation.json",
+    "reports/fabrication_v26_mechanical_package/v26_completion_status.json",
+    "reports/fabrication_v26_mechanical_package/v26_motion_validation.json",
+    "reports/fabrication_v26_mechanical_package/v26_role_manifest.json",
+    "reports/local_completion_status_v21.json",
+    "reports/v21_onshape_run_completion_status_final.json"
+  ]
+}

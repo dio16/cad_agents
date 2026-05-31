@@ -1,0 +1,142 @@
+{
+  "created_at": "2026-05-17T01:46:19.328654+00:00",
+  "status": "pass",
+  "mode": "full_regeneration",
+  "runner": [
+    "bash",
+    "./run_cad_agent.sh",
+    "--script"
+  ],
+  "steps": [
+    {
+      "name": "create_v28_mechanism_package",
+      "returncode": 0,
+      "status": "pass",
+      "command": [
+        "bash",
+        "./run_cad_agent.sh",
+        "--script",
+        "scripts/create_v28_mechanism_package.py"
+      ],
+      "stdout_tail": "{\n  \"status\": \"candidate_generated\",\n  \"manifest\": \"/home/diobrando/codex_wsl/cad_agent_framework/manifests/tourbillon_v28_mechanism_contract.json\",\n  \"part_count\": 9\n}\n",
+      "stderr_tail": ""
+    },
+    {
+      "name": "create_v28_motion_artifacts",
+      "returncode": 0,
+      "status": "pass",
+      "command": [
+        "bash",
+        "./run_cad_agent.sh",
+        "--script",
+        "scripts/create_v28_motion_artifacts.py"
+      ],
+      "stdout_tail": "{\n  \"status\": \"pass\",\n  \"reports\": [\n    \"v28_role_manifest.json\",\n    \"v28_motion_validation.json\"\n  ],\n  \"viewer\": \"/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v28_mechanism_package/v28_3d_cad_motion_viewer.html\"\n}\n",
+      "stderr_tail": ""
+    },
+    {
+      "name": "v28_mechanical_truth_audit",
+      "returncode": 0,
+      "status": "pass",
+      "command": [
+        "bash",
+        "./run_cad_agent.sh",
+        "--script",
+        "scripts/v28_mechanical_truth_audit.py"
+      ],
+      "stdout_tail": "{\n  \"status\": \"pass\",\n  \"report\": \"/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v28_mechanism_package/v28_mechanical_truth_audit.json\"\n}\n",
+      "stderr_tail": ""
+    },
+    {
+      "name": "v28_sampled_motion_audit",
+      "returncode": 0,
+      "status": "pass",
+      "command": [
+        "bash",
+        "./run_cad_agent.sh",
+        "--script",
+        "scripts/v28_sampled_motion_audit.py"
+      ],
+      "stdout_tail": "{\n  \"status\": \"pass\",\n  \"collision_count\": 0,\n  \"report\": \"/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v28_mechanism_package/v28_sampled_motion_audit.json\"\n}\n",
+      "stderr_tail": ""
+    },
+    {
+      "name": "v28_declared_contact_audit",
+      "returncode": 0,
+      "status": "pass",
+      "command": [
+        "bash",
+        "./run_cad_agent.sh",
+        "--script",
+        "scripts/v28_declared_contact_audit.py"
+      ],
+      "stdout_tail": "{\n  \"status\": \"pass\",\n  \"report\": \"/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v28_mechanism_package/v28_declared_contact_audit.json\"\n}\n",
+      "stderr_tail": ""
+    },
+    {
+      "name": "v28_visibility_audit",
+      "returncode": 0,
+      "status": "pass",
+      "command": [
+        "bash",
+        "./run_cad_agent.sh",
+        "--script",
+        "scripts/v28_visibility_audit.py"
+      ],
+      "stdout_tail": "{\n  \"status\": \"pass\",\n  \"report\": \"/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v28_mechanism_package/v28_visibility_audit.json\",\n  \"contact_sheet\": \"/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v28_mechanism_package/v28_visibility_contact_sheet.png\"\n}\n",
+      "stderr_tail": "/home/diobrando/codex_wsl/cad_agent_framework/scripts/v28_visibility_audit.py:63: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.\n  return sum(1 for pixel in image.getdata() if pixel)\n"
+    },
+    {
+      "name": "v28_wsl_http_viewer_smoke",
+      "returncode": 0,
+      "status": "pass",
+      "command": [
+        "bash",
+        "./run_cad_agent.sh",
+        "--script",
+        "scripts/v28_wsl_http_viewer_smoke.py"
+      ],
+      "stdout_tail": "{\n  \"status\": \"pass\",\n  \"report\": \"/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v28_mechanism_package/v28_wsl_http_viewer_smoke.json\",\n  \"screenshot\": \"/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v28_mechanism_package/v28_wsl_http_viewer_smoke.png\"\n}\n",
+      "stderr_tail": "/home/diobrando/codex_wsl/cad_agent_framework/scripts/v28_wsl_http_viewer_smoke.py:58: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.\n  for r, g, b in img.getdata():\n/home/diobrando/codex_wsl/cad_agent_framework/scripts/v28_wsl_http_viewer_smoke.py:70: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.\n  for r, g, b in diff.getdata():\n"
+    },
+    {
+      "name": "write_v28_gate_summary",
+      "returncode": 0,
+      "status": "pass",
+      "command": [
+        "bash",
+        "./run_cad_agent.sh",
+        "--script",
+        "scripts/write_v28_gate_summary.py"
+      ],
+      "stdout_tail": "     \"name\": \"role manifest names every visible moving role with parent/support/motion/axis metadata\",\n      \"status\": \"pass\",\n      \"source\": \"reports/fabrication_v28_mechanism_package/v28_role_manifest.json\",\n      \"axis_complete_roles\": [\n        \"balance_wheel\",\n        \"carrier\",\n        \"escape_wheel\",\n        \"hand_input_pinion\",\n        \"orbit_escape_pinion\",\n        \"pallet_fork\"\n      ]\n    },\n    {\n      \"name\": \"fallback transform motion artifact is present\",\n      \"status\": \"pass\",\n      \"source\": \"reports/fabrication_v28_mechanism_package/v28_motion_validation.json\",\n      \"motion_type\": \"fallback_transform_motion_with_physical_pallet_to_balance_linkage\"\n    },\n    {\n      \"name\": \"mechanical truth audit passes\",\n      \"status\": \"pass\",\n      \"source\": \"reports/fabrication_v28_mechanism_package/v28_mechanical_truth_audit.json\"\n    },\n    {\n      \"name\": \"sampled motion audit passes\",\n      \"status\": \"pass\",\n      \"source\": \"reports/fabrication_v28_mechanism_package/v28_sampled_motion_audit.json\",\n      \"undeclared_collision_count\": 0\n    },\n    {\n      \"name\": \"declared contact audit passes\",\n      \"status\": \"pass\",\n      \"source\": \"reports/fabrication_v28_mechanism_package/v28_declared_contact_audit.json\"\n    },\n    {\n      \"name\": \"sampled local-geometry visibility evidence passes\",\n      \"status\": \"pass\",\n      \"source\": \"reports/fabrication_v28_mechanism_package/v28_visibility_audit.json\",\n      \"contact_sheet\": \"/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v28_mechanism_package/v28_visibility_contact_sheet.png\",\n      \"artifact_kind\": \"deterministic_top_view_contact_sheet_from_local_step_geometry\"\n    },\n    {\n      \"name\": \"continuous local motion viewer smoke passes\",\n      \"status\": \"pass\",\n      \"source\": \"reports/fabrication_v28_mechanism_package/v28_wsl_http_viewer_smoke.json\"\n    },\n    {\n      \"name\": \"drive chain closes from hand input through pallet into balance\",\n      \"status\": \"pass\",\n      \"source\": \"manifests/tourbillon_v28_mechanism_contract.json\",\n      \"actual_chain\": [\n        [\n          \"hand_input_pinion\",\n          \"carrier\"\n        ],\n        [\n          \"carrier\",\n          \"orbit_escape_pinion\"\n        ],\n        [\n          \"orbit_escape_pinion\",\n          \"escape_wheel\"\n        ],\n        [\n          \"escape_wheel\",\n          \"pallet_fork\"\n        ],\n        [\n          \"pallet_fork\",\n          \"balance_wheel\"\n        ]\n      ]\n    },\n    {\n      \"name\": \"claim boundary remains explicitly non-watch-grade\",\n      \"status\": \"pass\",\n      \"source\": \"manifests/tourbillon_v28_mechanism_contract.json\",\n      \"blocked_claims\": [\n        \"lock/drop/impulse verified\",\n        \"regulating balance\",\n        \"self-sustaining oscillation\",\n        \"watch-grade escapement\"\n      ]\n    },\n    {\n      \"name\": \"claim-transition reports are fresh against the current V28 manifest\",\n      \"status\": \"pass\",\n      \"source\": \"manifest/report timestamps\",\n      \"manifest_created_at\": \"2026-05-17T01:43:26.640220+00:00\",\n      \"report_freshness\": {\n        \"/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v28_mechanism_package/v28_role_manifest.json\": true,\n        \"/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v28_mechanism_package/v28_motion_validation.json\": true,\n        \"/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v28_mechanism_package/v28_mechanical_truth_audit.json\": true,\n        \"/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v28_mechanism_package/v28_sampled_motion_audit.json\": true,\n        \"/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v28_mechanism_package/v28_declared_contact_audit.json\": true,\n        \"/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v28_mechanism_package/v28_visibility_audit.json\": true,\n        \"/home/diobrando/codex_wsl/cad_agent_framework/reports/fabrication_v28_mechanism_package/v28_wsl_http_viewer_smoke.json\": true\n      }\n    }\n  ]\n}\n",
+      "stderr_tail": ""
+    },
+    {
+      "name": "create_v28_user_deliverable",
+      "returncode": 0,
+      "status": "pass",
+      "command": [
+        "bash",
+        "./run_cad_agent.sh",
+        "--script",
+        "scripts/create_v28_user_deliverable.py"
+      ],
+      "stdout_tail": "{\n  \"status\": \"pass\",\n  \"deliverable_dir\": \"/home/diobrando/codex_wsl/cad_agent_framework/deliverables/tourbillon_v28\",\n  \"zip\": \"/home/diobrando/codex_wsl/cad_agent_framework/deliverables/tourbillon_v28/tourbillon_v28_print_bundle.zip\"\n}\n",
+      "stderr_tail": ""
+    },
+    {
+      "name": "validate_v28_user_deliverable",
+      "returncode": 0,
+      "status": "pass",
+      "command": [
+        "bash",
+        "./run_cad_agent.sh",
+        "--script",
+        "scripts/validate_v28_user_deliverable.py"
+      ],
+      "stdout_tail": "{\n  \"created_at\": \"2026-05-17T01:46:19.323234+00:00\",\n  \"status\": \"pass\",\n  \"deliverable_dir\": \"deliverables/tourbillon_v28\",\n  \"viewer_entrypoint\": \"deliverables/tourbillon_v28/viewer.html\",\n  \"printable_parts_dir\": \"deliverables/tourbillon_v28/stl\",\n  \"entrypoint_evidence\": \"pass\",\n  \"checks\": [\n    {\n      \"name\": \"deliverable directory exists\",\n      \"status\": \"pass\",\n      \"path\": \"/home/diobrando/codex_wsl/cad_agent_framework/deliverables/tourbillon_v28\"\n    },\n    {\n      \"name\": \"package manifest exists\",\n      \"status\": \"pass\",\n      \"path\": \"/home/diobrando/codex_wsl/cad_agent_framework/deliverables/tourbillon_v28/package_manifest.json\"\n    },\n    {\n      \"name\": \"viewer entrypoint exists\",\n      \"status\": \"pass\",\n      \"path\": \"viewer.html\"\n    },\n    {\n      \"name\": \"preview image exists\",\n      \"status\": \"pass\",\n      \"path\": \"preview.png\"\n    },\n    {\n      \"name\": \"contact-sheet preview exists\",\n      \"status\": \"pass\",\n      \"path\": \"preview_contact_sheet.png\"\n    },\n    {\n      \"name\": \"printed parts csv exists\",\n      \"status\": \"pass\",\n      \"path\": \"printed_parts.csv\"\n    },\n    {\n      \"name\": \"purchased parts csv exists\",\n      \"status\": \"pass\",\n      \"path\": \"purchased_parts.csv\"\n    },\n    {\n      \"name\": \"assembly sequence exists\",\n      \"status\": \"pass\",\n      \"path\": \"assembly_sequence.csv\"\n    },\n    {\n      \"name\": \"japanese readme exists\",\n      \"status\": \"pass\",\n      \"path\": \"README_JA.md\"\n    },\n    {\n      \"name\": \"stable current-delivery index exists\",\n      \"status\": \"pass\",\n      \"path\": \"deliverables/README.md\"\n    },\n    {\n      \"name\": \"stable current-delivery japanese index exists\",\n      \"status\": \"pass\",\n      \"path\": \"deliverables/README_JA.md\"\n    },\n    {\n      \"name\": \"machine current-delivery index exists\",\n      \"status\": \"pass\",\n      \"path\": \"deliverables/current_delivery.json\"\n    },\n    {\n      \"name\": \"expected printable STL count\",\n      \"status\": \"pass\",\n      \"count\": 9,\n      \"expected\": 9\n    },\n    {\n      \"name\": \"all STL files non-empty\",\n      \"status\": \"pass\",\n      \"files\": [\n        \"01_base_plinth_bearing_pocket_v28.stl\",\n        \"02_fixed_internal_ring_72t_v28.stl\",\n        \"03_rotating_carrier_drive_gear_v28.stl\",\n        \"04_orbit_escape_pinion_18t_v28.stl\",\n        \"05_hand_crank_pinion_v28.stl\",\n        \"06_balance_wheel_v28.stl\",\n        \"07_escape_wheel_15t_v28.stl\",\n        \"08_pallet_fork_bridge_v28.stl\",\n        \"09_crank_knob_v28.stl\"\n      ]\n    },\n    {\n      \"name\": \"print bundle zip exists\",\n      \"status\": \"pass\",\n      \"path\": \"tourbillon_v28_print_bundle.zip\"\n    },\n    {\n      \"name\": \"manifest uses relative viewer path\",\n      \"status\": \"pass\",\n      \"viewer_entrypoint\": \"viewer.html\"\n    },\n    {\n      \"name\": \"manifest declares printable parts dir\",\n      \"status\": \"pass\",\n      \"printable_parts_dir\": \"stl\"\n    },\n    {\n      \"name\": \"manifest object class is goal-level mechanism\",\n      \"status\": \"pass\",\n      \"object_class\": \"mechanically-driven-tabletop-mechanism\"\n    },\n    {\n      \"name\": \"manifest generation matches source\",\n      \"status\": \"pass\",\n      \"package_generation_id\": \"2026-05-17T01:43:26.640220+00:00\",\n      \"source_generation_id\": \"2026-05-17T01:43:26.640220+00:00\"\n    },\n    {\n      \"name\": \"current-delivery index points at current package\",\n      \"status\": \"pass\",\n      \"package_path\": \"deliverables/tourbillon_v28\"\n    },\n    {\n      \"name\": \"current-delivery index points at current viewer\",\n      \"status\": \"pass\",\n      \"viewer_entrypoint\": \"deliverables/tourbillon_v28/viewer.html\"\n    },\n    {\n      \"name\": \"current-delivery index matches source generation\",\n      \"status\": \"pass\",\n      \"current_generation_id\": \"2026-05-17T01:43:26.640220+00:00\",\n      \"source_generation_id\": \"2026-05-17T01:43:26.640220+00:00\"\n    }\n  ]\n}\n",
+      "stderr_tail": ""
+    }
+  ]
+}

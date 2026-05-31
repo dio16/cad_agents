@@ -1,0 +1,85 @@
+{
+  "name": "tourbillon_v17_layout_locked",
+  "design_rule": "layout_locked_before_cad",
+  "standard_components": [
+    {
+      "name": "central bearing",
+      "type": "608ZZ",
+      "bore_mm": 8.0,
+      "od_mm": 22.0,
+      "width_mm": 7.0,
+      "qty": 1
+    },
+    {
+      "name": "orbit pinion bearings",
+      "type": "623ZZ",
+      "bore_mm": 3.0,
+      "od_mm": 10.0,
+      "width_mm": 4.0,
+      "qty": 2
+    },
+    {
+      "name": "hand crank bearing",
+      "type": "623ZZ",
+      "bore_mm": 3.0,
+      "od_mm": 10.0,
+      "width_mm": 4.0,
+      "qty": 1
+    },
+    {
+      "name": "shafts",
+      "type": "MISUMI or equivalent 3 mm shaft",
+      "diameter_mm": 3.0,
+      "qty": 3
+    },
+    {
+      "name": "fasteners",
+      "type": "M3 screws",
+      "qty": 12
+    }
+  ],
+  "gears": {
+    "fixed_ring": {
+      "pitch_radius_mm": 58.0,
+      "teeth": 116,
+      "z": 27.0
+    },
+    "orbit_pinion": {
+      "pitch_radius_mm": 14.0,
+      "teeth": 28,
+      "center_radius_mm": 44.0,
+      "z": 27.0
+    },
+    "cage_drive": {
+      "pitch_radius_mm": 44.0,
+      "teeth": 88,
+      "z": 18.0
+    },
+    "hand_crank_pinion": {
+      "pitch_radius_mm": 11.0,
+      "teeth": 22,
+      "center_distance_mm": 55.0,
+      "z": 18.0
+    }
+  },
+  "layout_checks": [
+    {
+      "name": "drive gear plane separated below fixed ring",
+      "clearance_mm": 4.0,
+      "min_clearance_mm": 3.0
+    },
+    {
+      "name": "cage plane clears base",
+      "clearance_mm": 4.0,
+      "min_clearance_mm": 3.0
+    },
+    {
+      "name": "display is integrated into cage body",
+      "supported": true
+    },
+    {
+      "name": "no hardware reference imported as floating CAD",
+      "supported": true
+    }
+  ]
+}

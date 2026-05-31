@@ -1,0 +1,131 @@
+{
+  "version": "V29",
+  "status": "system_interface_control_ready",
+  "purpose": "prove that independently feasible risky subsystems still compose before full sculpture geometry",
+  "assembly_frame": {
+    "origin": "riser centerline at base plane",
+    "axes": {
+      "x": "left-to-right power transfer",
+      "y": "front-to-back",
+      "z": "upward"
+    }
+  },
+  "modules": [
+    {
+      "name": "autonomous_power_module",
+      "frame": "base_frame",
+      "inputs": [
+        {
+          "name": "external_low_voltage_power",
+          "kind": "energy"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "stored_energy_output_shaft",
+          "axis": "x",
+          "centerline_height_mm": 20
+        }
+      ],
+      "reserved_envelope_mm": {
+        "x": [-110, -5],
+        "y": [-42, 42],
+        "z": [0, 82]
+      },
+      "hero_view_occlusion_budget": "must not hide the riser or canted cage from the main oblique view"
+    },
+    {
+      "name": "spatial_riser",
+      "frame": "riser_frame",
+      "inputs": [
+        {
+          "name": "stored_energy_input_shaft",
+          "axis": "x",
+          "centerline_height_mm": 20
+        }
+      ],
+      "outputs": [
+        {
+          "name": "elevated_output_axis",
+          "axis": "z",
+          "centerline_height_mm": 62
+        }
+      ],
+      "reserved_envelope_mm": {
+        "x": [-35, 35],
+        "y": [-14, 14],
+        "z": [16, 66]
+      },
+      "hero_view_occlusion_budget": "must remain readable as the one obvious plane-changing transfer"
+    },
+    {
+      "name": "canted_cage_display",
+      "frame": "carrier_frame",
+      "inputs": [
+        {
+          "name": "elevated_carrier_drive_input",
+          "axis": "z_to_canted",
+          "centerline_height_mm": 62
+        }
+      ],
+      "outputs": [
+        {
+          "name": "carrier_rotation",
+          "axis": "canted_30_deg"
+        }
+      ],
+      "reserved_envelope_mm": {
+        "x": [18, 112],
+        "y": [-45, 45],
+        "z": [0, 56]
+      },
+      "hero_view_occlusion_budget": "fine-motion zone remains open from the primary oblique view"
+    }
+  ],
+  "interfaces": [
+    {
+      "from_module": "autonomous_power_module",
+      "from_output": "stored_energy_output_shaft",
+      "to_module": "spatial_riser",
+      "to_input": "stored_energy_input_shaft",
+      "handoff_type": "coaxial_shaft",
+      "required_match": {
+        "axis": "x",
+        "centerline_height_mm": 20
+      }
+    },
+    {
+      "from_module": "spatial_riser",
+      "from_output": "elevated_output_axis",
+      "to_module": "canted_cage_display",
+      "to_input": "elevated_carrier_drive_input",
+      "handoff_type": "axis_transition",
+      "required_match": {
+        "centerline_height_mm": 62,
+        "transition": "z_to_canted_30_deg"
+      }
+    }
+  ],
+  "declared_contact_zones": [
+    "power_to_riser_shaft_handoff",
+    "riser_to_canted_drive_handoff"
+  ],
+  "assembly_order": [
+    "install autonomous power module to base",
+    "install spatial riser and align low-plane shaft handoff",
+    "install canted cage support and elevated drive handoff",
+    "install fine-motion train after the carrier frame is constrained"
+  ],
+  "required_gates": [
+    "cross_module_integration_pass",
+    "interface_axis_match_pass",
+    "reserved_envelope_pass",
+    "hero_view_budget_pass",
+    "assembly_order_pass"
+  ],
+  "source_docs": [
+    "docs/v29_pre_cad_feasibility_package_ja.md",
+    "docs/v29_detailed_dimensioning_package_ja.md",
+    "docs/v29_risky_subsystem_review_ja.md"
+  ]
+}

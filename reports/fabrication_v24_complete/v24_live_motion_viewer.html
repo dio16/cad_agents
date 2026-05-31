@@ -1,0 +1,30 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>V24 Tourbillon Moving Object</title>
+<script type="module" src="https://unpkg.com/three@0.160.0/build/three.module.js"></script>
+<style>body{margin:0;background:#101720;color:#edf2f5;font-family:system-ui,sans-serif}main{display:grid;grid-template-columns:1fr 320px;min-height:100vh}#stage{width:100%;height:100vh}.panel{padding:18px;background:#171f28;border-left:1px solid #354250}button{margin:0 6px 8px 0;padding:8px 10px;border:1px solid #607080;border-radius:6px;background:#25313d;color:white}.row{margin:12px 0}.sw{display:inline-block;width:12px;height:12px;margin-right:8px;border-radius:3px}@media(max-width:760px){main{grid-template-columns:1fr}#stage{height:72vh}.panel{border-left:0;border-top:1px solid #354250}}</style>
+</head><body><main><div id="stage"></div><aside class="panel"><h1>V24 Tourbillon</h1><div class="row"><button id="play">Pause</button><button id="slow">Slow</button><button id="fast">Fast</button></div><div class="row"><button data-focus="front">Front</button><button data-focus="iso">Iso</button><button data-focus="esc">Escapement</button></div><p><span class="sw" style="background:#d9ad52"></span>carrier and balance move together</p><p><span class="sw" style="background:#e8742b"></span>orbit pinion rolls on fixed ring</p><p><span class="sw" style="background:#cc487e"></span>hand drive meshes with carrier gear</p><p><span class="sw" style="background:#557da0"></span>fixed ring is full, rear, and subdued</p><p>Continuous local transform animation. Native Onshape Gear Relation remains blocked.</p></aside></main>
+<script type="module">
+import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
+const root=document.getElementById('stage'), scene=new THREE.Scene(); scene.background=new THREE.Color(0x101720);
+const camera=new THREE.PerspectiveCamera(32, root.clientWidth/root.clientHeight, .01, 1); camera.position.set(.12,-.20,.16); camera.lookAt(0,0,.03);
+const renderer=new THREE.WebGLRenderer({antialias:true}); renderer.setSize(root.clientWidth,root.clientHeight); root.appendChild(renderer.domElement);
+scene.add(new THREE.HemisphereLight(0xffffff,0x1a1f25,2.3)); const dl=new THREE.DirectionalLight(0xffffff,1.5); dl.position.set(.1,-.1,.2); scene.add(dl);
+const mat=n=>new THREE.MeshStandardMaterial({color:n,roughness:.45,metalness:.25,transparent:n===0x557da0,opacity:n===0x557da0?.45:1});
+function cyl(r,h,c){let g=new THREE.CylinderGeometry(r,r,h,64); let m=new THREE.Mesh(g,c); m.rotation.x=Math.PI/2; return m;}
+function box(x,y,z,c){return new THREE.Mesh(new THREE.BoxGeometry(x,y,z),c);}
+function gear(r,t,color){const group=new THREE.Group(); group.add(cyl(r-.002,.004,color)); for(let i=0;i<t;i++){let tooth=box(.004,.0013,.004,color); let a=i*Math.PI*2/t; tooth.position.set(Math.cos(a)*r,Math.sin(a)*r,0); tooth.rotation.z=a; group.add(tooth);} return group;}
+const fixed=new THREE.Group(); scene.add(fixed); let base=cyl(.072,.006,mat(0x262a2f)); base.position.z=0; fixed.add(base); const ring=gear(.050,64,mat(0x557da0)); ring.position.z=.018; fixed.add(ring);
+const hand=gear(.0205,20,mat(0xcc487e)); hand.position.set(0,-.0615,.030); fixed.add(hand);
+const carrier=new THREE.Group(); scene.add(carrier); const cgear=gear(.041,40,mat(0xd9ad52)); cgear.position.z=.030; carrier.add(cgear); const cring=gear(.040,48,mat(0xd9ad52)); cring.position.z=.044; carrier.add(cring);
+function post(x,y){let p=cyl(.0013,.026,mat(0xc6ccd0)); p.position.set(x,y,.048); carrier.add(p)}
+post(.0375,0); post(-.018,.008); post(.016,.010); post(.005,-.011);
+const orbit=gear(.0125,16,mat(0xe8742b)); orbit.position.set(.0375,0,.018); carrier.add(orbit);
+const bal=new THREE.Group(); bal.position.set(-.018,.008,.056); bal.add(cyl(.0135,.0015,mat(0xefce6e))); carrier.add(bal);
+const esc=gear(.007,15,mat(0xed8531)); esc.position.set(.016,.010,.058); carrier.add(esc);
+const pallet=new THREE.Group(); pallet.position.set(.005,-.011,.060); const pb=box(.024,.0016,.0014,mat(0xebe6d7)); pallet.add(pb); carrier.add(pallet);
+for (const [x,y] of [[0,0],[.0375,0],[-.018,.008],[.016,.010],[.005,-.011]]) {let j=cyl(.0016,.0016,mat(0xda1841)); j.position.set(x,y,.064); carrier.add(j)}
+let playing=true, speed=.7, theta=0; document.getElementById('play').onclick=()=>{playing=!playing; play.textContent=playing?'Pause':'Play'}; slow.onclick=()=>speed=.25; fast.onclick=()=>speed=1.5;
+document.querySelectorAll('[data-focus]').forEach(b=>b.onclick=()=>{const f=b.dataset.focus; if(f==='front') camera.position.set(0,-.22,.12); if(f==='iso') camera.position.set(.12,-.20,.16); if(f==='esc') camera.position.set(.04,-.09,.10); camera.lookAt(0,0,.04);});
+let last=performance.now(); function loop(now){let dt=(now-last)/1000; last=now; if(playing) theta+=dt*speed; carrier.rotation.z=theta; hand.rotation.z=-2*theta; orbit.rotation.z=-4*theta; esc.rotation.z=7*theta; bal.rotation.z=Math.sin(theta*4)*.35; pallet.rotation.z=Math.sin(theta*4+1)*.25; renderer.render(scene,camera); requestAnimationFrame(loop)} requestAnimationFrame(loop);
+addEventListener('resize',()=>{camera.aspect=root.clientWidth/root.clientHeight;camera.updateProjectionMatrix();renderer.setSize(root.clientWidth,root.clientHeight);});
+</script></body></html>

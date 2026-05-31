@@ -1,0 +1,76 @@
+{
+  "created_at": "2026-04-30T01:16:41.028869+00:00",
+  "scope": "isolated V21 Onshape update run; canonical tourbillon_v20.json and tourbillon_v21.json not modified by this worker",
+  "manifest": "manifests/tourbillon_v21_onshape_run.json",
+  "commands_run": [
+    "wsl bash -lc \"cd '/mnt/c/Users/diobrando/Documents/New project/cad_agent_framework' && python3 cad_agent_cli.py --manifest manifests/tourbillon_v21_onshape_run.json import\"",
+    "wsl bash -lc \"cd '/mnt/c/Users/diobrando/Documents/New project/cad_agent_framework' && /home/diobrando/cad/tourbillon/.venv-cadquery/bin/python cad_agent_cli.py --manifest manifests/tourbillon_v21_onshape_run.json geometry-audit\"",
+    "wsl bash -lc \"cd '/mnt/c/Users/diobrando/Documents/New project/cad_agent_framework' && /home/diobrando/cad/tourbillon/.venv-cadquery/bin/python cad_agent_cli.py --manifest manifests/tourbillon_v21_onshape_run.json mated-assembly --fresh\"",
+    "wsl bash -lc \"cd '/mnt/c/Users/diobrando/Documents/New project/cad_agent_framework' && /home/diobrando/cad/tourbillon/.venv-cadquery/bin/python cad_agent_cli.py --manifest manifests/tourbillon_v21_onshape_run.json mate-audit\"",
+    "wsl bash -lc \"cd '/mnt/c/Users/diobrando/Documents/New project/cad_agent_framework' && /home/diobrando/cad/tourbillon/.venv-cadquery/bin/python cad_agent_cli.py --manifest manifests/tourbillon_v21_onshape_run.json pose-snapshots --fresh\""
+  ],
+  "fresh_printed_part_imports": [
+    {
+      "role": "fixed_base",
+      "file": "/home/diobrando/cad/tourbillon/tourbillon_v20_step/01_base_608zz_bearing_pocket_v20.step",
+      "element_id": "3e6189ad136c3947a4515cf9",
+      "translation_id": "69f2abc93ca6c58ff10c24d2",
+      "document_url": "https://cad.onshape.com/documents/0222fa90c0584ca0727f31d2/w/0cb8dde2f58aafcc165e983c/e/3e6189ad136c3947a4515cf9"
+    },
+    {
+      "role": "fixed_ring",
+      "file": "/home/diobrando/cad/tourbillon/tourbillon_v20_step/02_fixed_internal_ring_clearance_teeth_v20.step",
+      "element_id": "d907a907f4cfa108729c4554",
+      "translation_id": "69f2abd53ca6c58ff10c2531",
+      "document_url": "https://cad.onshape.com/documents/0222fa90c0584ca0727f31d2/w/0cb8dde2f58aafcc165e983c/e/d907a907f4cfa108729c4554"
+    },
+    {
+      "role": "rotating_cage",
+      "file": "/home/diobrando/cad/tourbillon/tourbillon_v20_step/03_rotating_cage_bearing_journal_shaft_retainer_v20.step",
+      "element_id": "42d6f7212771ad0dcd15a9a1",
+      "translation_id": "69f2abe03ca6c58ff10c2569",
+      "document_url": "https://cad.onshape.com/documents/0222fa90c0584ca0727f31d2/w/0cb8dde2f58aafcc165e983c/e/42d6f7212771ad0dcd15a9a1"
+    },
+    {
+      "role": "orbit_pinion",
+      "file": "/home/diobrando/cad/tourbillon/tourbillon_v20_step/04_orbit_pinion_3mm_bore_backlash_teeth_v20.step",
+      "element_id": "58d289ae720af46a9a031e3d",
+      "translation_id": "69f2abec3ca6c58ff10c258b",
+      "document_url": "https://cad.onshape.com/documents/0222fa90c0584ca0727f31d2/w/0cb8dde2f58aafcc165e983c/e/58d289ae720af46a9a031e3d"
+    },
+    {
+      "role": "hand_crank",
+      "file": "/home/diobrando/cad/tourbillon/tourbillon_v20_step/05_hand_crank_3mm_shaft_bore_retained_pinion_v20.step",
+      "element_id": "7ec43319ebe05aee2333807e",
+      "translation_id": "69f2abf83ca6c58ff10c25d6",
+      "document_url": "https://cad.onshape.com/documents/0222fa90c0584ca0727f31d2/w/0cb8dde2f58aafcc165e983c/e/7ec43319ebe05aee2333807e"
+    }
+  ],
+  "checks": {
+    "geometry_audit": "pass",
+    "mated_assembly_fresh": "pass",
+    "mate_audit_basic_mates": "pass",
+    "pose_snapshots_fresh": "pass"
+  },
+  "onshape": {
+    "source_document_url": "https://cad.onshape.com/documents/0222fa90c0584ca0727f31d2/w/0cb8dde2f58aafcc165e983c/e/d06eca291d4b92e8e6634fa4",
+    "mated_assembly_element_id": "ed96fa6ecf577942b84738b4",
+    "mated_assembly_url": "https://cad.onshape.com/documents/0222fa90c0584ca0727f31d2/w/0cb8dde2f58aafcc165e983c/e/ed96fa6ecf577942b84738b4",
+    "pose_snapshot_element_id": "9d5a5dcebd96c3492b7d3cd7",
+    "pose_snapshot_url": "https://cad.onshape.com/documents/0222fa90c0584ca0727f31d2/w/0cb8dde2f58aafcc165e983c/e/9d5a5dcebd96c3492b7d3cd7"
+  },
+  "interim_blockers_resolved": [
+    "Initial WSL python3 mated-assembly attempt failed because cadquery was not installed; resolved by using existing /home/diobrando/cad/tourbillon/.venv-cadquery/bin/python.",
+    "Fresh fixed_ring selector had 72 equivalent ring-edge matches and stale V20 deterministic_id KFF/ was not present; resolved only in run manifest by selecting fresh candidate KFJ/ with prefer_legacy_id=true. Candidate evidence: reports/v21_onshape_update_fixed_ring_selector_candidates.json."
+  ],
+  "changed_files": [
+    "manifests/tourbillon_v21_onshape_run.json",
+    "reports/v21_onshape_update_import.json",
+    "reports/v21_onshape_update_geometry_audit.json",
+    "reports/v21_onshape_update_fixed_ring_selector_candidates.json",
+    "reports/v21_onshape_update_mated_assembly.json",
+    "reports/v21_onshape_update_mate_audit.json",
+    "reports/v21_onshape_update_pose_snapshots.json",
+    "reports/v21_onshape_update_summary.json"
+  ]
+}

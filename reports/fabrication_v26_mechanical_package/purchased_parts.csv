@@ -1,0 +1,6 @@
+role,standard,size_mm,qty,fit
+central_bearing,608ZZ,8x22x7,1,slip pocket with 0.25 mm radial OD clearance
+orbit_escape_shaft,MISUMI equivalent precision shaft or dowel pin,3 dia x 38,1,supported by split lower/upper carrier bridge seats clear of the rotating pinion and escape wheel stack
+hand_crank_shaft,MISUMI equivalent precision shaft or dowel pin,3 dia x 42,1,two-point fixed-frame support
+ring_fasteners,M3 socket head screws,M3 x 42 envelope,4,fixed ring to base standoffs
+retention,M3 washers or printed collars,3.2 bore,4,axial retainers for hand and orbit shafts

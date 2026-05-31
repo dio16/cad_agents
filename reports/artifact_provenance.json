@@ -1,0 +1,426 @@
+{
+  "created_at": "2026-05-16T13:14:59.215048+00:00",
+  "status": "pass",
+  "root": "/home/diobrando/codex_wsl/cad_agent_framework",
+  "python": "/home/diobrando/cad/tourbillon/.venv-cadquery/bin/python",
+  "git_head": null,
+  "generation_id": "2026-05-16T13:12:01.537997+00:00",
+  "manifest_sha256": "538917edf59d9d44fc3a62ba5d6d8d13216206e6b45cc9fde2bb0c3af0710c65",
+  "artifact_set_sha256": "dab3fee722fca31dec10c0f121cd3ea8eaef3dc630907ba0ab4b70478ea7bc0b",
+  "derived_completion_hashes": {
+    "reports/fabrication_v27_connected_package/v27_role_manifest.json": "04f024e82f6f07cf0cc0c88a653fdb630dc64e72973eea8110bc9edcd087faee",
+    "reports/fabrication_v27_connected_package/v27_motion_validation.json": "86b4586cd8859c6213023f2f4d7a31fe61e68086abe7e9ecb1b482edb1751283",
+    "reports/fabrication_v27_connected_package/v27_3d_cad_motion_viewer.html": "4764413af45f713ce0ba9a09328c700f45d9dd8b8a7e23af09f9b7e48ce1938f"
+  },
+  "freshness_status": "pass",
+  "files": [
+    {
+      "path": "manifests/tourbillon_v26_mechanical_package.json",
+      "bytes": 6561,
+      "mtime_ns": 1778250056316708700,
+      "sha256": "5a92ba0424ba21773555a3f3f8ab0b9f82cd81591f0387880eeec08773bd9590"
+    },
+    {
+      "path": "manifests/tourbillon_v27_connected_contract.json",
+      "bytes": 11170,
+      "mtime_ns": 1778937121536077675,
+      "sha256": "538917edf59d9d44fc3a62ba5d6d8d13216206e6b45cc9fde2bb0c3af0710c65"
+    },
+    {
+      "path": "reports/fabrication_v26_mechanical_package/assembly_sequence.csv",
+      "bytes": 962,
+      "mtime_ns": 1778256257527860668,
+      "sha256": "6d6b9ca7f3939b82bd51bccefde2994e921221a5727967536cb40a7ddb38d88e"
+    },
+    {
+      "path": "reports/fabrication_v26_mechanical_package/printed_parts.csv",
+      "bytes": 2560,
+      "mtime_ns": 1778256257523722930,
+      "sha256": "6445830a629a09bf4a2da5c493674e0f9787ef6b139c1bcc2b74d7fc4149d62e"
+    },
+    {
+      "path": "reports/fabrication_v26_mechanical_package/purchased_parts.csv",
+      "bytes": 580,
+      "mtime_ns": 1778256257523722930,
+      "sha256": "852b0e9b2e6bab1bf9caa78ccb7f69e0a6992a2aeea05ecbc7f29ded87c62e5e"
+    },
+    {
+      "path": "reports/fabrication_v26_mechanical_package/stl/01_base_plinth_bearing_pocket_v26.stl",
+      "bytes": 955176,
+      "mtime_ns": 1778256257234081305,
+      "sha256": "e38d6820002d82cac2d07a4ad1ece3f539562777e68407debd4368dfa38c69d9"
+    },
+    {
+      "path": "reports/fabrication_v26_mechanical_package/stl/02_fixed_internal_ring_72t_v26.stl",
+      "bytes": 897189,
+      "mtime_ns": 1778256257320973792,
+      "sha256": "6bea16c7c3dd44a30d01b244be9cd4e49c3663c59c68175361b23b3b34ff8728"
+    },
+    {
+      "path": "reports/fabrication_v26_mechanical_package/stl/03_rotating_carrier_drive_gear_v26.stl",
+      "bytes": 1197376,
+      "mtime_ns": 1778256257420279493,
+      "sha256": "3eee868ff8b1de00fe6b01bfcab06db4df60105408a46900aeb6cf1215f8bbb0"
+    },
+    {
+      "path": "reports/fabrication_v26_mechanical_package/stl/04_orbit_escape_pinion_18t_v26.stl",
+      "bytes": 340401,
+      "mtime_ns": 1778256257453381392,
+      "sha256": "80edb4b72704b75856902a4b3cdd0bebf7e03fbc9c438fb06b5761d97e630ffe"
+    },
+    {
+      "path": "reports/fabrication_v26_mechanical_package/stl/05_hand_crank_pinion_v26.stl",
+      "bytes": 251167,
+      "mtime_ns": 1778256257478207818,
+      "sha256": "66e690a5e058f8eb64d20b1a6e830488c4cf5dbe1f01331011eac52a497dc3ee"
+    },
+    {
+      "path": "reports/fabrication_v26_mechanical_package/stl/06_balance_wheel_v26.stl",
+      "bytes": 213245,
+      "mtime_ns": 1778256257494758767,
+      "sha256": "97ed9d0d311dbd32d1ca04a5c29b77b658436f646b7ef288e944d5cc8d5b9364"
+    },
+    {
+      "path": "reports/fabrication_v26_mechanical_package/stl/07_escape_wheel_15t_v26.stl",
+      "bytes": 205750,
+      "mtime_ns": 1778256257507171980,
+      "sha256": "763eb92e2653bebd80ea1f53bc4a72e762f6a5fd13e1a13ecef7782f85ec0264"
+    },
+    {
+      "path": "reports/fabrication_v26_mechanical_package/stl/08_pallet_fork_bridge_v26.stl",
+      "bytes": 110550,
+      "mtime_ns": 1778256257515447455,
+      "sha256": "6b54c7ab3a85be21319401187414583a1461a30c132e4439d1583c0c25dbbcc9"
+    },
+    {
+      "path": "reports/fabrication_v26_mechanical_package/stl/09_crank_knob_v26.stl",
+      "bytes": 113757,
+      "mtime_ns": 1778256257523722930,
+      "sha256": "b95049e4f199ce91c2acda45241319d36c82b9775206a9d89542e5323320ad3b"
+    },
+    {
+      "path": "reports/fabrication_v26_mechanical_package/v26_3d_cad_motion_viewer.html",
+      "bytes": 1166350,
+      "mtime_ns": 1778256257585788992,
+      "sha256": "c38b27cf632e98c2bf1b24e9ff7ee95033634cee8b160fd96f44281e16d35fe9"
+    },
+    {
+      "path": "reports/fabrication_v26_mechanical_package/v26_completion_status.json",
+      "bytes": 1839,
+      "mtime_ns": 1778256257602339942,
+      "sha256": "5c3885ccc7513db4194773c7939471c223892b3d25a316d792f6ddb005a6a0b8"
+    },
+    {
+      "path": "reports/fabrication_v26_mechanical_package/v26_independent_mechanical_truth_audit.json",
+      "bytes": 20291,
+      "mtime_ns": 1778256286920724107,
+      "sha256": "86f72f427c8039b3539ba58d58c40d4da7f6cd257332430d0e864d4ecf68cb8f"
+    },
+    {
+      "path": "reports/fabrication_v26_mechanical_package/v26_live_motion_viewer.html",
+      "bytes": 3618,
+      "mtime_ns": 1778256257527860668,
+      "sha256": "5e4c72e031645ce4b0d01e6a6d9332fc32bb07a7b3e1196a2321c1c96d62bdaa"
+    },
+    {
+      "path": "reports/fabrication_v26_mechanical_package/v26_motion_validation.json",
+      "bytes": 1751,
+      "mtime_ns": 1778256257602339942,
+      "sha256": "30af59f8846ff1dc2f90c710681066b5a5d1e75055e1eb30f1736783c293a343"
+    },
+    {
+      "path": "reports/fabrication_v26_mechanical_package/v26_package_validation.json",
+      "bytes": 11640,
+      "mtime_ns": 1778256257602339942,
+      "sha256": "07974e38ed78f0b789be8adc8b124d4b63c34d7cdd9a4088b0bf1a161b751fce"
+    },
+    {
+      "path": "reports/fabrication_v26_mechanical_package/v26_role_manifest.json",
+      "bytes": 1099,
+      "mtime_ns": 1778256257602339942,
+      "sha256": "579281d042b9e49a2476333ab2a589f42d796848d695b4f4404e3d36370b3d72"
+    },
+    {
+      "path": "reports/fabrication_v26_mechanical_package/wsl_http_viewer_smoke.json",
+      "bytes": 1139,
+      "mtime_ns": 1778257273455229129,
+      "sha256": "fb771e74243608984a9608baa526b553833639a2c56787b76fb4995ae9ee6292"
+    },
+    {
+      "path": "reports/fabrication_v27_connected_package/assembly_sequence.csv",
+      "bytes": 732,
+      "mtime_ns": 1778937123725205848,
+      "sha256": "085f5768b9f2d686a904a1afab3ff102f63a7e3603cf9e7b64bbacfe2281f6a4"
+    },
+    {
+      "path": "reports/fabrication_v27_connected_package/printed_parts.csv",
+      "bytes": 2535,
+      "mtime_ns": 1778937121536077675,
+      "sha256": "1955e72e4a7d72e99efc0e93d519b9d8bdfed4cd2a4eb605f45656442424f199"
+    },
+    {
+      "path": "reports/fabrication_v27_connected_package/purchased_parts.csv",
+      "bytes": 443,
+      "mtime_ns": 1778937123725205848,
+      "sha256": "b18bf5422a780beb81a8d40d215a13249dc3cb38909f29e872b6d8e60cba4eb5"
+    },
+    {
+      "path": "reports/fabrication_v27_connected_package/step/01_base_plinth_bearing_pocket_v27.step",
+      "bytes": 102617,
+      "mtime_ns": 1778937120176087010,
+      "sha256": "c1e8e822480a1fbe04b025e8bfa5e47f2028e009c9a722640dd8f0e033860b72"
+    },
+    {
+      "path": "reports/fabrication_v27_connected_package/step/02_fixed_internal_ring_72t_v27.step",
+      "bytes": 1408185,
+      "mtime_ns": 1778937120728928744,
+      "sha256": "4d62f5512587be3d782a131e36a6f534578d4ea319b245313df91c4e40a682c0"
+    },
+    {
+      "path": "reports/fabrication_v27_connected_package/step/03_rotating_carrier_drive_gear_v27.step",
+      "bytes": 1240671,
+      "mtime_ns": 1778937121156459685,
+      "sha256": "4e8a38528383fae164b49734dc9f93586cdad4bab1336fc6410ecc0993a9306c"
+    },
+    {
+      "path": "reports/fabrication_v27_connected_package/step/04_orbit_escape_pinion_18t_v27.step",
+      "bytes": 300506,
+      "mtime_ns": 1778937121322312207,
+      "sha256": "5b7e54397b3fadf9c6c9de0f47b9b157c12c1c903b18e0f6dc2a5cd561f8d14f"
+    },
+    {
+      "path": "reports/fabrication_v27_connected_package/step/05_hand_crank_pinion_v27.step",
+      "bytes": 300466,
+      "mtime_ns": 1778937121392338826,
+      "sha256": "b4abfbc25b9953dabfd3d9df106dce7c14e3d88880cfc0967e0f089f636ab36e"
+    },
+    {
+      "path": "reports/fabrication_v27_connected_package/step/06_balance_wheel_v27.step",
+      "bytes": 88480,
+      "mtime_ns": 1778937121432880553,
+      "sha256": "d4513ab137124cf8ef2d52eb9e934384284ad4bb081ef7f673dd67eba5a3e3e8"
+    },
+    {
+      "path": "reports/fabrication_v27_connected_package/step/07_escape_wheel_15t_v27.step",
+      "bytes": 284224,
+      "mtime_ns": 1778937121480793503,
+      "sha256": "273bc9151818df3187ab0f8cb23fbb40e520cf0f9cfc170ef590085adfb1b7ff"
+    },
+    {
+      "path": "reports/fabrication_v27_connected_package/step/08_pallet_fork_bridge_v27.step",
+      "bytes": 74280,
+      "mtime_ns": 1778937121506592785,
+      "sha256": "9eba6dc134f579f6df2c0cd608e51a4f14f2069ec930ef830e280675a0ddde4c"
+    },
+    {
+      "path": "reports/fabrication_v27_connected_package/step/09_crank_knob_v27.step",
+      "bytes": 24043,
+      "mtime_ns": 1778937121521335230,
+      "sha256": "1d8d0504fe88384247d7b02b99a02b4a3f9da0f7ffc92eca7947a1dcf6f31a1e"
+    },
+    {
+      "path": "reports/fabrication_v27_connected_package/stl/01_base_plinth_bearing_pocket_v27.stl",
+      "bytes": 374884,
+      "mtime_ns": 1778937120268227298,
+      "sha256": "da7b10193ce16af8c3de4b425dab304f994e75dc359ef669403a7f3a8f5040be"
+    },
+    {
+      "path": "reports/fabrication_v27_connected_package/stl/02_fixed_internal_ring_72t_v27.stl",
+      "bytes": 580484,
+      "mtime_ns": 1778937120824754645,
+      "sha256": "c0b41075539af5bc64ff79242314406fd0026cc07598adfc9436e48a5fed7da7"
+    },
+    {
+      "path": "reports/fabrication_v27_connected_package/stl/03_rotating_carrier_drive_gear_v27.stl",
+      "bytes": 785284,
+      "mtime_ns": 1778937121285456091,
+      "sha256": "85401206a41a65bbe0b5445c09ce87d604779f0bff31f6f82501d74723400d4c"
+    },
+    {
+      "path": "reports/fabrication_v27_connected_package/stl/04_orbit_escape_pinion_18t_v27.stl",
+      "bytes": 151484,
+      "mtime_ns": 1778937121348111488,
+      "sha256": "f80baf9eeb676791fb657e35e3c91f56cbf6a902ac1e50d2777f9fb58db8cc14"
+    },
+    {
+      "path": "reports/fabrication_v27_connected_package/stl/05_hand_crank_pinion_v27.stl",
+      "bytes": 158684,
+      "mtime_ns": 1778937121414452497,
+      "sha256": "194b3121144886c3612fa98f7e544d78242563ad1b98f07b9b15f6f4a72b29fc"
+    },
+    {
+      "path": "reports/fabrication_v27_connected_package/stl/06_balance_wheel_v27.stl",
+      "bytes": 171284,
+      "mtime_ns": 1778937121447623000,
+      "sha256": "79515125108447a5096f051d72cadaa30b26eb8e5451095f6fdcaab0acd7828c"
+    },
+    {
+      "path": "reports/fabrication_v27_connected_package/stl/07_escape_wheel_15t_v27.stl",
+      "bytes": 144184,
+      "mtime_ns": 1778937121499221561,
+      "sha256": "c6af974e3ec7a8290219e796c7a8e3df43ccf476c6860f39e658a3fcf51af54b"
+    },
+    {
+      "path": "reports/fabrication_v27_connected_package/stl/08_pallet_fork_bridge_v27.stl",
+      "bytes": 35184,
+      "mtime_ns": 1778937121517649619,
+      "sha256": "4d906569f3031c45eecfe807b204abaef64c56ad2d00fcd00f0cb7b4df2ab24a"
+    },
+    {
+      "path": "reports/fabrication_v27_connected_package/stl/09_crank_knob_v27.stl",
+      "bytes": 157884,
+      "mtime_ns": 1778937121532392065,
+      "sha256": "21037cf9b3e37b06eb45df5cab34b650d3065950c8dffe1850095b9c1539f17a"
+    },
+    {
+      "path": "reports/fabrication_v27_connected_package/v27_3d_cad_motion_viewer.html",
+      "bytes": 2465143,
+      "mtime_ns": 1778937123861547578,
+      "sha256": "4764413af45f713ce0ba9a09328c700f45d9dd8b8a7e23af09f9b7e48ce1938f"
+    },
+    {
+      "path": "reports/fabrication_v27_connected_package/v27_declared_mesh_contact_audit.json",
+      "bytes": 8414,
+      "mtime_ns": 1778937279104803360,
+      "sha256": "a1308cb955f0f3aab3deb62a118bbeb26d99975ff21ae1523a2306e1391f3725"
+    },
+    {
+      "path": "reports/fabrication_v27_connected_package/v27_independent_connected_audit.json",
+      "bytes": 19263,
+      "mtime_ns": 1778937145242972255,
+      "sha256": "d5a29df549013512646fcb94efe336377840e480bdf4c5d9d4960cfbbb24f661"
+    },
+    {
+      "path": "reports/fabrication_v27_connected_package/v27_mechanical_truth_audit.json",
+      "bytes": 4636,
+      "mtime_ns": 1778937168471101513,
+      "sha256": "c1121b231a4ac846d1dc5406e2af532f20e5a64e1d6998190e3fa45e2e8d3869"
+    },
+    {
+      "path": "reports/fabrication_v27_connected_package/v27_motion_validation.json",
+      "bytes": 3224,
+      "mtime_ns": 1778937123732575672,
+      "sha256": "86b4586cd8859c6213023f2f4d7a31fe61e68086abe7e9ecb1b482edb1751283"
+    },
+    {
+      "path": "reports/fabrication_v27_connected_package/v27_role_manifest.json",
+      "bytes": 1462,
+      "mtime_ns": 1778937123725205848,
+      "sha256": "04f024e82f6f07cf0cc0c88a653fdb630dc64e72973eea8110bc9edcd087faee"
+    },
+    {
+      "path": "reports/fabrication_v27_connected_package/v27_sampled_motion_audit.json",
+      "bytes": 7234,
+      "mtime_ns": 1778937232762366667,
+      "sha256": "e4decbfa2f237cb19297fead5aa2bc1f42ea2489c37578220b0639a9e93b37e1"
+    },
+    {
+      "path": "reports/fabrication_v27_connected_package/v27_step_interference_audit.json",
+      "bytes": 2062,
+      "mtime_ns": 1778937150903270290,
+      "sha256": "22d88d6befa6dbf6d0e93a71a853950e15e11e38f5e442176e79d54306b1b237"
+    },
+    {
+      "path": "reports/fabrication_v27_connected_package/v27_visibility_audit.json",
+      "bytes": 2118,
+      "mtime_ns": 1778937299026660029,
+      "sha256": "91f729765d7dd43f9f63b6366caac0f8e564679d6732697c68543723dd5da775"
+    },
+    {
+      "path": "reports/fabrication_v27_connected_package/v27_wsl_http_viewer_smoke.json",
+      "bytes": 3368,
+      "mtime_ns": 1778937139805940375,
+      "sha256": "befe6a1666dd8441a37f8cb1b9fec755d9f6d143ec87d16b5f73c4f42818808e"
+    },
+    {
+      "path": "reports/validation_quarantine.json",
+      "bytes": 1079,
+      "mtime_ns": 1778253421901447500,
+      "sha256": "3f55864e442739c53b04fbd58a9ce6696a7011f88fe758b20b2f2ed16ed56f3b"
+    },
+    {
+      "path": "reports/wsl_runtime_proof.json",
+      "bytes": 2197,
+      "mtime_ns": 1778937299124853489,
+      "sha256": "1dec6d773acf1d901b4a7a5636ca778a599f064bdea09770eba1855ba297cf64"
+    },
+    {
+      "path": "scripts/create_v26_mechanical_package.py",
+      "bytes": 52753,
+      "mtime_ns": 1778255604322954400,
+      "sha256": "4b0a888a780a053d5286f61704d043244cbcada7bfabcb8fdee8f6ca0f1ed6db"
+    },
+    {
+      "path": "scripts/create_v27_connected_cadquery_package.py",
+      "bytes": 15055,
+      "mtime_ns": 1778908096375640572,
+      "sha256": "f00eb350956b6daeee69463006bc2b0b7c34088f1626ed29af1c95a533c4e1c9"
+    },
+    {
+      "path": "scripts/create_v27_motion_artifacts.py",
+      "bytes": 16444,
+      "mtime_ns": 1778936555721052610,
+      "sha256": "bf2cfd39f36f4a4c45bbe0cd9042e2f63d63358db3ccc283b9a2104bb282ad76"
+    },
+    {
+      "path": "scripts/independent_mechanical_truth_audit.py",
+      "bytes": 14748,
+      "mtime_ns": 1778254304689087000,
+      "sha256": "00772cb8f65b0145d0330ed1ac2129d7c42e18104bc01b707d3c9bdef82de943"
+    },
+    {
+      "path": "scripts/independent_v27_connected_audit.py",
+      "bytes": 8352,
+      "mtime_ns": 1778893352883811328,
+      "sha256": "7bae1f20abab7699c2aa3eccf054197ecba6f0466c716cd5a569ba8e2b80784c"
+    },
+    {
+      "path": "scripts/v27_declared_mesh_contact_audit.py",
+      "bytes": 2055,
+      "mtime_ns": 1778893452638950338,
+      "sha256": "2558308a551fc7264f0f474e4b91c0f9dd23a8b48ba9abf9c3aceb70190f2381"
+    },
+    {
+      "path": "scripts/v27_mechanical_truth_audit.py",
+      "bytes": 8887,
+      "mtime_ns": 1778907552735026054,
+      "sha256": "8435afd36322a47889c4fb4dafb09b9694f1a96bdc33926de5b4141de84f8df5"
+    },
+    {
+      "path": "scripts/v27_sampled_motion_audit.py",
+      "bytes": 10286,
+      "mtime_ns": 1778907649495919799,
+      "sha256": "a4354d7b5aaa1eac62f6311071dd598927ef69108279a62c83c4a2d1bcaa0bf9"
+    },
+    {
+      "path": "scripts/v27_step_interference_audit.py",
+      "bytes": 2802,
+      "mtime_ns": 1778907552731312548,
+      "sha256": "e9c7c2a5f1ee16a3461a4be365087582745e4361b8ea076d1673f86d06dd00e8"
+    },
+    {
+      "path": "scripts/v27_visibility_audit.py",
+      "bytes": 5455,
+      "mtime_ns": 1778936555721052610,
+      "sha256": "bf15d26fbec66166f39e9d20280d3a468404bce452b9bd846bcc5fdf265d6dc8"
+    },
+    {
+      "path": "scripts/v27_wsl_http_viewer_smoke.py",
+      "bytes": 6745,
+      "mtime_ns": 1778907125106757055,
+      "sha256": "af88305c78d6c740631bd4fb91dabc5853f114a71cfb64d701b910d7b6d35b5a"
+    },
+    {
+      "path": "scripts/write_current_gate_summary.py",
+      "bytes": 7787,
+      "mtime_ns": 1778907125110357055,
+      "sha256": "7538c7f08ab47f1882066c5d16a2246480b321a164185364e1f12c9722466e00"
+    },
+    {
+      "path": "scripts/wsl_http_viewer_smoke.py",
+      "bytes": 4677,
+      "mtime_ns": 1778256631758612800,
+      "sha256": "ecd7007f693a0d4b287257a81b8e4a11829532102201749dda82bd838148c08c"
+    }
+  ]
+}
