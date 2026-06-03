@@ -1,122 +1,75 @@
-# dio16/cad_agents — Project Specification
+# Platform Specification
 
-## 1. Project Identity
+## 1. システム原則
 
-- **Repository:** dio16/cad_agents
-- **Visibility:** Public
-- **License:** Apache-2.0
-- **Execution environment:** WSL (Linux), Bash
-- **Package manager:** UV (Python, required), pnpm (Node.js, auxiliary)
-- **CAD backends:** CadQuery + build123d (both supported; manifest-driven)
-- **First product output:** stationary-autonomous-winding desktop tourbillon spatial-kinetic-sculpture object, 3D-printable with independent local fabrication-PASS evidence
+本仕様は、原案 `docs/Origen/Design_document_for_a_machine_design_platform.md` を実装単位へ分解したものです。
 
-## 2. Mission Statement
+- LLM は設計計画器であり、CAD 実行器ではない。
+- CAD Runtime は OCCT / FreeCAD 互換の決定論的実行器である。
+- Validation は品質ゲートであり、合否と理由を機械可読に返す。
+- 自由文と CAD 実行の間には、必ず JSON Schema と Parametric DSL の境界を置く。
+- STEP AP242 / B-Rep を正本形状とし、STL / OBJ / glTF / PNG / PDF は派生物として扱う。
 
-Build a reusable agentic CAD modeling framework that produces **validated, user-consumable 3D-printable mechanical objects**.
+## 2. 正本データ階層
 
-The repository is not a single artifact factory. It is a living design system that:
-1. keeps its own truth reliable (P1),
-2. grows reusable design capability whenever that capability blocks delivery (P2),
-3. delivers goal-closing evidence on every loop (P3),
-4. and only polishes or explores when no P1–P3 work is executable.
+| レイヤ | 正本 | 目的 |
+|---|---|---|
+| 要件 | Requirement JSON | 自然文の曖昧さを工学項目へ分解する |
+| 仕様 | Specification JSON | 寸法、拘束、材料、工程、検証条件を確定する |
+| 生成命令 | Parametric DSL / Operation Graph | LLM 出力を安全に実行可能化する |
+| 形状 | STEP AP242 / B-Rep | 組立、交換、再利用の正本にする |
+| 派生物 | STL / OBJ / glTF / PNG / PDF | 造形、表示、共有、図面化に使う |
+| 検証 | Validation Report JSON | 幾何、工程、FEA の判定と差分を記録する |
 
-## 3. Final Goal
+## 3. エージェント責任境界
 
-**Produce a 3D-printable desktop tourbillon sculpture object** where:
-- the whole object reads as bold kinetic sculpture (macro),
-- the fast, fine parts read as watch-like precision (micro),
-- force travels through real 3D space across height or axis direction (spatial drive),
-- input energy is provided by a stationary-autonomous-winding mechanism,
-- every completion-critical claim is backed by independent local fabrication-PASS evidence (WSL, UV, CadQuery/build123d, viewer, STL, BOM, deliverable).
+| エージェント | 責務 | 禁止事項 |
+|---|---|---|
+| Requirement Extractor | 自然文を Requirement JSON に変換する | 未知事項を推測で埋める |
+| Spec Composer | Requirement を Specification JSON に変換する | 製造条件や公差を独断で確定する |
+| DSL Compiler | Specification を Parametric DSL に変換する | 自由コード生成、未検証 DSL 実行要求 |
+| CAD Runtime | DSL を実行し STEP/B-Rep を生成する | 仕様解釈の変更、失敗の隠蔽 |
+| Validation | 幾何、DFM/AM、FEA を判定する | 不合格の合格書き換え |
+| Orchestrator | ゲートと修正ループを制御する | 検証バイパス、承認省略 |
+| Policy / Audit | ルーティング、ログ、法規タグを管理する | 監査ログ改ざん、保持期間違反 |
+| Model Gateway | commercial / onprem / hybrid を切り替える | 機密情報の不適切ルーティング |
 
-Final closure requires `reports/goal_state.json` and freshly regenerated `reports/goal_state_freshness.json` to pass in the same turn-end sequence, all P1–P3 mission work closed or externally blocked with evidence, and a same-generation deliverable package validated.
+## 4. 必須スキーマ要点
 
-## 4. Mandatory Infrastructure
+### Requirement JSON
 
-### 4.1 Runtime
+必須キー: `traceability_id`, `product_type`, `functional_requirements`, `dimensions`, `manufacturing`, `unknowns`, `assumptions`。
 
-| Layer | Requirement |
-|---|---|
-| UV | All Python package management and execution MUST use UV. `uv venv`, `uv run`, `uv pip install`. Direct `python`, `pip`, external venv paths are not valid active-work entrypoints. |
-| pnpm | Node.js work (if any) MUST use pnpm. `npm` and `yarn` are not permitted. |
-| Bash-only | All active-repository work must execute from Bash inside WSL. The sanctioned entrypoint is `bash ./run_cad_agent.sh ...`. |
-| WSL-first validation | `reports/wsl_runtime_proof.json` must pass before any local gate is trusted. |
+### Specification JSON
 
-### 4.2 CAD Backends (both supported)
+必須キー: `traceability_id`, `requirement_id`, `parameter_table`, `constraints`, `material_candidates`, `manufacturing_profile`, `validation_plan`, `unresolved_risks`。
 
-| Backend | Role |
-|---|---|
-| **CadQuery / OCP** | Production geometry, STEP/STL, fabrication-package, interference-volume, bbox, assembly STEP/GLB, local viewer. |
-| **build123d / OCP** | New local prototypes, quick topology experiments, viewer snapshots, GLB/STL/DXF/URDF exports, text-to-CAD harness. |
+### Parametric DSL
 
-Switching between backends is manifest-driven. The generator selected by the manifest renders into the gate chain; gates are backend-agnostic once the manifest defines expected outputs.
+必須キー: `traceability_id`, `units`, `parameters`, `features`, `derivative_outputs`。`units` は `mm` 固定で、`features` は実行可能順序でなければならない。
 
-### 4.3 Evidence Architecture
+### Validation Report JSON
 
-The only trusted completion summary is `reports/current_gate_summary.json`. The only fresh closure pair is `reports/goal_state.json` + freshly regenerated `reports/goal_state_freshness.json` in the same turn-end sequence.
+必須キー: `traceability_id`, `specification_id`, `artifact_ids`, `dimensions_check`, `topology_check`, `unit_consistency`, `manufacturing_profile_rules`, `pass`, `failures`。
 
-Completion evidence is generation-identity-bound: every completion-critical report, viewer, deliverable pointer must belong to one generation identity.
+## 5. API境界
 
-## 5. Active Design Path
+- `POST /v1/projects`
+- `POST /v1/requirements/extract`
+- `POST /v1/specifications/generate`
+- `POST /v1/cad/jobs`
+- `GET /v1/cad/jobs/{job_id}`
+- `POST /v1/validation/jobs`
+- `POST /v1/revisions`
+- `POST /v1/exports`
+- `GET /v1/artifacts/{artifact_id}`
 
-The active design path is **V31**. The pre-CAD feasibility chain through `geometry-ready` has passed. The current active task is the V31 post-CAD proof bundle:
+## 6. ゲート
 
-1. role manifest
-2. sampled motion artifact
-3. declared contact audit
-4. visibility evidence
-5. DFAM audit
-6. autonomous-winding evidence
-7. spatial-drive evidence
-8. object-value review
-9. user-consumable deliverable
-10. current goal closeout
-
-## 6. Scope Boundaries
-
-### 6.1 In-Repo Proof
-
-- 3D model reproducibility
-- manifest / generator / report / viewer alignment
-- user-consumable deliverable package
-- object-value brief, hero-view evidence, kinetic-object review
-- gear ratios, tooth profile, center distances, interference, visibility, BOM, assembly order
-- local-first / WSL-first verification paths
-- mechanical-truth evidence from generated geometry (not declaration)
-
-### 6.2 Out-of-Repo Proof (explicitly not claimed)
-
-- real printer / slicer / material final clearance
-- long-term wear / warpage / durability
-- hand-feeling after physical assembly
-- physical print evidence
-
-## 7. Repository Structure
-
-| Directory | Purpose |
-|---|---|
-| `cad_agent/` | Local workflow engine and CLI entrypoint |
-| `scripts/` | Generation and validation scripts |
-| `manifests/` | JSON design contracts |
-| `docs/` | Canonical workflow / design-rule / skill documents |
-| `reports/` | Gate, audit, and evidence outputs |
-| `deliverables/` | Fabrication packages (STL, STEP, viewer, BOM) |
-| `mechanisms/` | Motion contracts, layout graphs |
-
-AGENTS.md stays thin (launch-manual surface). Detailed canonical guidance lives in `docs/`:
-
-| Concern | Canonical doc |
-|---|---|
-| CAD implementation workflow | `docs/mechanical_design_workflow_ja.md` |
-| Design-rule decisions | `docs/design_rule_register_ja.md` |
-| Claim / completion wording | `docs/mechanism_claim_taxonomy_ja.md` |
-| Backend selection rationale | `docs/local_first_cad_backend_strategy_ja.md` |
-| Skill / workflow governance | `docs/skill_governance_ja.md` |
-| Context-efficiency / operating packet | `docs/context_efficiency_playbook_ja.md`, `docs/operating_packet_checklist_ja.md` |
-| Codex operating alignment | `docs/codex_operating_alignment_ja.md` |
-
-## 8. Public Repository Notes
-
-- This is an Apache-2.0 licensed public repository.
-- No cloud-CAD API dependencies are required for active delivery.
-- Contributions should preserve: source-of-truth alignment, local-first verification path, UV-only Python execution policy, evidence-backed completion wording.
+| ゲート | 通過条件 | バイパス |
+|---|---|---|
+| Schema Gate | JSON Schema pass | 不可 |
+| AST Gate | Parametric DSL が AST validator pass | 不可 |
+| Validation Gate | 全 check pass | Reviewer 承認時のみ条件付き許容 |
+| Compliance Gate | データ分類、法規、輸出タグ確定 | 不可 |
+| Human Approval Gate | 仕様変更、regulated/export-controlled、新規 DSL operation の承認記録 | 不可 |

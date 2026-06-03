@@ -1,107 +1,54 @@
-# CAD Agents
+# CAD Agents: AI Machine Design Platform
 
-<!-- Badges (add as needed) -->
-<!-- shields.io badges go here once CI is enabled -->
+This repository now tracks the reference architecture for an AI-assisted mechanical design platform. The original proposal is [`docs/Origen/Design_document_for_a_machine_design_platform.md`](docs/Origen/Design_document_for_a_machine_design_platform.md); every maintained document and script is aligned to that proposal.
 
-Lightweight, auditable agentic CAD framework that runs deterministic geometry, motion, visibility, and fabrication gates locally. Final artifact verification reads generated files from disk in a fresh WSL process.
+## Core principle
 
-- **License:** Apache-2.0
-- **Python:** 3.12+
-- **Package manager:** UV
-- **Backends:** CadQuery + build123d
+Do **not** ask an LLM to emit executable CAD code from free text. The platform uses a gated pipeline:
 
-## Goal
+1. natural-language design intent
+2. `Requirement JSON`
+3. `Specification JSON`
+4. validated `Parametric DSL`
+5. deterministic CAD runtime using OCCT / FreeCAD-compatible workers
+6. validation reports for geometry, DFM/AM, assembly, and optional FEA
+7. versioned artifacts such as STEP AP242, STL, OBJ, glTF, PNG, and PDF
 
-Build a 3D-printable desktop tourbillon spatial-kinetic sculpture object with:
-- bold sculptural presence (macro),
-- watch-like fine-motion precision (micro),
-- real 3D spatial drive across height or axis direction,
-- stationary-autonomous-winding input.
+The LLM is a design planner, the CAD kernel is the executor, and validation is the quality gate.
 
-Completion requires independent local evidence: local fabrication pass, viewer, STL, BOM, role manifest, motion/contact/visibility/DFAM checks, and a same-generation deliverable package.
+## Canonical files
 
-For the canonical mission statement, see [`GOAL.md`](./GOAL.md). For scope and backend selection, see [`SPEC.md`](./SPEC.md).
+| File | Purpose |
+|---|---|
+| [`GOAL.md`](GOAL.md) | Repository mission, non-goals, and acceptance criteria |
+| [`SPEC.md`](SPEC.md) | System architecture and data contracts |
+| [`TASKS.md`](TASKS.md) | Implementation roadmap derived from the proposal |
+| [`AGENTS.md`](AGENTS.md) | Agent responsibility and safety operating rules |
+| [`docs/architecture_ja.md`](docs/architecture_ja.md) | Japanese architecture summary |
+| [`docs/api_contracts_ja.md`](docs/api_contracts_ja.md) | API, schema, and traceability contracts |
+| [`docs/validation_security_ja.md`](docs/validation_security_ja.md) | Validation, audit, and security gates |
+| [`docs/operations_ja.md`](docs/operations_ja.md) | CI/CD, runtime, and operational model |
 
-## Why local-first
+Legacy tourbillon-specific documents and scripts were removed because they were unrelated to the machine-design-platform proposal.
 
-- Browser automation is used only for visual review.
-- Cloud CAD views are review surfaces, not the source of truth.
-- Local manifests, local generators, WSL-first validation, and independent reports are the routine path.
-- Onshape is optional final-review/share infrastructure only when local gates are insufficient.
-
-This repo no longer depends on Onshape APIs for active delivery.
-
-## Requirements
-
-- WSL 2 (Linux) with Bash
-- Python 3.12+
-- UV
-- CadQuery-capable CAD runtime
-- Git
-
-## Setup
-
-Install dependencies with UV, then use the sanctioned Bash runner.
+## Run the repository checks
 
 ```bash
-git clone https://github.com/dio16/cad_agents.git
-cd cad_agents
-
-uv venv --python 3.12
-uv pip install -e .
+bash ./run_cad_agent.sh validate-docs
+bash ./run_cad_agent.sh status
 ```
 
-## Verify setup
-
-```bash
-bash ./run_cad_agent.sh --manifest manifests/tourbillon_v31_geometry_contract.json status
-bash ./run_cad_agent.sh --manifest manifests/tourbillon_v31_geometry_contract.json completion-status
-```
-
-## Usage
-
-All active work must execute from Bash inside WSL using `run_cad_agent.sh`. Direct `python`, `pip`, PowerShell, `pwsh`, `cmd.exe`, and `cad_agent_cli.py` are not valid active-work entrypoints.
-
-Common commands:
-- `status`
-- `completion-status`
-- `local-backend-status`
-- `local-fabrication-audit`
-- `local-assembly-export`
-- `local-completion-status`
-- `local-pose-snapshots`
-- `check`
-- `motion`
-- `solid-audit`
-- `hardware-context-audit`
-- `motion-preview`
+The runner intentionally exposes only platform documentation/contract checks. It no longer exposes old single-artifact tourbillon generation commands.
 
 ## Repository layout
 
-- `cad_agent/` local workflow and CLI entrypoint
-- `scripts/` generation and validation scripts
-- `manifests/` JSON design contracts
-- `docs/` canonical workflow documents
-- `reports/` gate, audit, and evidence outputs
-- `deliverables/` current fabrication packages
-
-## Documentation
-
-- Operating rules: [`AGENTS.md`](./AGENTS.md)
-- Goal and priority order: [`GOAL.md`](./GOAL.md)
-- Project specification: [`SPEC.md`](./SPEC.md)
-- Execution ledger: [`TASKS.md`](./TASKS.md)
-
-## Contributing
-
-This repository is maintained as a goal-closure CAD system. Contributions should preserve:
-- source-of-truth alignment,
-- local-first verification path,
-- UV-only Python execution policy,
-- evidence-backed completion wording.
-
-Do not add cloud-CAD dependencies as the first diagnostic path.
+```text
+docs/Origen/   Original proposal supplied by the user
+docs/          Maintained platform documentation
+scripts/       Deterministic validation scripts for the platform docs
+run_cad_agent.sh  Bash entrypoint for local checks
+```
 
 ## License
 
-MIT — see [`LICENSE`](./LICENSE).
+Apache-2.0. See [`LICENSE`](LICENSE).

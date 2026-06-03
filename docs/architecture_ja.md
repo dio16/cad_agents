@@ -1,71 +1,50 @@
-# Codex Agentic CAD Workflow
+# アーキテクチャ設計
 
-> この文書は Onshape 中心期の履歴説明を含む。現行の運用判断では、`AGENTS.md` の `Local-First CAD Backend Policy` と `docs/local_first_cad_backend_strategy_ja.md` を優先する。
+## 概要
 
-## 結論
+本プラットフォームは、自然言語から直接 CAD コードを生成しません。原案が示す通り、要件、仕様、DSL、CAD 実行、検証、成果物保存を分離します。
 
-Codexが外部CADと連携してエージェンティックモデリングを行う基盤としては、現時点では Onshape API + CadQuery/FeatureScript + Codex in-app browser の組み合わせが最も強い。
+```mermaid
+flowchart TD
+    U[設計者] --> API[API Gateway / Auth]
+    API --> ORCH[Workflow Orchestrator]
+    ORCH --> MGW[Model Gateway]
+    MGW --> COM[Commercial LLM API]
+    MGW --> ONP[On-prem LLM / vLLM]
+    ORCH --> REQ[Requirement Extractor]
+    REQ --> SPEC[Spec Composer]
+    SPEC --> DSL[DSL Compiler]
+    DSL --> AST[AST / Schema Validator]
+    AST --> CAD[CAD Runtime / OCCT / FreeCAD]
+    CAD --> STEP[STEP AP242 / B-Rep]
+    CAD --> MESH[Mesh / Render Worker]
+    MESH --> DER[STL / OBJ / glTF / PNG]
+    CAD --> VAL[Validation Service]
+    VAL --> FEA[Optional FEA]
+    VAL --> ART[Artifact Store]
+    STEP --> ART
+    DER --> ART
+    ART --> AUD[Policy / Audit / Retention]
+```
 
-## 採用構成
+## 主要コンポーネント
 
-- 形状生成: CadQuery または FeatureScript
-- CAD投入: Onshape REST API translations
-- アセンブリ作成: Onshape REST API assemblies
-- 動作姿勢検証: Onshape assembly transform API
-- 視覚レビュー: Codex in-app browser
-- 成果物管理: JSON manifest
+| コンポーネント | 役割 |
+|---|---|
+| API Gateway / Auth | 認証、案件作成、ジョブ起動、成果物取得 |
+| Workflow Orchestrator | 標準フロー、修正ループ、ゲート制御 |
+| Model Gateway | commercial / onprem / hybrid のルーティング |
+| Rules & Retrieval | 設計規則、プリンタプロファイル、過去案件の参照 |
+| DSL Compiler | Specification JSON から Parametric DSL を生成 |
+| CAD Runtime | 検証済み DSL を OCCT / FreeCAD 系で実行 |
+| Validation Service | 幾何、DFM/AM、組立干渉、FEA の pass/fail 判定 |
+| Artifact Store | STEP、派生物、Validation Report、hash を版管理保存 |
+| Policy / Audit | データ分類、輸出管理タグ、保持期間、不変ログ |
 
-## なぜOnshape中心か
+## 設計判断
 
-- 公式REST APIがあり、ブラウザ座標操作を避けられる。
-- STEP投入、Assembly作成、Instance追加、Transform変更がAPI化できる。
-- クラウドCADなので、Codexが作った変更をユーザーが同じドキュメントで即確認できる。
-- CAD履歴がOnshape側に残る。
-
-## 他候補
-
-- FreeCAD: ローカルで完全自動化できるが、ユーザー確認と共同レビューが重い。
-- Fusion/SolidWorks: 高機能だがGUI/ライセンス/ローカル状態に依存し、Codexの安定操作が難しい。
-- OpenSCAD/CadQueryのみ: 生成は速いが、クラウドCAD上での組立・レビュー・共有が弱い。
-
-## 標準ループ
-
-1. 仕様を `manifest` に定義する。
-2. CadQuery/FeatureScriptで部品を生成する。
-3. `cad_agent_cli.py import` でOnshapeへ投入する。
-4. `cad_agent_cli.py assembly` で検証Assemblyを作る。
-5. `cad_agent_cli.py pose --theta 90` などで代表姿勢を作る。
-6. in-app browserで視覚確認する。
-7. 問題を設計スクリプトに戻す。
-
-## 現在の対応範囲
-
-- Manifest検証
-- APIキー認証
-- STEP個別インポート
-- インポート完了ポーリング
-- Assembly作成
-- Part挿入
-- Instance ID取得
-- Z軸回転姿勢
-- 公転+自転姿勢
-- 姿勢検証履歴のmanifest記録
-- Assembly Feature API呼び出し基盤
-
-## 次に拡張する範囲
-
-- Mate Connector作成
-- Revolute mate作成
-- Gear relation作成
-- Appearance設定
-- 干渉検査のAPI/近似ジオメトリチェック
-- FeatureScript生成バックエンド
-- Part Studio Features APIによるネイティブ履歴生成
-
-## Transform Rule
-
-Onshape Assembly TransformはトップレベルAssembly座標系に対する絶対4x4行列として扱う。CAD生成側はmmで設計しやすいが、Onshape APIへ渡す平行移動はmeterに変換する。
-
-## Mate Automation Rule
-
-Onshape公式APIではAssembly Feature APIでMate ConnectorとMateを作れる。ただし実体面/稜線に安定してMate Connectorを置くには、対象面のdeterministicIdが必要になる。今後の完全自動Mateは、生成CAD側に軸・面・Mate Connector候補を明示的に設け、それをmanifestに記録してから作成する。
+- 正本形状は STEP AP242 / B-Rep とする。
+- STL / OBJ は派生物であり、正本を破壊的に置き換えない。
+- CAD Runtime はネットワーク分離サンドボックスで実行する。
+- raw code 実行は既定禁止で、許可時も監査ログ必須とする。
+- 3回以上の validation failure は人間へエスカレーションする。

@@ -1,60 +1,45 @@
-# CAD Agents
+# CAD Agents: AI機械設計プラットフォーム
 
-local-first / WSL-first のエージェンティック CAD 自動化基盤です。
+このリポジトリは、生成AIを使った機械設計プラットフォームの設計・実装準備リポジトリです。原案は [`docs/Origen/Design_document_for_a_machine_design_platform.md`](docs/Origen/Design_document_for_a_machine_design_platform.md) であり、維持対象のドキュメントとスクリプトはこの原案に合わせて整理されています。
 
-このリポジトリの正本は `GOAL.md`、仕様は `SPEC.md`、運用規範は `AGENTS.md`、実行台帳は `TASKS.md` です。
+## 中核方針
 
-## ゴール
+自由文を直接 CAD コードに変換しません。必ず次の境界を通します。
 
-机上で静止していても自律的に巻き上がる給力機構を持ち、全体は大胆なキネティック・スカルプチャー、細部は時計のように精緻で、力の流れが立体空間を横断する卓上トゥールビオン機構オブジェを、3Dプリンタで製作可能なモデルとして完成させます。
+1. 人間の設計意図
+2. `Requirement JSON`
+3. `Specification JSON`
+4. スキーマ検証済み `Parametric DSL`
+5. OCCT / FreeCAD 系の決定論的 CAD Runtime
+6. 幾何、DFM/AM、組立、必要に応じた FEA の Validation Report
+7. STEP AP242、STL、OBJ、glTF、PNG、PDF などの版管理成果物
 
-## 優先順位
+LLM は設計計画器、CAD カーネルは実行器、検証器は品質ゲートです。
 
-1. `P1` Operational Integrity / Truth
-2. `P2` Reusable Design System
-3. `P3` Goal Delivery / Evidence Production
-4. `P4` Optional Optimization / Exploration
+## 正本文書
 
-部分完了で停止せず、`GOAL.md` との差分が残る限り、外部 blocker でない未解決 gap は active task として残します。
+| ファイル | 目的 |
+|---|---|
+| [`GOAL.md`](GOAL.md) | リポジトリの目的、非目的、受入条件 |
+| [`SPEC.md`](SPEC.md) | アーキテクチャとデータ契約 |
+| [`TASKS.md`](TASKS.md) | 原案ベースの実装ロードマップ |
+| [`AGENTS.md`](AGENTS.md) | エージェント責任境界と安全ルール |
+| [`docs/architecture_ja.md`](docs/architecture_ja.md) | アーキテクチャ要約 |
+| [`docs/api_contracts_ja.md`](docs/api_contracts_ja.md) | API、スキーマ、traceability 契約 |
+| [`docs/validation_security_ja.md`](docs/validation_security_ja.md) | 検証、監査、セキュリティゲート |
+| [`docs/operations_ja.md`](docs/operations_ja.md) | CI/CD、ランタイム、運用モデル |
 
-## セットアップ
+旧トゥールビヨン個別成果物向けのドキュメントとスクリプトは、原案と無関係なため削除しました。
+
+## チェック実行
 
 ```bash
-git clone https://github.com/dio16/cad_agents.git
-cd cad_agents
-uv venv --python 3.12
-uv pip install -e .
+bash ./run_cad_agent.sh validate-docs
+bash ./run_cad_agent.sh status
 ```
 
-## 基本コマンド
-
-```bash
-bash ./run_cad_agent.sh --manifest manifests/tourbillon_v31_geometry_contract.json status
-bash ./run_cad_agent.sh --manifest manifests/tourbillon_v31_geometry_contract.json completion-status
-```
-
-利用可能なコマンド: `status`, `completion-status`, `local-backend-status`, `local-fabrication-audit`, `local-assembly-export`, `local-completion-status`, `local-pose-snapshots`, `check`, `motion`, `solid-audit`, `hardware-context-audit`, `motion-preview`
-
-## 運用方針
-
-- active work は必ず WSL 内の Bash から `bash ./run_cad_agent.sh ...` で実行します。
-- PowerShell、`pwsh`、`cmd.exe`、direct `python`、direct `cad_agent_cli.py` は active-work entrypoint として使いません。
-- Bash runner 外の証拠は完了主張の根拠に使いません。
-
-## ディレクトリ構成
-
-- `GOAL.md`: ゴールと優先順位の正本
-- `SPEC.md`: プロジェクト仕様（スコープ、バックエンド戦略、I/O スキーマ）
-- `AGENTS.md`: 実行ルールの薄いランチャー
-- `TASKS.md`: ライブタスク台帳
-- `cad_agent/workflow.py`: ローカルワークフロー（干渉検証、モーション、完成度など）
-- `cad_agent/transforms.py`: 4x4 変換ヘルパー
-- `manifests/*.json`: 設計契約
-- `docs/`: 設計ワークフルール / 設計ルール台帳 / スキル運用など canonical 文書
-- `scripts/`: 生成・検証スクリプト
-- `reports/`: ゲート・検証レポート
-- `deliverables/`: 現在の fabrication package
+`run_cad_agent.sh` は、プラットフォーム文書と契約の検証に限定されています。
 
 ## ライセンス
 
-Apache-2.0 — 詳細は [`LICENSE`](./LICENSE) を参照してください。
+Apache-2.0。詳細は [`LICENSE`](LICENSE) を参照してください。
