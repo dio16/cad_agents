@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cad-agents.local/schemas/phase1/validation_report.schema.json",
+  "title": "Phase 1 Validation Report",
+  "type": "object",
+  "required": ["traceability_id", "specification_id", "artifact_ids", "dimensions_check", "topology_check", "unit_consistency", "manufacturing_profile_rules", "pass", "failures"],
+  "properties": {
+    "traceability_id": {"type": "string", "minLength": 1},
+    "specification_id": {"type": "string", "minLength": 1},
+    "artifact_ids": {"type": "array", "items": {"type": "string"}},
+    "dimensions_check": {"type": "object", "required": ["status"]},
+    "topology_check": {"type": "object", "required": ["status"]},
+    "unit_consistency": {"type": "object", "required": ["status"]},
+    "manufacturing_profile_rules": {"type": "object", "required": ["status"]},
+    "pass": {"type": "boolean"},
+    "failures": {"type": "array", "items": {"type": "object"}}
+  },
+  "additionalProperties": true
+}

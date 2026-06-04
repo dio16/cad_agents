@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cad-agents.local/schemas/phase1/requirement.schema.json",
+  "title": "Phase 1 Requirement JSON",
+  "type": "object",
+  "required": ["traceability_id", "product_type", "functional_requirements", "dimensions", "manufacturing", "unknowns", "assumptions"],
+  "properties": {
+    "traceability_id": {"type": "string", "minLength": 1},
+    "product_type": {"type": "string", "minLength": 1},
+    "functional_requirements": {"type": "array", "items": {"type": "string"}},
+    "dimensions": {"type": "object", "additionalProperties": {"type": "number"}},
+    "manufacturing": {"type": "object"},
+    "unknowns": {"type": "array", "items": {"type": "string"}},
+    "assumptions": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": true
+}

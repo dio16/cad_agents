@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cad-agents.local/schemas/phase1/parametric_dsl.schema.json",
+  "title": "Phase 1 Parametric DSL",
+  "type": "object",
+  "required": ["traceability_id", "units", "parameters", "features", "derivative_outputs"],
+  "properties": {
+    "traceability_id": {"type": "string", "minLength": 1},
+    "units": {"const": "mm"},
+    "parameters": {"type": "object", "additionalProperties": {"type": "number"}},
+    "features": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["op"],
+        "properties": {"op": {"enum": ["box", "cylinder", "through_hole"]}},
+        "additionalProperties": true
+      }
+    },
+    "derivative_outputs": {"type": "array", "items": {"enum": ["step_ap242", "stl"]}}
+  },
+  "additionalProperties": true
+}

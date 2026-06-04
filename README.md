@@ -35,10 +35,12 @@ Legacy tourbillon-specific documents and scripts were removed because they were 
 
 ```bash
 bash ./run_cad_agent.sh validate-docs
+bash ./run_cad_agent.sh phase1-contract-test
+bash ./run_cad_agent.sh phase1-golden-pipeline
 bash ./run_cad_agent.sh status
 ```
 
-The runner intentionally exposes only platform documentation/contract checks. It no longer exposes old single-artifact tourbillon generation commands.
+The runner exposes platform documentation checks plus the Phase 1 PoC contract and golden-pipeline commands. The Phase 1 pipeline validates Requirement JSON, Specification JSON, Parametric DSL AST, deterministic STEP/STL generation, Validation Report creation, artifact hash indexing, and human approval records.
 
 ## Repository layout
 
@@ -46,6 +48,9 @@ The runner intentionally exposes only platform documentation/contract checks. It
 docs/Origen/   Original proposal supplied by the user
 docs/          Maintained platform documentation
 scripts/       Deterministic validation scripts for the platform docs
+cad_agent/platform_poc.py  Phase 1 single-part platform PoC runtime and gates
+schemas/phase1/  JSON Schema contracts for Phase 1 I/O boundaries
+tests/         Unit tests for schema, AST, runtime, validation, artifact, and approval gates
 run_cad_agent.sh  Bash entrypoint for local checks
 ```
 

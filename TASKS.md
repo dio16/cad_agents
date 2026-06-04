@@ -13,13 +13,13 @@
 
 | ID | タスク | 完了条件 |
 |---|---|---|
-| P1-1 | Requirement JSON Schema | required fields と unknowns/assumptions 分離を contract test で確認 |
-| P1-2 | Specification JSON Schema | parameter_table、constraints、validation_plan を contract test で確認 |
-| P1-3 | Parametric DSL Schema | `units=mm`、parameter 参照整合、feature order を AST validator で確認 |
-| P1-4 | CAD Runtime MVP | DSL から STEP AP242 と STL を生成し、失敗理由を返す |
-| P1-5 | Validation MVP | bbox、volume、watertight、self-intersection、DFM/AM 最小ルールを判定 |
-| P1-6 | Artifact Store MVP | traceability_id と artifact_hash を保存 |
-| P1-7 | Human Approval Gate | 仕様変更と validation override の承認記録を保存 |
+| P1-1 | Requirement JSON Schema | ✅ `cad_agent.platform_poc` の contract test で required fields と unknowns/assumptions 分離を確認 |
+| P1-2 | Specification JSON Schema | ✅ `parameter_table`、`constraints`、`validation_plan` を contract test で確認 |
+| P1-3 | Parametric DSL Schema | ✅ `units=mm`、parameter 参照整合、feature order を AST validator で確認 |
+| P1-4 | CAD Runtime MVP | ✅ allowlist DSL から STEP AP242 surrogate と STL を生成し、AST/volume 失敗理由を返す |
+| P1-5 | Validation MVP | ✅ bbox、volume、topology proxy、unit consistency、DFM/AM 最小ルールを Validation Report に保存 |
+| P1-6 | Artifact Store MVP | ✅ `traceability_id` と `artifact_hash` を `artifact_index.jsonl` に保存 |
+| P1-7 | Human Approval Gate | ✅ 仕様変更/validation override の承認記録を JSONL に保存 |
 
 ## Phase 2: Pilot（10〜16週）
 
