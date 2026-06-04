@@ -37,10 +37,11 @@ LLM は設計計画器、CAD カーネルは実行器、検証器は品質ゲー
 bash ./run_cad_agent.sh validate-docs
 bash ./run_cad_agent.sh phase1-contract-test
 bash ./run_cad_agent.sh phase1-golden-pipeline
+bash ./run_cad_agent.sh phase2-pilot-run
 bash ./run_cad_agent.sh status
 ```
 
-`run_cad_agent.sh` は、プラットフォーム文書チェックと Phase 1 PoC の contract/golden pipeline を提供します。Phase 1 PoC は Requirement JSON、Specification JSON、Parametric DSL AST、決定論的 STEP/STL 生成、Validation Report、artifact hash index、Human Approval Gate 記録を検証します。
+`run_cad_agent.sh` は、プラットフォーム文書チェック、Phase 1 PoC の contract/golden pipeline、Phase 2 Pilot 検証を提供します。Phase 1 PoC は Requirement JSON、Specification JSON、Parametric DSL AST、決定論的 STEP/STL 生成、Validation Report、artifact hash index、Human Approval Gate 記録を検証します。Phase 2 Pilot は FreeCAD/OCCT と Blender の adapter probe、DFM/AM profile catalog、review diff HTML、audit retention/data classification、Model Gateway ルート判定を検証します。
 
 ## ライセンス
 

@@ -79,3 +79,15 @@
 ## Traceability
 
 全I/O、プロンプト、モデルルート、CAD artifact、Validation Report は同一 generation identity に束ねます。最低限、`traceability_id`、`requirement_id`、`specification_id`、`prompt_version`、`model_route`、`artifact_hash` を記録します。
+
+## Phase 2 Pilot 追加契約
+
+Phase 2 では Phase 1 の JSON/DSL 境界を変えず、周辺 contract を追加する。
+
+| Contract | 必須項目 | 用途 |
+|---|---|---|
+| DFM/AM Profile | `profile_id`, `process`, `min_wall_mm`, `min_hole_diameter_mm`, `supported_materials`, `rule_ids` | Specification の `manufacturing_profile` を製造ルールへ解決する |
+| Worker Probe | `worker`, `mode`, `executable`, `status` | FreeCAD/OCCT・Blender worker の native/surrogate 接続状態を記録する |
+| Review Diff | `left_traceability_id`, `right_traceability_id`, `changed_parameters` | 版比較 UI の入力にする |
+| Audit Event | `event_id`, `traceability_id`, `data_classification`, `retention_days`, `model_route` | 保持期間、分類、モデルルートを監査可能にする |
+| Model Gateway Trial | `data_classification`, `requested_route`, `selected_route`, `allowed_routes`, `human_approval_required` | commercial/onprem/hybrid の route policy を検証する |

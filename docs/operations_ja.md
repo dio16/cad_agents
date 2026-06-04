@@ -2,13 +2,14 @@
 
 ## ローカルコマンド
 
-このリポジトリの maintained script は文書・契約整合性チェックと Phase 1 PoC の最小パイプライン検証を提供します。
+このリポジトリの maintained script は文書・契約整合性チェック、Phase 1 PoC の最小パイプライン検証、Phase 2 Pilot の adapter / review / audit / gateway 検証を提供します。
 
 ```bash
 bash ./run_cad_agent.sh status
 bash ./run_cad_agent.sh validate-docs
 bash ./run_cad_agent.sh phase1-contract-test
 bash ./run_cad_agent.sh phase1-golden-pipeline
+bash ./run_cad_agent.sh phase2-pilot-run
 ```
 
 ## CI/CD
@@ -55,3 +56,7 @@ flowchart TD
 ## ゴールデンケース
 
 PoC の regression には、ブラケット、カバー、スペーサ、治具、パイプクランプ、簡易組立を使います。各ケースは Requirement / Specification / DSL / STEP / Validation Report を generation identity で束ねます。
+
+## Phase 2 Pilot コマンド
+
+`bash ./run_cad_agent.sh phase2-pilot-run` は、FreeCAD/OCCT と Blender が導入済みなら native executable を記録し、未導入なら deterministic surrogate adapter として結果を残します。加えて DFM/AM profile catalog、HTML review viewer、version diff、`audit_log.jsonl` の保持期間・データ分類、Model Gateway の public / confidential ルーティング試験を 1 つの report にまとめます。
