@@ -12,12 +12,18 @@ case "${1:-}" in
 {
   "status": "aligned",
   "source_proposal": "docs/Origen/Design_document_for_a_machine_design_platform.md",
-  "maintained_commands": ["status", "validate-docs"]
+  "maintained_commands": ["status", "validate-docs", "phase1-contract-test", "phase1-golden-pipeline"]
 }
 EOF
     ;;
   validate-docs)
     exec "$PYTHON_BIN" scripts/validate_platform_contracts.py
+    ;;
+  phase1-contract-test)
+    exec "$PYTHON_BIN" -m cad_agent.platform_poc contract-test
+    ;;
+  phase1-golden-pipeline)
+    exec "$PYTHON_BIN" -m cad_agent.platform_poc golden-pipeline "${@:2}"
     ;;
   ""|-h|--help|help)
     cat <<'EOF'
@@ -25,7 +31,9 @@ Usage: bash ./run_cad_agent.sh <command>
 
 Commands:
   status         Print repository alignment status.
-  validate-docs  Validate that maintained docs/scripts follow the Origen proposal.
+  validate-docs            Validate that maintained docs/scripts follow the Origen proposal.
+  phase1-contract-test    Run Phase 1 schema and AST contract tests.
+  phase1-golden-pipeline  Run the single-part Phase 1 PoC pipeline.
 EOF
     ;;
   *)

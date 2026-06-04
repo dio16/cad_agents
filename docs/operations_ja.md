@@ -2,11 +2,13 @@
 
 ## ローカルコマンド
 
-このリポジトリの maintained script は文書・契約整合性チェックに限定します。
+このリポジトリの maintained script は文書・契約整合性チェックと Phase 1 PoC の最小パイプライン検証を提供します。
 
 ```bash
 bash ./run_cad_agent.sh status
 bash ./run_cad_agent.sh validate-docs
+bash ./run_cad_agent.sh phase1-contract-test
+bash ./run_cad_agent.sh phase1-golden-pipeline
 ```
 
 ## CI/CD

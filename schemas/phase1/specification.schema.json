@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://cad-agents.local/schemas/phase1/specification.schema.json",
+  "title": "Phase 1 Specification JSON",
+  "type": "object",
+  "required": ["traceability_id", "requirement_id", "parameter_table", "constraints", "material_candidates", "manufacturing_profile", "validation_plan", "unresolved_risks"],
+  "properties": {
+    "traceability_id": {"type": "string", "minLength": 1},
+    "requirement_id": {"type": "string", "minLength": 1},
+    "parameter_table": {"type": "object", "additionalProperties": {"type": "number"}},
+    "constraints": {"type": "array", "items": {"type": "string"}},
+    "material_candidates": {"type": "array", "items": {"type": "string"}},
+    "manufacturing_profile": {"type": "string", "minLength": 1},
+    "validation_plan": {"type": "array", "items": {"type": "string"}},
+    "unresolved_risks": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": true
+}
