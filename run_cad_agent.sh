@@ -12,7 +12,7 @@ case "${1:-}" in
 {
   "status": "aligned",
   "source_proposal": "docs/Origen/Design_document_for_a_machine_design_platform.md",
-  "maintained_commands": ["status", "validate-docs", "phase1-contract-test", "phase1-golden-pipeline"]
+  "maintained_commands": ["status", "validate-docs", "phase1-contract-test", "phase1-golden-pipeline", "phase2-pilot-run"]
 }
 EOF
     ;;
@@ -23,7 +23,10 @@ EOF
     exec "$PYTHON_BIN" -m cad_agent.platform_poc contract-test
     ;;
   phase1-golden-pipeline)
-    exec "$PYTHON_BIN" -m cad_agent.platform_poc golden-pipeline "${@:2}"
+    exec "$PYTHON_BIN" -m cad_agent.platform_poc golden-pipeline --output-dir "${2:-artifacts/phase1_poc}"
+    ;;
+  phase2-pilot-run)
+    exec "$PYTHON_BIN" -m cad_agent.phase2_pilot pilot-run --output-dir "${2:-artifacts/phase2_pilot}"
     ;;
   ""|-h|--help|help)
     cat <<'EOF'
@@ -34,6 +37,7 @@ Commands:
   validate-docs            Validate that maintained docs/scripts follow the Origen proposal.
   phase1-contract-test    Run Phase 1 schema and AST contract tests.
   phase1-golden-pipeline  Run the single-part Phase 1 PoC pipeline.
+  phase2-pilot-run        Run Phase 2 pilot adapters, DFM catalog, review diff, audit, and gateway checks.
 EOF
     ;;
   *)

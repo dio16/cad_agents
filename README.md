@@ -37,10 +37,11 @@ Legacy tourbillon-specific documents and scripts were removed because they were 
 bash ./run_cad_agent.sh validate-docs
 bash ./run_cad_agent.sh phase1-contract-test
 bash ./run_cad_agent.sh phase1-golden-pipeline
+bash ./run_cad_agent.sh phase2-pilot-run
 bash ./run_cad_agent.sh status
 ```
 
-The runner exposes platform documentation checks plus the Phase 1 PoC contract and golden-pipeline commands. The Phase 1 pipeline validates Requirement JSON, Specification JSON, Parametric DSL AST, deterministic STEP/STL generation, Validation Report creation, artifact hash indexing, and human approval records.
+The runner exposes platform documentation checks plus the Phase 1 PoC contract/golden-pipeline commands and the Phase 2 pilot command. The Phase 1 pipeline validates Requirement JSON, Specification JSON, Parametric DSL AST, deterministic STEP/STL generation, Validation Report creation, artifact hash indexing, and human approval records. The Phase 2 pilot keeps deterministic surrogates for unavailable native CAD/render tools while exercising FreeCAD/OCCT and Blender adapter probes, DFM/AM profile checks, review diff HTML generation, audit retention metadata, data classification, and Model Gateway route decisions.
 
 ## Repository layout
 
@@ -49,6 +50,7 @@ docs/Origen/   Original proposal supplied by the user
 docs/          Maintained platform documentation
 scripts/       Deterministic validation scripts for the platform docs
 cad_agent/platform_poc.py  Phase 1 single-part platform PoC runtime and gates
+cad_agent/phase2_pilot.py  Phase 2 pilot adapters, DFM/AM catalog, review diff, audit, and gateway checks
 schemas/phase1/  JSON Schema contracts for Phase 1 I/O boundaries
 tests/         Unit tests for schema, AST, runtime, validation, artifact, and approval gates
 run_cad_agent.sh  Bash entrypoint for local checks

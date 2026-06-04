@@ -23,12 +23,16 @@
 
 ## Phase 2: Pilot（10〜16週）
 
-- FreeCAD headless / OCCT worker 統合
-- Blender render / mesh worker 統合
-- DFM/AM プロファイルカタログ
-- Review UI、diff viewer、版比較
-- 監査ログ、保持期間、データ分類
-- commercial / onprem / hybrid の Model Gateway 試験
+目的: Phase 1 の単一部品パイプラインを維持したまま、実 worker 接続点、製造プロファイル、レビュー、監査、モデルルーティングを Pilot 用に通す。
+
+| ID | タスク | 完了条件 |
+|---|---|---|
+| P2-1 | FreeCAD headless / OCCT worker 統合 | ✅ `phase2-pilot-run` で native executable を検出、未導入環境では deterministic surrogate adapter を記録 |
+| P2-2 | Blender render / mesh worker 統合 | ✅ `phase2-pilot-run` で Blender adapter を probe し、OBJ surrogate mesh を生成 |
+| P2-3 | DFM/AM プロファイルカタログ | ✅ `fdm_standard` / `cnc_3axis_soft_metal` の profile catalog で仕様の壁厚・穴径・材料を検証 |
+| P2-4 | Review UI、diff viewer、版比較 | ✅ Phase 1 baseline と revised spec の parameter diff を HTML review viewer に保存 |
+| P2-5 | 監査ログ、保持期間、データ分類 | ✅ `audit_log.jsonl` に `data_classification`、`retention_days`、`model_route` を保存 |
+| P2-6 | commercial / onprem / hybrid の Model Gateway 試験 | ✅ public commercial は許可、confidential commercial は onprem fallback として fail 判定 |
 
 ## Phase 3: Production v1（4〜6か月）
 
