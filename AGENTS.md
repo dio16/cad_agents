@@ -116,7 +116,7 @@ artifactの保存
 
 - JSON Schema Contract Test：全LLM工程の入出力を自動検証
 - AST/schema validator：DSL実行前に静的検証
-- サンドボックス実行：CADランタイムはネットワーク分離環境で実行
+- サンドボックス実行：CADランタイムはネットワーク分離環境で実行することを目標とし、現行PoC/PilotはローカルCLIとdeterministic surrogateで検証する
 - 監査ログ：全I/Oと判断を不変ストレージに記録
 - 人間確認ゲート：仕様変更、機微案件、新規validation criteria適用時に必須
 
@@ -177,9 +177,9 @@ artifactの保存
 
 ### 8.2 内部コマンド
 
-- スキーマ検証：`jsonlint` / `ajv` / 同等のschema validator
-- CAD実行：`bash ./run_cad_agent.sh --manifest ...`（または同等のCAD runtime entrypoint）
-- 幾何検証：local gate chain（solid-audit, geometry-audit, contact/interferenceチェーン）
+- スキーマ検証：`bash ./run_cad_agent.sh phase1-contract-test`
+- CAD実行：`bash ./run_cad_agent.sh phase1-golden-pipeline`（または同等のCAD runtime entrypoint）
+- パイロット検証：`bash ./run_cad_agent.sh phase2-pilot-run`
 - レポート生成：validation report, BOM/assembly レポート
 
 ## 9. エージェント品質要件

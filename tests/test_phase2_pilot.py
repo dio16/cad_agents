@@ -7,12 +7,12 @@ from tempfile import TemporaryDirectory
 
 from cad_agent.phase2_pilot import (
     compare_phase_reports,
-    golden_specification,
     route_model,
     run_phase2_pilot,
     validate_dfm_profile_against_spec,
+    write_review_viewer,
 )
-from cad_agent.platform_poc import run_golden_pipeline
+from cad_agent.platform_poc import golden_specification, run_golden_pipeline
 
 
 class Phase2PilotTest(unittest.TestCase):
@@ -28,6 +28,20 @@ class Phase2PilotTest(unittest.TestCase):
         allowed = route_model("public", "commercial")
         self.assertEqual(allowed["status"], "pass")
 
+    def test_model_gateway_requires_approval_for_restricted_data(self) -> None:
+        for classification in ["regulated", "export-controlled"]:
+            blocked = route_model(classification, "commercial")
+            self.assertEqual(blocked["status"], "fail")
+            self.assertEqual(blocked["route_status"], "fail")
+            self.assertEqual(blocked["approval_status"], "pending")
+            self.assertFalse(blocked["approval_satisfied"])
+
+            allowed_route = route_model(classification, "onprem")
+            self.assertEqual(allowed_route["status"], "pending_approval")
+            self.assertEqual(allowed_route["route_status"], "pass")
+            self.assertEqual(allowed_route["selected_route"], "onprem")
+            self.assertTrue(allowed_route["human_approval_required"])
+
     def test_version_compare_reports_changed_parameters(self) -> None:
         with TemporaryDirectory() as temp_dir:
             baseline = run_golden_pipeline(Path(temp_dir) / "baseline")
@@ -36,6 +50,23 @@ class Phase2PilotTest(unittest.TestCase):
             diff = compare_phase_reports(baseline, revised)
             self.assertEqual(diff["status"], "pass")
             self.assertIn("wall_t", diff["changed_parameters"])
+
+    def test_review_viewer_escapes_inserted_values(self) -> None:
+        with TemporaryDirectory() as temp_dir:
+            output_path = Path(temp_dir) / "review.html"
+            result = write_review_viewer(
+                output_path,
+                {
+                    "dsl": {"traceability_id": "<script>alert('x')</script>"},
+                    "runtime": {"status": "<bad status>"},
+                    "validation_report": {"pass": "<bad pass>"},
+                },
+                {"path": "<bad path>"},
+                {"changed_parameters": {}},
+            )
+            html = Path(result["path"]).read_text(encoding="utf-8")
+            self.assertNotIn("<script>", html)
+            self.assertIn("&lt;script&gt;", html)
 
     def test_phase2_pilot_run_writes_artifacts_and_report(self) -> None:
         with TemporaryDirectory() as temp_dir:

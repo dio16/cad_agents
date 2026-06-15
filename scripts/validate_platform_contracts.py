@@ -36,6 +36,12 @@ STALE_TERMS = [
     "PowerShell",
 ]
 
+STALE_COMMAND_TERMS = [
+    "--manifest",
+    "solid-audit",
+    "geometry-audit",
+]
+
 
 @dataclass
 class Check:
@@ -77,6 +83,8 @@ def validate() -> tuple[int, dict[str, object]]:
             # README_JA may mention old docs were removed once; that is allowed.
             allowed = rel in {Path("README.md"), Path("README_JA.md")} and "旧" in text and "削除" in text
             add(checks, f"no stale term '{term}' in {rel}", allowed or term not in text)
+        for command_term in STALE_COMMAND_TERMS:
+            add(checks, f"no stale command term '{command_term}' in {rel}", command_term not in text)
 
     runner = read(Path("run_cad_agent.sh"))
     add(checks, "runner exposes validate-docs", "validate-docs" in runner)

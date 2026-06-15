@@ -10,7 +10,13 @@
 - 自由文と CAD 実行の間には、必ず JSON Schema と Parametric DSL の境界を置く。
 - STEP AP242 / B-Rep を正本形状とし、STL / OBJ / glTF / PNG / PDF は派生物として扱う。
 
-## 2. 正本データ階層
+## 2. 現在の実装成熟度
+
+- 実装済み: ローカル CLI、Phase 1 PoC contract/golden pipeline、Phase 2 Pilot adapter probe、DFM/AM catalog、review diff HTML、audit JSONL、Model Gateway trial。
+- 未実装: API Gateway/Auth、Project Service、非同期ジョブキュー、sandbox CAD worker pool、Observability、Production v1/v2 の PLM/ERP/MES adapter。
+- 本リポジトリの現在の成功基準は、設計案全体を本番運用することではなく、原案に基づく安全な I/O 境界・検証ゲート・PoC/Pilot パイプラインを再現可能に保つことです。
+
+## 3. 正本データ階層
 
 | レイヤ | 正本 | 目的 |
 |---|---|---|
@@ -21,7 +27,7 @@
 | 派生物 | STL / OBJ / glTF / PNG / PDF | 造形、表示、共有、図面化に使う |
 | 検証 | Validation Report JSON | 幾何、工程、FEA の判定と差分を記録する |
 
-## 3. エージェント責任境界
+## 4. エージェント責任境界
 
 | エージェント | 責務 | 禁止事項 |
 |---|---|---|
@@ -34,7 +40,7 @@
 | Policy / Audit | ルーティング、ログ、法規タグを管理する | 監査ログ改ざん、保持期間違反 |
 | Model Gateway | commercial / onprem / hybrid を切り替える | 機密情報の不適切ルーティング |
 
-## 4. 必須スキーマ要点
+## 5. 必須スキーマ要点
 
 ### Requirement JSON
 
@@ -52,7 +58,7 @@
 
 必須キー: `traceability_id`, `specification_id`, `artifact_ids`, `dimensions_check`, `topology_check`, `unit_consistency`, `manufacturing_profile_rules`, `pass`, `failures`。
 
-## 5. API境界
+## 6. API境界
 
 - `POST /v1/projects`
 - `POST /v1/requirements/extract`
@@ -64,7 +70,7 @@
 - `POST /v1/exports`
 - `GET /v1/artifacts/{artifact_id}`
 
-## 6. ゲート
+## 7. ゲート
 
 | ゲート | 通過条件 | バイパス |
 |---|---|---|

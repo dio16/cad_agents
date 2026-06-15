@@ -3,12 +3,14 @@ from __future__ import annotations
 import argparse
 import json
 import shutil
-from dataclasses import dataclass
+from copy import deepcopy
+from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
+from html import escape
 from pathlib import Path
 from typing import Any
 
-from cad_agent.platform_poc import golden_specification, run_golden_pipeline, stable_hash_file, write_json
+from cad_agent.platform_poc import run_golden_pipeline, stable_hash_file, write_json
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -88,7 +90,7 @@ def validate_dfm_profile_against_spec(specification: dict[str, Any]) -> dict[str
             ",".join(str(material) for material in materials),
         ),
     ]
-    return {"status": _pilot_status(checks), "profile": profile, "checks": [check.__dict__ for check in checks]}
+    return {"status": _pilot_status(checks), "profile": profile, "checks": [asdict(check) for check in checks]}
 
 
 def probe_worker(worker_name: str, candidates: list[str]) -> dict[str, Any]:
@@ -96,6 +98,7 @@ def probe_worker(worker_name: str, candidates: list[str]) -> dict[str, Any]:
     return {
         "worker": worker_name,
         "mode": "native" if executable else "surrogate",
+        "native_available": executable is not None,
         "executable": executable,
         "status": "pass",
         "detail": "native executable detected" if executable else "native executable not present; deterministic surrogate adapter exercised",
@@ -133,6 +136,12 @@ def write_review_viewer(output_path: Path, phase1_report: dict[str, Any], diff_r
     output_path.parent.mkdir(parents=True, exist_ok=True)
     runtime = phase1_report.get("runtime", {})
     validation = phase1_report.get("validation_report", {})
+    traceability_id = str(phase1_report.get("dsl", {}).get("traceability_id", ""))
+    validation_pass = validation.get("pass")
+    validation_class = "pass" if validation_pass is True else "fail"
+    runtime_status = str(runtime.get("status", ""))
+    mesh_path = str(obj_artifact.get("path", ""))
+    diff_json = escape(json.dumps(diff_report, ensure_ascii=False, indent=2, sort_keys=True))
     html = f"""<!doctype html>
 <html lang=\"ja\">
 <head>
@@ -142,12 +151,12 @@ def write_review_viewer(output_path: Path, phase1_report: dict[str, Any], diff_r
 </head>
 <body>
 <h1>Phase 2 Pilot Review UI</h1>
-<p>traceability_id: <code>{phase1_report.get('dsl', {}).get('traceability_id')}</code></p>
-<p>Validation: <span class=\"pass\">{validation.get('pass')}</span></p>
+<p>traceability_id: <code>{escape(traceability_id)}</code></p>
+<p>Validation: <span class=\"{escape(validation_class)}\">{escape(str(validation_pass))}</span></p>
 <h2>Worker outputs</h2>
-<ul><li>CAD runtime status: {runtime.get('status')}</li><li>Mesh artifact: {obj_artifact.get('path')}</li></ul>
+<ul><li>CAD runtime status: {escape(runtime_status)}</li><li>Mesh artifact: {escape(mesh_path)}</li></ul>
 <h2>Version diff summary</h2>
-<pre>{json.dumps(diff_report, ensure_ascii=False, indent=2, sort_keys=True)}</pre>
+<pre>{diff_json}</pre>
 </body>
 </html>
 """
@@ -176,15 +185,23 @@ def route_model(data_classification: str, requested_route: str | None = None) ->
         raise ValueError(f"unknown data classification: {data_classification}")
     rule = MODEL_GATEWAY_RULES[data_classification]
     selected = requested_route or str(rule["default_route"])
-    allowed = selected in rule["allowed_routes"]
+    route_allowed = selected in rule["allowed_routes"]
+    approval_required = bool(rule.get("human_approval_required", False))
     return {
-        "status": "pass" if allowed else "fail",
+        "status": "pass" if route_allowed and not approval_required else "fail" if not route_allowed else "pending_approval",
+        "route_status": "pass" if route_allowed else "fail",
+        "approval_status": "pass" if not approval_required else "pending",
+        "approval_satisfied": not approval_required,
         "data_classification": data_classification,
         "requested_route": requested_route,
-        "selected_route": selected if allowed else rule["default_route"],
+        "selected_route": selected if route_allowed else str(rule["default_route"]),
         "allowed_routes": rule["allowed_routes"],
-        "human_approval_required": bool(rule.get("human_approval_required", False)),
+        "human_approval_required": approval_required,
     }
+
+
+def _gateway_requires_onprem_approval(gateway: dict[str, Any]) -> bool:
+    return gateway["selected_route"] == "onprem" and gateway["route_status"] in {"pass", "fail"} and gateway["approval_status"] == "pending" and gateway["human_approval_required"]
 
 
 def append_audit_event(audit_path: Path, event: dict[str, Any]) -> dict[str, Any]:
@@ -204,10 +221,10 @@ def append_audit_event(audit_path: Path, event: dict[str, Any]) -> dict[str, Any
 def run_phase2_pilot(output_dir: Path = DEFAULT_PHASE2_OUTPUT_DIR) -> dict[str, Any]:
     output_dir.mkdir(parents=True, exist_ok=True)
     baseline = run_golden_pipeline(output_dir / "baseline")
-    revised = json.loads(json.dumps(baseline))
+    revised = deepcopy(baseline)
     revised["specification"]["parameter_table"]["wall_t"] = 4.5
     diff = compare_phase_reports(baseline, revised)
-    profile_validation = validate_dfm_profile_against_spec(golden_specification())
+    profile_validation = validate_dfm_profile_against_spec(baseline["specification"])
     worker_probes = [
         probe_worker("freecad_occt_worker", ["freecadcmd", "FreeCADCmd", "pythonocc-shell"]),
         probe_worker("blender_mesh_render_worker", ["blender"]),
@@ -216,6 +233,8 @@ def run_phase2_pilot(output_dir: Path = DEFAULT_PHASE2_OUTPUT_DIR) -> dict[str, 
     viewer_artifact = write_review_viewer(output_dir / "review" / "phase2_review_viewer.html", baseline, diff, obj_artifact)
     gateway_public = route_model("public", "commercial")
     gateway_confidential = route_model("confidential", "commercial")
+    gateway_regulated = route_model("regulated", "commercial")
+    gateway_export_controlled = route_model("export-controlled", "commercial")
     audit = append_audit_event(
         output_dir / "audit" / "audit_log.jsonl",
         {
@@ -236,18 +255,20 @@ def run_phase2_pilot(output_dir: Path = DEFAULT_PHASE2_OUTPUT_DIR) -> dict[str, 
         PilotCheck("Audit log event recorded", audit["status"]),
         PilotCheck("Model gateway permits public commercial route", gateway_public["status"]),
         PilotCheck("Model gateway blocks confidential commercial route", "pass" if gateway_confidential["status"] == "fail" else "fail"),
+        PilotCheck("Model gateway requires onprem approval for regulated data", "pass" if _gateway_requires_onprem_approval(gateway_regulated) else "fail"),
+        PilotCheck("Model gateway requires onprem approval for export-controlled data", "pass" if _gateway_requires_onprem_approval(gateway_export_controlled) else "fail"),
     ]
     report = {
         "status": _pilot_status(checks),
         "generated_at": utc_now(),
-        "checks": [check.__dict__ for check in checks],
+        "checks": [asdict(check) for check in checks],
         "dfm_am_profile_validation": profile_validation,
         "worker_probes": worker_probes,
         "mesh_artifact": obj_artifact,
         "review_ui_artifact": viewer_artifact,
         "version_diff": diff,
         "audit_log": audit,
-        "model_gateway_trials": [gateway_public, gateway_confidential],
+        "model_gateway_trials": [gateway_public, gateway_confidential, gateway_regulated, gateway_export_controlled],
     }
     write_json(output_dir / "phase2_pilot_report.json", report)
     if output_dir.resolve() == DEFAULT_PHASE2_OUTPUT_DIR.resolve():

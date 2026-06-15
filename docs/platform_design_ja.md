@@ -1,9 +1,24 @@
 # platform_design_ja.md
 
-この文書は原案ベースの新しい正本セットへ統合されました。
+この文書は、原案 `docs/Origen/Design_document_for_a_machine_design_platform.md` に基づく設計の索引・要約です。詳細は原案と `docs/architecture_ja.md`、`docs/api_contracts_ja.md`、`docs/validation_security_ja.md`、`docs/operations_ja.md` を参照してください。
 
-- 原案: `docs/Origen/Design_document_for_a_machine_design_platform.md`
-- アーキテクチャ: `docs/architecture_ja.md`
-- API・スキーマ: `docs/api_contracts_ja.md`
-- 検証・セキュリティ: `docs/validation_security_ja.md`
-- 運用: `docs/operations_ja.md`
+## 設計方針
+
+- LLM は設計計画器であり、CAD カーネルは実行器、Validation は品質ゲートです。
+- 自由文を直接 CAD コードに流さず、Requirement JSON、Specification JSON、Parametric DSL、Validation Report の構造化境界を下流工程に置きます。
+- 正本形状は STEP AP242 / B-Rep とし、STL / OBJ / glTF / PNG / PDF は派生物として扱います。
+- 仕様変更、regulated / export-controlled タグ、新規 DSL operation、Validation override は人間承認またはレビュー承認ゲートを必須にします。
+
+## 主要コンポーネント
+
+- API Gateway / Auth: 認証、案件作成、ジョブ起動、成果物取得
+- Workflow Orchestrator: 標準フロー、修正ループ、ゲート制御
+- Model Gateway: commercial / onprem / hybrid のデータ分類ベースのルーティング
+- Requirement Extractor / Spec Composer / DSL Compiler: 構造化出力のみを下流へ渡す
+- CAD Runtime: OCCT / FreeCAD 互換の決定論的実行器
+- Validation Service: 幾何、DFM/AM、組立、FEA の pass/fail と reason code
+- Artifact Store / Policy / Audit: hash、保持期間、データ分類、traceability を記録
+
+## 現在の成熟度
+
+このリポジトリは Phase 1 PoC と Phase 2 Pilot を検証できるローカル CLI/検証環境です。Production v1 の API サーバー、認証、ジョブキュー、サンドボックス CAD worker pool、観測基盤はまだ計画段階です。

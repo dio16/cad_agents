@@ -8,12 +8,24 @@
     "traceability_id": {"type": "string", "minLength": 1},
     "specification_id": {"type": "string", "minLength": 1},
     "artifact_ids": {"type": "array", "items": {"type": "string"}},
-    "dimensions_check": {"type": "object", "required": ["status"]},
-    "topology_check": {"type": "object", "required": ["status"]},
-    "unit_consistency": {"type": "object", "required": ["status"]},
-    "manufacturing_profile_rules": {"type": "object", "required": ["status"]},
+    "dimensions_check": {"type": "object", "required": ["status"], "properties": {"status": {"enum": ["pass", "fail"]}}, "additionalProperties": true},
+    "topology_check": {"type": "object", "required": ["status"], "properties": {"status": {"enum": ["pass", "fail"]}}, "additionalProperties": true},
+    "unit_consistency": {"type": "object", "required": ["status"], "properties": {"status": {"enum": ["pass", "fail"]}}, "additionalProperties": true},
+    "manufacturing_profile_rules": {"type": "object", "required": ["status"], "properties": {"status": {"enum": ["pass", "fail"]}}, "additionalProperties": true},
     "pass": {"type": "boolean"},
-    "failures": {"type": "array", "items": {"type": "object"}}
+    "failures": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["reason_code", "failure_location"],
+        "properties": {
+          "reason_code": {"type": "string", "minLength": 1},
+          "failure_location": {"type": "string", "minLength": 1},
+          "detail": {"type": "string"}
+        },
+        "additionalProperties": true
+      }
+    }
   },
   "additionalProperties": true
 }

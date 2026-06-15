@@ -4,69 +4,22 @@ import argparse
 import hashlib
 import json
 import math
-from ctypes.util import find_library
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterable
+
+from .schema_gate import ContractResult, validate_against_schema
 
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_OUTPUT_DIR = ROOT / "artifacts" / "phase1_poc"
 DEFAULT_REPORT_DIR = ROOT / "reports"
 
-REQUIREMENT_REQUIRED = {
-    "traceability_id",
-    "product_type",
-    "functional_requirements",
-    "dimensions",
-    "manufacturing",
-    "unknowns",
-    "assumptions",
-}
-
-SPECIFICATION_REQUIRED = {
-    "traceability_id",
-    "requirement_id",
-    "parameter_table",
-    "constraints",
-    "material_candidates",
-    "manufacturing_profile",
-    "validation_plan",
-    "unresolved_risks",
-}
-
-DSL_REQUIRED = {
-    "traceability_id",
-    "units",
-    "parameters",
-    "features",
-    "derivative_outputs",
-}
-
-VALIDATION_REQUIRED = {
-    "traceability_id",
-    "specification_id",
-    "artifact_ids",
-    "dimensions_check",
-    "topology_check",
-    "unit_consistency",
-    "manufacturing_profile_rules",
-    "pass",
-    "failures",
-}
-
 ALLOWED_DSL_OPS = {"box", "cylinder", "through_hole"}
 ADDITIVE_OPS = {"box", "cylinder"}
 SUBTRACTIVE_OPS = {"through_hole"}
 ALLOWED_OUTPUTS = {"step_ap242", "stl"}
-
-
-@dataclass(frozen=True)
-class ContractResult:
-    name: str
-    status: str
-    detail: str = ""
 
 
 def utc_now() -> str:
@@ -90,79 +43,20 @@ def stable_hash_file(path: Path) -> str:
     return stable_hash_bytes(path.read_bytes())
 
 
-def _check_required(document: dict[str, Any], required: set[str], label: str) -> list[ContractResult]:
-    return [
-        ContractResult(f"{label} required field: {key}", "pass" if key in document else "fail")
-        for key in sorted(required)
-    ]
-
-
-def _check_type(name: str, value: Any, expected_type: type | tuple[type, ...]) -> ContractResult:
-    return ContractResult(name, "pass" if isinstance(value, expected_type) else "fail", type(value).__name__)
-
-
 def validate_requirement_schema(document: dict[str, Any]) -> list[ContractResult]:
-    checks = _check_required(document, REQUIREMENT_REQUIRED, "Requirement JSON")
-    checks.extend(
-        [
-            _check_type("Requirement functional_requirements is list", document.get("functional_requirements"), list),
-            _check_type("Requirement dimensions is object", document.get("dimensions"), dict),
-            _check_type("Requirement manufacturing is object", document.get("manufacturing"), dict),
-            _check_type("Requirement unknowns is list", document.get("unknowns"), list),
-            _check_type("Requirement assumptions is list", document.get("assumptions"), list),
-            ContractResult(
-                "Requirement unknowns/assumptions are separated",
-                "pass"
-                if isinstance(document.get("unknowns"), list)
-                and isinstance(document.get("assumptions"), list)
-                and set(document.get("unknowns", [])).isdisjoint(set(document.get("assumptions", [])))
-                else "fail",
-            ),
-        ]
-    )
-    return checks
+    return validate_against_schema(document, "requirement")
 
 
 def validate_specification_schema(document: dict[str, Any]) -> list[ContractResult]:
-    checks = _check_required(document, SPECIFICATION_REQUIRED, "Specification JSON")
-    checks.extend(
-        [
-            _check_type("Specification parameter_table is object", document.get("parameter_table"), dict),
-            _check_type("Specification constraints is list", document.get("constraints"), list),
-            _check_type("Specification material_candidates is list", document.get("material_candidates"), list),
-            _check_type("Specification validation_plan is list", document.get("validation_plan"), list),
-            _check_type("Specification unresolved_risks is list", document.get("unresolved_risks"), list),
-        ]
-    )
-    return checks
+    return validate_against_schema(document, "specification")
 
 
 def validate_parametric_dsl_schema(document: dict[str, Any]) -> list[ContractResult]:
-    checks = _check_required(document, DSL_REQUIRED, "Parametric DSL")
-    checks.extend(
-        [
-            ContractResult("Parametric DSL units are mm", "pass" if document.get("units") == "mm" else "fail"),
-            _check_type("Parametric DSL parameters is object", document.get("parameters"), dict),
-            _check_type("Parametric DSL features is list", document.get("features"), list),
-            _check_type("Parametric DSL derivative_outputs is list", document.get("derivative_outputs"), list),
-        ]
-    )
-    if isinstance(document.get("derivative_outputs"), list):
-        unknown_outputs = sorted(set(document["derivative_outputs"]) - ALLOWED_OUTPUTS)
-        checks.append(ContractResult("Parametric DSL derivative outputs supported", "pass" if not unknown_outputs else "fail", ",".join(unknown_outputs)))
-    return checks
+    return validate_against_schema(document, "parametric_dsl")
 
 
 def validate_validation_report_schema(document: dict[str, Any]) -> list[ContractResult]:
-    checks = _check_required(document, VALIDATION_REQUIRED, "Validation Report")
-    checks.extend(
-        [
-            _check_type("Validation Report artifact_ids is list", document.get("artifact_ids"), list),
-            _check_type("Validation Report pass is boolean", document.get("pass"), bool),
-            _check_type("Validation Report failures is list", document.get("failures"), list),
-        ]
-    )
-    return checks
+    return validate_against_schema(document, "validation_report")
 
 
 def _parameter_names(document: dict[str, Any]) -> set[str]:
@@ -181,14 +75,16 @@ def _walk_values(value: Any) -> Iterable[Any]:
         yield value
 
 
-def validate_parametric_dsl_ast(document: dict[str, Any]) -> list[ContractResult]:
-    checks = validate_parametric_dsl_schema(document)
+def validate_parametric_dsl_semantics(document: dict[str, Any]) -> list[ContractResult]:
     params = _parameter_names(document)
     features = document.get("features", [])
+    seen_additive = False
     seen_subtractive = False
     op_failures: list[str] = []
     order_failures: list[str] = []
     ref_failures: list[str] = []
+    derivative_outputs = document.get("derivative_outputs", [])
+    output_failures = sorted(set(derivative_outputs) - ALLOWED_OUTPUTS) if isinstance(derivative_outputs, list) else []
     if isinstance(features, list):
         for index, feature in enumerate(features):
             if not isinstance(feature, dict):
@@ -197,20 +93,28 @@ def validate_parametric_dsl_ast(document: dict[str, Any]) -> list[ContractResult
             op = feature.get("op")
             if op not in ALLOWED_DSL_OPS:
                 op_failures.append(f"feature[{index}] op={op}")
+            if op in ADDITIVE_OPS:
+                seen_additive = True
             if op in SUBTRACTIVE_OPS:
                 seen_subtractive = True
+            if not seen_additive and op in SUBTRACTIVE_OPS:
+                order_failures.append(f"feature[{index}] subtractive op precedes additive base")
             if seen_subtractive and op in ADDITIVE_OPS:
                 order_failures.append(f"feature[{index}] additive op follows subtractive op")
             for value in _walk_values(feature):
                 if isinstance(value, str) and value.startswith("$") and value[1:] not in params:
                     ref_failures.append(value)
-    checks.extend(
-        [
-            ContractResult("Parametric DSL operations are allowlisted", "pass" if not op_failures else "fail", "; ".join(op_failures)),
-            ContractResult("Parametric DSL feature order is executable", "pass" if not order_failures else "fail", "; ".join(order_failures)),
-            ContractResult("Parametric DSL parameter references resolve", "pass" if not ref_failures else "fail", ",".join(sorted(set(ref_failures)))),
-        ]
-    )
+    return [
+        ContractResult("Parametric DSL operations are allowlisted", "pass" if not op_failures else "fail", "; ".join(op_failures)),
+        ContractResult("Parametric DSL feature order is executable", "pass" if not order_failures else "fail", "; ".join(order_failures)),
+        ContractResult("Parametric DSL parameter references resolve", "pass" if not ref_failures else "fail", ",".join(sorted(set(ref_failures)))),
+        ContractResult("Parametric DSL derivative outputs supported", "pass" if not output_failures else "fail", ",".join(output_failures)),
+    ]
+
+
+def validate_parametric_dsl_ast(document: dict[str, Any]) -> list[ContractResult]:
+    checks = validate_parametric_dsl_schema(document)
+    checks.extend(validate_parametric_dsl_semantics(document))
     return checks
 
 
@@ -234,7 +138,7 @@ def contract_report() -> dict[str, Any]:
         "status": "pass" if all(contract_status(items) == "pass" for items in groups.values()) else "fail",
         "generated_at": utc_now(),
         "checks": {
-            key: [item.__dict__ for item in items]
+            key: [asdict(item) for item in items]
             for key, items in groups.items()
         },
     }
@@ -320,7 +224,11 @@ END-ISO-10303-21;
 
 
 def _cadquery_available() -> bool:
-    return find_library("GL") is not None
+    try:
+        import cadquery
+    except ImportError:
+        return False
+    return cadquery is not None
 
 
 def _build_cadquery_model(dsl: dict[str, Any]) -> Any:
@@ -368,7 +276,7 @@ def run_cad_runtime(dsl: dict[str, Any], output_dir: Path = DEFAULT_OUTPUT_DIR) 
             "status": "fail",
             "traceability_id": dsl.get("traceability_id"),
             "reason_code": "DSL_AST_VALIDATION_FAILED",
-            "checks": [item.__dict__ for item in ast_checks],
+            "checks": [asdict(item) for item in ast_checks],
             "artifacts": [],
         }
 
@@ -450,13 +358,16 @@ def validate_artifacts(specification: dict[str, Any], dsl: dict[str, Any], runti
     if runtime_result.get("status") != "pass":
         failures.append({"reason_code": runtime_result.get("reason_code", "CAD_RUNTIME_FAILED"), "failure_location": "cad_runtime"})
 
-    bbox = runtime_result.get("bbox_mm", {})
-    limits = specification.get("constraints", [])
-    required_bbox = specification.get("validation_plan", {}).get("bbox_mm") if isinstance(specification.get("validation_plan"), dict) else None
-    if required_bbox:
-        bbox_ok = all(abs(float(bbox.get(axis, 0.0)) - float(required_bbox[axis])) <= float(required_bbox.get("tolerance_mm", 0.1)) for axis in ["length", "width", "height"])
+    bbox = runtime_result.get("bbox_mm", {}) or {}
+    parameter_table = specification.get("parameter_table", {}) or {}
+    constraints = specification.get("constraints", [])
+    axes = ["length", "width", "height"]
+    has_bbox_spec = isinstance(parameter_table, dict) and isinstance(constraints, list) and all(axis in parameter_table for axis in axes)
+    tolerance_mm = 0.1
+    if has_bbox_spec:
+        bbox_ok = all(abs(float(bbox.get(axis, 0.0)) - float(parameter_table[axis])) <= tolerance_mm for axis in axes)
     else:
-        bbox_ok = bool(bbox) and all(float(bbox.get(axis, 0.0)) > 0 for axis in ["length", "width", "height"])
+        bbox_ok = isinstance(bbox, dict) and all(float(bbox.get(axis, 0.0)) > 0 for axis in axes)
     if not bbox_ok:
         failures.append({"reason_code": "BBOX_OUT_OF_RANGE", "failure_location": "dimensions_check"})
 
@@ -537,8 +448,8 @@ def record_human_approval(
     reason: str,
     approval_dir: Path = DEFAULT_OUTPUT_DIR / "approvals",
 ) -> dict[str, Any]:
-    if approval_type not in {"specification_change", "validation_override"}:
-        raise ValueError("approval_type must be specification_change or validation_override")
+    if approval_type not in {"specification_change", "validation_override", "regulated_tag", "export_controlled_tag", "new_dsl_operation"}:
+        raise ValueError("approval_type must be specification_change, validation_override, regulated_tag, export_controlled_tag, or new_dsl_operation")
     if decision not in {"approved", "rejected"}:
         raise ValueError("decision must be approved or rejected")
     record = {

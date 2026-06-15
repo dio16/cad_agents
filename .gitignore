@@ -28,6 +28,13 @@ reports/fabrication_*/assets/
 reports/fabrication_*/stl/
 reports/text_to_cad_reports/
 
+# Generated local artifacts
+artifacts/
+
 # Phase 1 generated local PoC outputs
 artifacts/phase1_poc/
 reports/phase1_contract_test.json
+reports/phase2_pilot_report.json
+
+# OpenCode deepwork session state
+.slim/deepwork/

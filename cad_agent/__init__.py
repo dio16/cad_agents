@@ -1,3 +1,3 @@
-"""Agentic CAD workflow helpers for Codex and Onshape."""
+"""Agentic CAD workflow helpers for the machine design platform."""
 
-__all__ = ["onshape_client", "workflow"]
+__all__ = ["platform_poc", "phase2_pilot"]
