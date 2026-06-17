@@ -10,37 +10,36 @@ bash ./run_cad_agent.sh validate-docs
 bash ./run_cad_agent.sh phase1-contract-test
 bash ./run_cad_agent.sh phase1-golden-pipeline
 bash ./run_cad_agent.sh phase2-pilot-run
+bash ./run_cad_agent.sh serve --dry-run
+bash ./run_cad_agent.sh sbom --output /tmp/cad_agent_sbom.json
+bash ./run_cad_agent.sh provenance --output /tmp/cad_agent_provenance.json
 ```
 
-## CI/CD
+## CI/CD skeleton
+
+現在の CI は Production v1/v2 の完全運用ではなく、GitHub Actions 上で既存の文書・契約・Phase 1/2・SBOM/provenance・serve dry-run を通す smoke workflow です。
 
 ```mermaid
 flowchart TD
     A[Git Push / PR] --> B[GitHub Actions]
-    B --> C[Lint / Type Check]
-    C --> D[Unit Test]
-    D --> E[Schema Contract Test]
-    E --> F[CAD Worker Integration Test]
-    F --> G[Golden Case Regression]
-    G --> H[Security Scan]
-    H --> I[SBOM / Trivy]
-    I --> J[Container Build]
-    J --> K[Cosign Sign]
-    K --> L[Artifact Registry]
-    L --> M[Helm / Kustomize Update]
-    M --> N[Argo CD Sync]
-    N --> O[Canary Deploy]
-    O --> P[Smoke Test]
-    P --> Q[Promotion]
+    B --> C[uv sync --locked --extra dev]
+    C --> D[pytest -q]
+    D --> E[validate-docs]
+    E --> F[phase1-contract-test]
+    F --> G[phase1-golden-pipeline]
+    G --> H[phase2-pilot-run]
+    H --> I[sbom / provenance stubs]
+    I --> J[serve --dry-run]
 ```
 
-## 実行基盤
+## 実行基盤 skeleton
 
-- LLM 推論は GPU 系リソースへ分離する。
-- CAD / geometry / validation は CPU worker pool を基本にする。
-- FEA は別 queue とし、長時間ジョブとして扱う。
-- API は短時間同期、CAD/FEA は非同期 queue にする。
-- KServe / vLLM / OpenAI-compatible API で model route を抽象化する。
+- 現リポジトリは Production v1/v2 実行基盤の skeleton/contract を示す。
+- API server は stdlib `http.server` の local stub。
+- job queue は synchronous simulation。
+- CI は GitHub Actions smoke workflow。
+- SBOM/provenance は決定論的 local stub。
+- Production 実運用: Kubernetes、KServe/vLLM、Argo CD、Cosign/Trivy、sandbox worker pool は将来拡張。
 
 ## SLO候補
 

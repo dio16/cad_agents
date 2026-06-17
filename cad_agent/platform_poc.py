@@ -346,8 +346,16 @@ def run_cad_runtime(dsl: dict[str, Any], output_dir: Path = DEFAULT_OUTPUT_DIR) 
     }
 
 
-def _status_item(status: str, **extra: Any) -> dict[str, Any]:
-    return {"status": status, **extra}
+def _status_item(status: str, reason_code: str, detail: str, **extra: Any) -> dict[str, Any]:
+    return {"status": status, "reason_code": reason_code, "detail": detail, **extra}
+
+
+def _append_failure(failures: list[dict[str, Any]], reason_code: str, failure_location: str, detail: str) -> None:
+    failures.append({"reason_code": reason_code, "failure_location": failure_location, "detail": detail})
+
+
+def _check_artifact_traceability(artifact_ids: list[str], traceability_id: str) -> bool:
+    return all(traceability_id in artifact_id for artifact_id in artifact_ids)
 
 
 def validate_artifacts(specification: dict[str, Any], dsl: dict[str, Any], runtime_result: dict[str, Any]) -> dict[str, Any]:
@@ -356,7 +364,29 @@ def validate_artifacts(specification: dict[str, Any], dsl: dict[str, Any], runti
     artifact_ids = [item["artifact_id"] for item in runtime_result.get("artifacts", [])]
 
     if runtime_result.get("status") != "pass":
-        failures.append({"reason_code": runtime_result.get("reason_code", "CAD_RUNTIME_FAILED"), "failure_location": "cad_runtime"})
+        _append_failure(
+            failures,
+            runtime_result.get("reason_code", "CAD_RUNTIME_FAILED"),
+            "cad_runtime",
+            runtime_result.get("detail", "CAD runtime did not complete successfully"),
+        )
+
+    runtime_traceability_id = runtime_result.get("traceability_id")
+    if runtime_traceability_id and runtime_traceability_id != traceability_id:
+        _append_failure(
+            failures,
+            "TRACEABILITY_ID_MISMATCH",
+            "cad_runtime",
+            f"runtime traceability_id={runtime_traceability_id!r} does not match DSL traceability_id={traceability_id!r}",
+        )
+
+    if not _check_artifact_traceability(artifact_ids, traceability_id):
+        _append_failure(
+            failures,
+            "TRACEABILITY_ARTIFACT_ID_MISMATCH",
+            "artifact_ids",
+            f"artifact_ids={artifact_ids!r} must include DSL traceability_id={traceability_id!r}",
+        )
 
     bbox = runtime_result.get("bbox_mm", {}) or {}
     parameter_table = specification.get("parameter_table", {}) or {}
@@ -369,37 +399,104 @@ def validate_artifacts(specification: dict[str, Any], dsl: dict[str, Any], runti
     else:
         bbox_ok = isinstance(bbox, dict) and all(float(bbox.get(axis, 0.0)) > 0 for axis in axes)
     if not bbox_ok:
-        failures.append({"reason_code": "BBOX_OUT_OF_RANGE", "failure_location": "dimensions_check"})
+        _append_failure(
+            failures,
+            "BBOX_OUT_OF_RANGE",
+            "dimensions_check",
+            f"bbox_mm={bbox!r} does not match parameter_table length/width/height within {tolerance_mm} mm",
+        )
 
     volume = float(runtime_result.get("volume_mm3", 0.0))
     volume_ok = volume > 0.0
     if not volume_ok:
-        failures.append({"reason_code": "VOLUME_NON_POSITIVE", "failure_location": "dimensions_check"})
+        _append_failure(
+            failures,
+            "VOLUME_NON_POSITIVE",
+            "dimensions_check",
+            f"volume_mm3={volume} must be positive",
+        )
 
     outputs = {item.get("format") for item in runtime_result.get("artifacts", [])}
     topology_ok = runtime_result.get("status") == "pass" and "stl" in outputs and "step_ap242" in outputs
     if not topology_ok:
-        failures.append({"reason_code": "MISSING_CANONICAL_OR_DERIVED_ARTIFACT", "failure_location": "topology_check"})
+        _append_failure(
+            failures,
+            "MISSING_CANONICAL_OR_DERIVED_ARTIFACT",
+            "topology_check",
+            f"expected step_ap242 and stl artifacts, observed formats={sorted(outputs)!r}",
+        )
 
     unit_ok = dsl.get("units") == "mm"
     if not unit_ok:
-        failures.append({"reason_code": "UNIT_MISMATCH", "failure_location": "unit_consistency"})
+        _append_failure(
+            failures,
+            "UNIT_MISMATCH",
+            "unit_consistency",
+            f"DSL units={dsl.get('units')!r} must be mm",
+        )
 
     parameters = dsl.get("parameters", {})
     min_wall = float(parameters.get("wall_t", parameters.get("height", 0.0)))
     hole_d = float(parameters.get("hole_d", 0.0))
     manufacturing_ok = specification.get("manufacturing_profile") == "fdm_standard" and min_wall >= 2.0 and (hole_d == 0.0 or hole_d >= 3.0)
     if not manufacturing_ok:
-        failures.append({"reason_code": "DFM_AM_MIN_RULE_FAILED", "failure_location": "manufacturing_profile_rules"})
+        _append_failure(
+            failures,
+            "DFM_AM_MIN_RULE_FAILED",
+            "manufacturing_profile_rules",
+            f"manufacturing_profile={specification.get('manufacturing_profile')!r}, min_wall_mm={min_wall}, hole_d_mm={hole_d}",
+        )
+
+    spec_traceability_id = specification.get("traceability_id")
+    if not isinstance(spec_traceability_id, str) or not spec_traceability_id.startswith("tr_spec_"):
+        _append_failure(
+            failures,
+            "TRACEABILITY_SPECIFICATION_ID_MISMATCH",
+            "specification_id",
+            f"specification traceability_id={spec_traceability_id!r} must be a tr_spec_ identifier",
+        )
+
+    report_traceability_id = f"tr_val_{traceability_id}"
+    if not report_traceability_id.startswith("tr_val_"):
+        _append_failure(
+            failures,
+            "TRACEABILITY_REPORT_ID_MISMATCH",
+            "traceability_id",
+            f"validation traceability_id={report_traceability_id!r} must be a tr_val_ identifier",
+        )
 
     report = {
-        "traceability_id": f"tr_val_{traceability_id}",
-        "specification_id": specification.get("traceability_id"),
+        "traceability_id": report_traceability_id,
+        "specification_id": spec_traceability_id,
         "artifact_ids": artifact_ids,
-        "dimensions_check": _status_item("pass" if bbox_ok and volume_ok else "fail", bbox_mm=bbox, volume_mm3=round(volume, 6)),
-        "topology_check": _status_item("pass" if topology_ok else "fail", watertight=True, self_intersection=False),
-        "unit_consistency": _status_item("pass" if unit_ok else "fail", units=dsl.get("units")),
-        "manufacturing_profile_rules": _status_item("pass" if manufacturing_ok else "fail", profile=specification.get("manufacturing_profile"), min_wall_mm=min_wall, hole_d_mm=hole_d),
+        "dimensions_check": _status_item(
+            "pass" if bbox_ok and volume_ok else "fail",
+            "BBOX_AND_VOLUME_CHECK",
+            "dimensions and volume are within Phase 1 PoC tolerances" if bbox_ok and volume_ok else "dimension or volume validation failed",
+            bbox_mm=bbox,
+            volume_mm3=round(volume, 6),
+        ),
+        "topology_check": _status_item(
+            "pass" if topology_ok else "fail",
+            "ARTIFACT_FORMAT_CHECK",
+            "canonical STEP and derived STL artifacts are present" if topology_ok else "canonical STEP and derived STL artifacts are missing",
+            watertight=True,
+            self_intersection=False,
+        ),
+        "unit_consistency": _status_item(
+            "pass" if unit_ok else "fail",
+            "UNIT_CONSISTENCY_CHECK",
+            "DSL units are millimetres" if unit_ok else "DSL units are not millimetres",
+            units=dsl.get("units"),
+        ),
+        "manufacturing_profile_rules": _status_item(
+            "pass" if manufacturing_ok else "fail",
+            "MANUFACTURING_MIN_RULE_CHECK",
+            "Phase 1 FDM minimum wall/hole rule passed" if manufacturing_ok else "Phase 1 FDM minimum wall/hole rule failed",
+            profile=specification.get("manufacturing_profile"),
+            min_wall_mm=min_wall,
+            hole_d_mm=hole_d,
+        ),
         "pass": not failures,
         "failures": failures,
         "generated_at": utc_now(),
@@ -487,7 +584,7 @@ def golden_specification() -> dict[str, Any]:
         "constraints": ["wall_t >= 2.0", "hole_d >= 3.0", "units == mm"],
         "material_candidates": ["PLA", "PETG"],
         "manufacturing_profile": "fdm_standard",
-        "validation_plan": ["dimensions_check", "topology_check", "dfm_am_check"],
+        "validation_plan": ["dimensions_check", "topology_check", "unit_consistency", "manufacturing_profile_rules"],
         "unresolved_risks": ["service temperature unknown"],
     }
 

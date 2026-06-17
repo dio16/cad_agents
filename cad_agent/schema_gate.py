@@ -10,6 +10,7 @@ from jsonschema import Draft202012Validator
 
 
 SCHEMA_DIR = Path(__file__).resolve().parents[1] / "schemas" / "phase1"
+ALLOWED_SCHEMA_NAMES = frozenset({"requirement", "specification", "parametric_dsl", "validation_report"})
 
 
 @dataclass(frozen=True)
@@ -21,6 +22,8 @@ class ContractResult:
 
 @lru_cache(maxsize=None)
 def _load_schema(schema_name: str) -> dict[str, Any]:
+    if schema_name not in ALLOWED_SCHEMA_NAMES:
+        raise ValueError(f"unknown Phase 1 schema name: {schema_name}")
     schema_path = SCHEMA_DIR / f"{schema_name}.schema.json"
     return json.loads(schema_path.read_text(encoding="utf-8"))
 
@@ -31,6 +34,9 @@ def _schema_validator(schema_name: str) -> Draft202012Validator:
 
 
 def validate_against_schema(document: dict[str, Any], schema_name: str) -> list[ContractResult]:
+    if schema_name not in ALLOWED_SCHEMA_NAMES:
+        return [ContractResult(f"{schema_name} JSON Schema", "fail", f"unknown Phase 1 schema name: {schema_name}")]
+
     validator = _schema_validator(schema_name)
     errors = sorted(validator.iter_errors(document), key=lambda error: list(error.absolute_path))
     if not errors:

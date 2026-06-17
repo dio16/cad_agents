@@ -7,11 +7,11 @@ Validation は品質ゲートです。見た目ではなく、仕様一致性と
 | チェック | 内容 |
 |---|---|
 | `dimensions_check` | 仕様寸法、公差、bbox、volume の一致 |
-| `topology_check` | watertight、self-intersection、non-manifold の検出 |
+| `topology_check` | STEP/STL artifact presence と topology proxy metadata。true watertight/self-intersection/non-manifold solving は将来範囲 |
 | `unit_consistency` | mm / deg / N / MPa の単位混在検出 |
-| `manufacturing_profile_rules` | 壁厚、穴径、overhang、clearance などの DFM/AM 規則 |
-| `assembly_interference_check` | 組立干渉、接触、運動範囲の検証 |
-| `optional_fea` | 最大変位、応力、固有値などの工学要件 |
+| `manufacturing_profile_rules` | 壁厚、穴径、`dfm.build_volume.max` の保守的 axis-aligned bbox envelope、overhang、clearance などの DFM/AM 規則 |
+| `assembly_interference_check` | 将来拡張: 組立干渉、接触、運動範囲の検証。AABB stub は別モジュールとして skeleton のみ |
+| `optional_fea` | 将来拡張: 最大変位、応力、固有値などの工学要件 |
 
 不合格時は `reason_code` と `failure_location` を返し、Orchestrator が修正ループに渡します。3回以上の検証失敗は人間判断へエスカレーションします。
 
@@ -20,8 +20,8 @@ Validation は品質ゲートです。見た目ではなく、仕様一致性と
 - Prompt Injection、schema escape、code escape をテスト対象にする。
 - LLM 出力は JSON Schema / AST validator を通過するまで下流へ渡さない。
 - raw code は `allow_raw_code=false` を既定にする。
-- CAD Runtime はネットワーク分離サンドボックスで実行する。
-- 監査ログは改ざん不能ストレージへ保存する。
+- CAD Runtime の PoC/Pilot はローカル CLI と deterministic surrogate adapter で検証し、ネットワーク分離サンドボックス化は将来目標。
+- 監査ログは append-style JSONL で記録し、改ざん不能ストレージ化は将来目標。
 
 ## データ分類
 

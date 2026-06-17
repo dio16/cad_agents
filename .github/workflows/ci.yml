@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
+        with:
+          python-version: '3.12'
+          enable-cache: true
+
+      - name: Install project
+        run: uv sync --locked --extra dev
+
+      - name: Baseline status and docs
+        run: |
+          bash ./run_cad_agent.sh status
+          bash ./run_cad_agent.sh validate-docs
+
+      - name: Phase 1 contract and golden pipeline
+        run: |
+          bash ./run_cad_agent.sh phase1-contract-test
+          bash ./run_cad_agent.sh phase1-golden-pipeline --output-dir /tmp/cad_agent_phase1_ci
+
+      - name: Phase 2 pilot run
+        run: |
+          bash ./run_cad_agent.sh phase2-pilot-run --output-dir /tmp/cad_agent_phase2_ci
+
+      - name: Python tests
+        run: uv run --frozen pytest -q
+
+      - name: SBOM and provenance stubs
+        run: |
+          bash ./run_cad_agent.sh sbom --output /tmp/cad_agent_sbom.json
+          bash ./run_cad_agent.sh provenance --output /tmp/cad_agent_provenance.json
+
+      - name: API server dry-run
+        run: bash ./run_cad_agent.sh serve --dry-run

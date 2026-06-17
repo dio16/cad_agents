@@ -5,27 +5,290 @@
   "type": "object",
   "required": ["traceability_id", "specification_id", "artifact_ids", "dimensions_check", "topology_check", "unit_consistency", "manufacturing_profile_rules", "pass", "failures"],
   "properties": {
-    "traceability_id": {"type": "string", "minLength": 1},
-    "specification_id": {"type": "string", "minLength": 1},
-    "artifact_ids": {"type": "array", "items": {"type": "string"}},
-    "dimensions_check": {"type": "object", "required": ["status"], "properties": {"status": {"enum": ["pass", "fail"]}}, "additionalProperties": true},
-    "topology_check": {"type": "object", "required": ["status"], "properties": {"status": {"enum": ["pass", "fail"]}}, "additionalProperties": true},
-    "unit_consistency": {"type": "object", "required": ["status"], "properties": {"status": {"enum": ["pass", "fail"]}}, "additionalProperties": true},
-    "manufacturing_profile_rules": {"type": "object", "required": ["status"], "properties": {"status": {"enum": ["pass", "fail"]}}, "additionalProperties": true},
-    "pass": {"type": "boolean"},
+    "traceability_id": {
+      "type": "string",
+      "pattern": "^tr_val_[A-Za-z0-9_]+$"
+    },
+    "specification_id": {
+      "type": "string",
+      "pattern": "^tr_spec_[A-Za-z0-9_]+$"
+    },
+    "artifact_ids": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "dimensions_check": {
+      "$ref": "#/$defs/validation_check"
+    },
+    "topology_check": {
+      "$ref": "#/$defs/validation_check"
+    },
+    "unit_consistency": {
+      "$ref": "#/$defs/validation_check"
+    },
+    "manufacturing_profile_rules": {
+      "$ref": "#/$defs/validation_check"
+    },
+    "pass": {
+      "type": "boolean"
+    },
     "failures": {
       "type": "array",
       "items": {
-        "type": "object",
-        "required": ["reason_code", "failure_location"],
-        "properties": {
-          "reason_code": {"type": "string", "minLength": 1},
-          "failure_location": {"type": "string", "minLength": 1},
-          "detail": {"type": "string"}
-        },
-        "additionalProperties": true
+        "$ref": "#/$defs/failure_item"
       }
+    },
+    "generated_at": {
+      "type": "string",
+      "minLength": 1
     }
   },
-  "additionalProperties": true
+  "$defs": {
+    "validation_check": {
+      "type": "object",
+      "required": ["status", "reason_code", "detail"],
+      "properties": {
+        "status": {
+          "enum": ["pass", "fail"]
+        },
+        "reason_code": {
+          "type": "string",
+          "minLength": 1
+        },
+        "detail": {
+          "type": "string",
+          "minLength": 1
+        },
+        "bbox_mm": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "number"
+          }
+        },
+        "volume_mm3": {
+          "type": "number"
+        },
+        "watertight": {
+          "type": "boolean"
+        },
+        "self_intersection": {
+          "type": "boolean"
+        },
+        "units": {
+          "type": "string"
+        },
+        "profile": {
+          "type": "string"
+        },
+        "min_wall_mm": {
+          "type": "number"
+        },
+        "hole_d_mm": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
+    },
+    "failure_item": {
+      "type": "object",
+      "required": ["reason_code", "failure_location", "detail"],
+      "properties": {
+        "reason_code": {
+          "type": "string",
+          "minLength": 1
+        },
+        "failure_location": {
+          "type": "string",
+          "minLength": 1
+        },
+        "detail": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "pass": {
+            "const": true
+          }
+        },
+        "required": ["pass"]
+      },
+      "then": {
+        "properties": {
+          "failures": {
+            "maxItems": 0
+          },
+          "dimensions_check": {
+            "properties": {
+              "status": {
+                "const": "pass"
+              }
+            }
+          },
+          "topology_check": {
+            "properties": {
+              "status": {
+                "const": "pass"
+              }
+            }
+          },
+          "unit_consistency": {
+            "properties": {
+              "status": {
+                "const": "pass"
+              }
+            }
+          },
+          "manufacturing_profile_rules": {
+            "properties": {
+              "status": {
+                "const": "pass"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "pass": {
+            "const": false
+          }
+        },
+        "required": ["pass"]
+      },
+      "then": {
+        "properties": {
+          "failures": {
+            "minItems": 1
+          }
+        },
+        "anyOf": [
+          {
+            "required": ["dimensions_check"],
+            "properties": {
+              "dimensions_check": {
+                "properties": {
+                  "status": {
+                    "const": "fail"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "required": ["topology_check"],
+            "properties": {
+              "topology_check": {
+                "properties": {
+                  "status": {
+                    "const": "fail"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "required": ["unit_consistency"],
+            "properties": {
+              "unit_consistency": {
+                "properties": {
+                  "status": {
+                    "const": "fail"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "required": ["manufacturing_profile_rules"],
+            "properties": {
+              "manufacturing_profile_rules": {
+                "properties": {
+                  "status": {
+                    "const": "fail"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "failures": {
+            "minItems": 1
+          }
+        },
+        "required": ["failures"]
+      },
+      "then": {
+        "anyOf": [
+          {
+            "required": ["dimensions_check"],
+            "properties": {
+              "dimensions_check": {
+                "properties": {
+                  "status": {
+                    "const": "fail"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "required": ["topology_check"],
+            "properties": {
+              "topology_check": {
+                "properties": {
+                  "status": {
+                    "const": "fail"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "required": ["unit_consistency"],
+            "properties": {
+              "unit_consistency": {
+                "properties": {
+                  "status": {
+                    "const": "fail"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "required": ["manufacturing_profile_rules"],
+            "properties": {
+              "manufacturing_profile_rules": {
+                "properties": {
+                  "status": {
+                    "const": "fail"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "additionalProperties": false
 }

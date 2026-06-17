@@ -15,6 +15,9 @@ MAINTAINED_COMMANDS = [
     "phase1-contract-test",
     "phase1-golden-pipeline",
     "phase2-pilot-run",
+    "serve",
+    "sbom",
+    "provenance",
 ]
 
 
@@ -48,6 +51,26 @@ def build_parser() -> argparse.ArgumentParser:
     phase2_pilot_parser = subparsers.add_parser("phase2-pilot-run", help="Run Phase 2 pilot integration checks")
     phase2_pilot_parser.add_argument("--output-dir", type=Path, default=DEFAULT_PHASE2_OUTPUT_DIR)
 
+    serve_parser = subparsers.add_parser("serve", help="Run the local API server skeleton")
+    serve_parser.add_argument("--host", default="127.0.0.1")
+    serve_parser.add_argument("--port", type=int, default=8000)
+    serve_parser.add_argument("--dry-run", action="store_true", help="Instantiate the handler and exit without serving")
+    serve_parser.set_defaults(func=None)
+
+    sbom_parser = subparsers.add_parser("sbom", help="Generate a deterministic SPDX-lite SBOM from pyproject.toml and uv.lock")
+    sbom_parser.add_argument("--project", type=Path, default=Path("pyproject.toml"))
+    sbom_parser.add_argument("--lock", type=Path, default=Path("uv.lock"))
+    sbom_parser.add_argument("--output", type=Path)
+    sbom_parser.add_argument("--created-at", default="1970-01-01T00:00:00Z")
+    sbom_parser.set_defaults(func=None)
+
+    provenance_parser = subparsers.add_parser("provenance", help="Generate a deterministic SLSA-like provenance stub")
+    provenance_parser.add_argument("--project", type=Path, default=Path("pyproject.toml"))
+    provenance_parser.add_argument("--lock", type=Path, default=Path("uv.lock"))
+    provenance_parser.add_argument("--output", type=Path)
+    provenance_parser.add_argument("--created-at")
+    provenance_parser.set_defaults(func=None)
+
     return parser
 
 
@@ -77,6 +100,25 @@ def main(argv: list[str] | None = None) -> int:
         report = run_phase2_pilot(args.output_dir)
         _print_json(report)
         return 0 if report["status"] == "pass" else 2
+    if args.command == "serve":
+        from cad_agent.api_server import instantiate_handler, run_server
+
+        if args.dry_run:
+            instantiate_handler()
+            print(f"API server dry-run OK: configured for {args.host}:{args.port}")
+            return 0
+        run_server(args.host, args.port)
+        return 0
+    if args.command == "sbom":
+        from scripts.generate_sbom import build_sbom, write_json
+
+        write_json(build_sbom(args.project, args.lock, args.created_at), args.output)
+        return 0
+    if args.command == "provenance":
+        from scripts.provenance import build_provenance, write_json
+
+        write_json(build_provenance(args.project, args.lock, args.created_at), args.output)
+        return 0
 
     parser.error(f"unknown command: {args.command}")
     return 2

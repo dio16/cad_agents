@@ -10,9 +10,9 @@
 2. `Requirement JSON`
 3. `Specification JSON`
 4. スキーマ検証済み `Parametric DSL`
-5. OCCT / FreeCAD 系の決定論的 CAD Runtime
-6. 幾何、DFM/AM、組立、必要に応じた FEA の Validation Report
-7. STEP AP242、STL、OBJ、glTF、PNG、PDF などの版管理成果物
+5. OCCT / FreeCAD / Blender の executable probe を行う決定論的 CAD Runtime / worker probe。executable がある場合のみ native mode を記録し、ない場合は deterministic surrogate adapter を使う
+6. 幾何、DFM/AM の Validation Report。組立干渉と FEA は将来拡張の検証概念として扱い、AABB assembly stub は Production v2 data-model skeleton として分離
+7. 現在の PoC/Pilot 出力は deterministic STEP surrogate、STL、OBJ surrogate。glTF、PNG、PDF は export target
 
 LLM は設計計画器、CAD カーネルは実行器、検証器は品質ゲートです。
 
@@ -38,10 +38,13 @@ bash ./run_cad_agent.sh validate-docs
 bash ./run_cad_agent.sh phase1-contract-test
 bash ./run_cad_agent.sh phase1-golden-pipeline
 bash ./run_cad_agent.sh phase2-pilot-run
+bash ./run_cad_agent.sh serve --dry-run
+bash ./run_cad_agent.sh sbom --output /tmp/cad_agent_sbom.json
+bash ./run_cad_agent.sh provenance --output /tmp/cad_agent_provenance.json
 bash ./run_cad_agent.sh status
 ```
 
-`run_cad_agent.sh` は、プラットフォーム文書チェック、Phase 1 PoC の contract/golden pipeline、Phase 2 Pilot 検証を提供します。Phase 1 PoC は Requirement JSON、Specification JSON、Parametric DSL AST、決定論的 STEP/STL 生成、Validation Report、artifact hash index、Human Approval Gate 記録を検証します。Phase 2 Pilot は FreeCAD/OCCT と Blender の adapter probe、DFM/AM profile catalog、review diff HTML、audit retention/data classification、Model Gateway ルート判定を検証します。
+`run_cad_agent.sh` は、プラットフォーム文書チェック、Phase 1 PoC の contract/golden pipeline、Phase 2 Pilot 検証、`serve --dry-run`、決定論的 SBOM/provenance stub を提供します。Phase 1 PoC は Requirement JSON、Specification JSON、Parametric DSL AST、決定論的 STEP/STL 生成、Validation Report、artifact hash index、Human Approval Gate 記録を検証します。Phase 2 Pilot は FreeCAD/OCCT と Blender の adapter probe、DFM/AM profile catalog、review diff HTML、audit retention/data classification、Model Gateway ルート判定を検証します。現在の PoC/Pilot 成熟度: native の FreeCAD/OCCT/Blender 実行は約束せず、executable を probe し、存在する場合のみ native mode を記録し、ない場合は deterministic surrogate adapter を使います。Production v1/v2 追加は分離された skeleton/contract で、stdlib API server、in-memory project/job service、security/observability tests、CI/SBOM/provenance commands、静的 material/BOM/AABB assembly stubs を含みます。
 
 ## ライセンス
 

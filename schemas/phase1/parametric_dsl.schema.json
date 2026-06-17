@@ -5,19 +5,157 @@
   "type": "object",
   "required": ["traceability_id", "units", "parameters", "features", "derivative_outputs"],
   "properties": {
-    "traceability_id": {"type": "string", "minLength": 1},
-    "units": {"const": "mm"},
-    "parameters": {"type": "object", "additionalProperties": {"type": "number"}},
-    "features": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "required": ["op"],
-        "properties": {"op": {"enum": ["box", "cylinder", "through_hole"]}},
-        "additionalProperties": true
+    "traceability_id": {
+      "type": "string",
+      "pattern": "^tr_dsl_[A-Za-z0-9_]+$"
+    },
+    "units": {
+      "const": "mm"
+    },
+    "parameters": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "number"
       }
     },
-    "derivative_outputs": {"type": "array", "items": {"enum": ["step_ap242", "stl"]}}
+    "features": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "box"
+              },
+              "length_mm": {
+                "type": "string"
+              },
+              "width_mm": {
+                "type": "string"
+              },
+              "height_mm": {
+                "type": "string"
+              }
+            },
+            "required": ["op", "length_mm", "width_mm", "height_mm"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "cylinder"
+              },
+              "radius_mm": {
+                "type": "string"
+              },
+              "height_mm": {
+                "type": "string"
+              },
+              "axis": {
+                "type": "string",
+                "enum": ["x", "y", "z"]
+              },
+              "positions_mm": {
+                "$ref": "#/$defs/coordinate_pair_array"
+              }
+            },
+            "required": ["op", "radius_mm", "height_mm", "axis", "positions_mm"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {
+                "const": "through_hole"
+              },
+              "axis": {
+                "type": "string",
+                "enum": ["x", "y", "z"]
+              },
+              "diameter_mm": {
+                "type": "string"
+              },
+              "depth_mm": {
+                "type": "string"
+              },
+              "positions_mm": {
+                "$ref": "#/$defs/coordinate_pair_array"
+              }
+            },
+            "required": ["op", "axis", "diameter_mm", "depth_mm", "positions_mm"],
+            "additionalProperties": false
+          }
+        ],
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "op": {
+                  "const": "box"
+                }
+              },
+              "required": ["op"]
+            },
+            "then": {
+              "required": ["length_mm", "width_mm", "height_mm"]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "op": {
+                  "const": "cylinder"
+                }
+              },
+              "required": ["op"]
+            },
+            "then": {
+              "required": ["radius_mm", "height_mm", "axis", "positions_mm"]
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "op": {
+                  "const": "through_hole"
+                }
+              },
+              "required": ["op"]
+            },
+            "then": {
+              "required": ["axis", "diameter_mm", "depth_mm", "positions_mm"]
+            }
+          }
+        ]
+      }
+    },
+    "derivative_outputs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "enum": ["step_ap242", "stl"]
+      }
+    }
   },
-  "additionalProperties": true
+  "$defs": {
+    "coordinate_pair_array": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "array",
+        "minItems": 2,
+        "maxItems": 2,
+        "items": {
+          "type": "number"
+        }
+      }
+    }
+  },
+  "additionalProperties": false
 }

@@ -22,6 +22,10 @@ Thumbs.db
 # Legacy / quarantined
 onshape/
 *.ps1
+cad_agent/legacy/
+
+# Local OpenCode config
+.ignore
 
 # Large generated artifacts (tracked separately via releases if needed)
 reports/fabrication_*/assets/

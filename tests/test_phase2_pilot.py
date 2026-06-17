@@ -4,6 +4,7 @@ import json
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from typing import Any
 
 from cad_agent.phase2_pilot import (
     compare_phase_reports,
@@ -15,11 +16,63 @@ from cad_agent.phase2_pilot import (
 from cad_agent.platform_poc import golden_specification, run_golden_pipeline
 
 
+BUILD_VOLUME_CHECK_NAME = "DFM/AM build volume within profile"
+
+
 class Phase2PilotTest(unittest.TestCase):
+    @staticmethod
+    def _check_by_name(checks: list[dict[str, Any]], name: str) -> dict[str, Any]:
+        return next(check for check in checks if check["name"] == name)
+
+    def _spec_with_parameters(self, updates: dict[str, Any]) -> dict[str, Any]:
+        spec = golden_specification()
+        spec["parameter_table"].update(updates)
+        return spec
+
     def test_dfm_am_catalog_validates_golden_specification(self) -> None:
         result = validate_dfm_profile_against_spec(golden_specification())
         self.assertEqual(result["status"], "pass")
         self.assertEqual(result["profile"]["profile_id"], "fdm_standard")
+        build_volume_check = self._check_by_name(result["checks"], BUILD_VOLUME_CHECK_NAME)
+        self.assertEqual(build_volume_check["status"], "pass")
+        self.assertIn("bbox_mm=", build_volume_check["detail"])
+        self.assertIn("max_bbox_mm=", build_volume_check["detail"])
+
+    def test_dfm_am_catalog_fails_oversized_specification(self) -> None:
+        result = validate_dfm_profile_against_spec(
+            self._spec_with_parameters({"length": 300.0, "width": 300.0, "height": 300.0})
+        )
+        self.assertEqual(result["status"], "fail")
+        build_volume_check = self._check_by_name(result["checks"], BUILD_VOLUME_CHECK_NAME)
+        self.assertEqual(build_volume_check["status"], "fail")
+        self.assertIn("bbox_mm=", build_volume_check["detail"])
+        self.assertIn("max_bbox_mm=", build_volume_check["detail"])
+        self.assertIn("length=300.0>220.0", build_volume_check["detail"])
+
+    def test_dfm_am_catalog_fails_missing_or_non_numeric_bbox_gracefully(self) -> None:
+        cases = [
+            {
+                "name": "missing length",
+                "updates": {"length": "ignored"},
+                "missing_keys": ["length"],
+            },
+            {
+                "name": "non_numeric_length",
+                "updates": {"length": "bad"},
+                "missing_keys": [],
+            },
+        ]
+        for case in cases:
+            with self.subTest(name=case["name"]):
+                spec = golden_specification()
+                spec["parameter_table"].update(case["updates"])
+                for key in case["missing_keys"]:
+                    del spec["parameter_table"][key]
+                result = validate_dfm_profile_against_spec(spec)
+                self.assertEqual(result["status"], "fail")
+                build_volume_check = self._check_by_name(result["checks"], BUILD_VOLUME_CHECK_NAME)
+                self.assertEqual(build_volume_check["status"], "fail")
+                self.assertIn("length/width/height must be numeric", build_volume_check["detail"])
 
     def test_model_gateway_blocks_confidential_commercial_route(self) -> None:
         blocked = route_model("confidential", "commercial")

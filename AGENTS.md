@@ -28,7 +28,7 @@
 | エージェント | 責務 | 連携先 | 禁止事項 |
 |---|---|---|---|
 | CAD Runtime | DSL実行、形状生成 | Validation, Export | 仕様の解釈変更、実行失敗の隠蔽 |
-| Validation | 幾何妥当、DFM/AM、FEA | Orchestrator, Audit | 不合格の合格書き換え、検証条件の省略 |
+| Validation | 幾何妥当、DFM/AM、将来拡張としてのFEA候補 | Orchestrator, Audit | 不合格の合格書き換え、検証条件の省略 |
 | Export Worker | STEP/STL/OBJ/PDF生成 | Artifact Store | 正本formatsの破壊的変換 |
 
 ### 3.3 統制・承認エージェント
@@ -36,7 +36,7 @@
 | エージェント | 責務 | 連携先 | 禁止事項 |
 |---|---|---|---|
 | Orchestrator | ワークフロー制御、修正ループ管理 | 全エージェント | 検証バイパス、ゲート省略 |
-| Policy / Audit | ルーティング、ログ、法規タグ | Project Service, Gateway | 監査ログの改ざん、保持期間違反 |
+| Policy / Audit | ルーティング、ログ、法規タグ | Project Service, Gateway | 許可なしの監査ログ変更、保持期間違反 |
 | Model Gateway | 商用/オンプレLLMルーティング | Requirement, Spec, DSL | 機密情報の不適切なルーティング |
 
 ### 3.4 人間の役割
@@ -69,7 +69,7 @@ DSLの生成と修正案提示
 CAD形状の生成
 幾何・DFM/AM検証
 artifactの保存
-ログの不変記録
+append-style JSONLログ記録（将来の不変ストレージを目標）
 ```
 
 ### 4.2 エスカレーション条件
@@ -117,7 +117,7 @@ artifactの保存
 - JSON Schema Contract Test：全LLM工程の入出力を自動検証
 - AST/schema validator：DSL実行前に静的検証
 - サンドボックス実行：CADランタイムはネットワーク分離環境で実行することを目標とし、現行PoC/PilotはローカルCLIとdeterministic surrogateで検証する
-- 監査ログ：全I/Oと判断を不変ストレージに記録
+- 監査ログ：全I/Oと判断をappend-style JSONLに記録し、不変ストレージ化は将来目標
 - 人間確認ゲート：仕様変更、機微案件、新規validation criteria適用時に必須
 
 ## 7. 作業フローとゲート
@@ -139,7 +139,7 @@ artifactの保存
     ↓
 [CAD Runtime] 形状生成 → STEP/B-Rep
     ↓
-[Validation] 幾何/DFM/AM/FEA
+[Validation] 幾何/DFM/AM（FEAは将来拡張候補）
     ↓
   合格 → 次の工程へ
   不合格 → failure reasonを添えてOrchestratorへ
@@ -180,7 +180,7 @@ artifactの保存
 - スキーマ検証：`bash ./run_cad_agent.sh phase1-contract-test`
 - CAD実行：`bash ./run_cad_agent.sh phase1-golden-pipeline`（または同等のCAD runtime entrypoint）
 - パイロット検証：`bash ./run_cad_agent.sh phase2-pilot-run`
-- レポート生成：validation report, BOM/assembly レポート
+- レポート生成：`bash ./run_cad_agent.sh phase2-pilot-run` による validation report, DFM/AM profile report, review diff HTML
 
 ## 9. エージェント品質要件
 

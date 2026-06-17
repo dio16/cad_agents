@@ -24,6 +24,7 @@ from cad_agent.platform_poc import (
     validate_specification_schema,
     validate_validation_report_schema,
 )
+from cad_agent.schema_gate import validate_against_schema
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -74,6 +75,35 @@ class PlatformPocTest(unittest.TestCase):
 
         self.assertEqual(contract_status(checks), "fail")
 
+    def test_validation_report_schema_rejects_failed_check_without_reason_code_or_detail(self) -> None:
+        with TemporaryDirectory() as temp_dir:
+            validation = validate_artifacts(golden_specification(), golden_dsl(), run_cad_runtime(golden_dsl(), Path(temp_dir) / "unused"))
+        validation["pass"] = False
+        validation["dimensions_check"]["status"] = "fail"
+        validation["dimensions_check"].pop("reason_code")
+        validation["dimensions_check"].pop("detail")
+        validation["failures"].append({"reason_code": "DIMENSION_FAILURE", "failure_location": "dimensions_check", "detail": "missing dimensions"})
+
+        checks = validate_validation_report_schema(validation)
+
+        self.assertEqual(contract_status(checks), "fail")
+
+    def test_validation_report_schema_rejects_pass_fail_inconsistency(self) -> None:
+        with TemporaryDirectory() as temp_dir:
+            validation = validate_artifacts(golden_specification(), golden_dsl(), run_cad_runtime(golden_dsl(), Path(temp_dir) / "unused"))
+        validation["pass"] = False
+
+        checks = validate_validation_report_schema(validation)
+
+        self.assertEqual(contract_status(checks), "fail")
+
+    def test_schema_gate_rejects_unknown_schema_name(self) -> None:
+        checks = validate_against_schema(golden_requirement(), "unknown_schema")
+
+        self.assertEqual(len(checks), 1)
+        self.assertEqual(checks[0].status, "fail")
+        self.assertIn("unknown Phase 1 schema name", checks[0].detail)
+
     def test_schema_gate_rejects_invalid_requirement(self) -> None:
         requirement = golden_requirement()
         del requirement["traceability_id"]
@@ -83,6 +113,33 @@ class PlatformPocTest(unittest.TestCase):
         self.assertEqual(len(checks), 1)
         self.assertEqual(checks[0].status, "fail")
         self.assertIn("traceability_id", checks[0].detail)
+
+    def test_schema_gate_rejects_unknown_root_property(self) -> None:
+        requirement = golden_requirement()
+        requirement["unexpected"] = "not allowed"
+
+        checks = validate_requirement_schema(requirement)
+
+        self.assertEqual(contract_status(checks), "fail")
+        self.assertIn("Additional properties", checks[0].detail)
+
+    def test_schema_gate_rejects_invalid_traceability_pattern(self) -> None:
+        requirement = golden_requirement()
+        requirement["traceability_id"] = "bad-id"
+
+        checks = validate_requirement_schema(requirement)
+
+        self.assertEqual(contract_status(checks), "fail")
+        self.assertIn("does not match", checks[0].detail)
+
+    def test_parametric_dsl_schema_rejects_missing_nested_feature_fields(self) -> None:
+        dsl = golden_dsl()
+        del dsl["features"][1]["positions_mm"]
+
+        checks = validate_parametric_dsl_schema(dsl)
+
+        self.assertEqual(contract_status(checks), "fail")
+        self.assertIn("positions_mm", checks[0].detail)
 
     def test_ast_validator_rejects_unknown_parameter_reference(self) -> None:
         dsl = golden_dsl()

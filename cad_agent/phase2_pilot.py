@@ -90,7 +90,57 @@ def validate_dfm_profile_against_spec(specification: dict[str, Any]) -> dict[str
             ",".join(str(material) for material in materials),
         ),
     ]
+    checks.append(_build_volume_check(specification, profile))
     return {"status": _pilot_status(checks), "profile": profile, "checks": [asdict(check) for check in checks]}
+
+
+def _to_float_or_none(value: Any) -> float | None:
+    if isinstance(value, bool):
+        return None
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def _extract_bbox_from_parameter_table(specification: dict[str, Any]) -> dict[str, float | None]:
+    parameters = specification.get("parameter_table", {}) if isinstance(specification.get("parameter_table"), dict) else {}
+    return {axis: _to_float_or_none(parameters.get(axis)) for axis in ("length", "width", "height")}
+
+
+def _parse_max_bbox_mm(profile: dict[str, Any]) -> list[float] | None:
+    max_bbox = profile.get("max_bbox_mm")
+    if not isinstance(max_bbox, (list, tuple)) or len(max_bbox) != 3:
+        return None
+    try:
+        return [float(value) for value in max_bbox]
+    except (TypeError, ValueError):
+        return None
+
+
+def _build_volume_check(specification: dict[str, Any], profile: dict[str, Any]) -> PilotCheck:
+    bbox = _extract_bbox_from_parameter_table(specification)
+    max_bbox = _parse_max_bbox_mm(profile)
+    length = bbox["length"]
+    width = bbox["width"]
+    height = bbox["height"]
+    if length is None or width is None or height is None or max_bbox is None:
+        return PilotCheck(
+            "DFM/AM build volume within profile",
+            "fail",
+            f"bbox_mm={bbox} max_bbox_mm={profile.get('max_bbox_mm')} length/width/height must be numeric and max_bbox_mm must be a 3-item numeric list",
+        )
+    exceeded: list[str] = []
+    if length > max_bbox[0]:
+        exceeded.append(f"length={length}>{max_bbox[0]}")
+    if width > max_bbox[1]:
+        exceeded.append(f"width={width}>{max_bbox[1]}")
+    if height > max_bbox[2]:
+        exceeded.append(f"height={height}>{max_bbox[2]}")
+    detail = f"bbox_mm={bbox} max_bbox_mm={max_bbox}"
+    if exceeded:
+        detail += " exceeded=" + ",".join(exceeded)
+    return PilotCheck("DFM/AM build volume within profile", "pass" if not exceeded else "fail", detail)
 
 
 def probe_worker(worker_name: str, candidates: list[str]) -> dict[str, Any]:

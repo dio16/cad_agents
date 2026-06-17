@@ -16,9 +16,10 @@
 - Model Gateway: commercial / onprem / hybrid のデータ分類ベースのルーティング
 - Requirement Extractor / Spec Composer / DSL Compiler: 構造化出力のみを下流へ渡す
 - CAD Runtime: OCCT / FreeCAD 互換の決定論的実行器
-- Validation Service: 幾何、DFM/AM、組立、FEA の pass/fail と reason code
+- Validation Service: 幾何、DFM/AM、将来拡張としての組立/FEA 候補の pass/fail と reason code
 - Artifact Store / Policy / Audit: hash、保持期間、データ分類、traceability を記録
+- Production v2 stubs: static material catalog, decoupled BOM aggregation, AABB assembly interference/separation/adjacency checks
 
 ## 現在の成熟度
 
-このリポジトリは Phase 1 PoC と Phase 2 Pilot を検証できるローカル CLI/検証環境です。Production v1 の API サーバー、認証、ジョブキュー、サンドボックス CAD worker pool、観測基盤はまだ計画段階です。
+このリポジトリは Phase 1 PoC と Phase 2 Pilot を検証できるローカル CLI/検証環境です。Production v1/v2 は skeleton/contract として、stdlib API server、Project Service stub、同期 job queue simulation、security/observability tests、CI/SBOM/provenance stubs、静的 material catalog、BOM aggregation、AABB assembly interference stub を追加済みです。Kubernetes、KServe/vLLM、Argo CD、実 worker pool、PLM/ERP/MES adapter、実 FEA、実材料DB、部品ライブラリ、BOM連携は将来拡張です。

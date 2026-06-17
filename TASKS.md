@@ -27,25 +27,24 @@
 
 | ID | タスク | 完了条件 |
 |---|---|---|
-| P2-1 | FreeCAD headless / OCCT worker 統合 | ✅ `phase2-pilot-run` で native executable を検出、未導入環境では deterministic surrogate adapter を記録 |
-| P2-2 | Blender render / mesh worker 統合 | ✅ `phase2-pilot-run` で Blender adapter を probe し、OBJ surrogate mesh を生成 |
-| P2-3 | DFM/AM プロファイルカタログ | ✅ `fdm_standard` / `cnc_3axis_soft_metal` の profile catalog で仕様の壁厚・穴径・材料を検証 |
+| P2-1 | FreeCAD headless / OCCT worker probe | ✅ `phase2-pilot-run` で executable を検出した場合のみ native mode を記録し、未導入環境では deterministic surrogate adapter を記録 |
+| P2-2 | Blender render / mesh worker probe | ✅ `phase2-pilot-run` で Blender adapter を probe し、native executable 不在時は OBJ surrogate mesh を生成 |
+| P2-3 | DFM/AM プロファイルカタログ | ✅ `fdm_standard` / `cnc_3axis_soft_metal` の profile catalog を保持し、Pilot golden path では `fdm_standard` の仕様の壁厚・穴径・材料・`dfm.build_volume.max`（`max_bbox_mm` に対する保守的 axis-aligned bbox 比較）を検証 |
 | P2-4 | Review UI、diff viewer、版比較 | ✅ Phase 1 baseline と revised spec の parameter diff を HTML review viewer に保存 |
 | P2-5 | 監査ログ、保持期間、データ分類 | ✅ `audit_log.jsonl` に `data_classification`、`retention_days`、`model_route` を保存 |
 | P2-6 | commercial / onprem / hybrid の Model Gateway 試験 | ✅ public commercial は許可、confidential commercial は onprem fallback として fail 判定 |
 
-## Phase 3: Production v1（4〜6か月）
+## Phase 3: Production v1 readiness skeleton
 
-- Kubernetes job queue と CAD/FEA worker pool
-- KServe / vLLM を使ったオンプレモデルルート
-- GitHub Actions + Argo CD による CI/CD
-- SLSA provenance、Cosign 署名、SBOM / Trivy scan
-- Prompt Injection、schema escape、code escape の security tests
-- SLO、コスト監視、queue p95 監視
+- [x] API Gateway / Project Service skeleton: stdlib HTTP server, in-memory project CRUD, API-key stub, artifact index lookup only.
+- [x] Synchronous job queue simulation: `cad_golden`, `phase2_pilot`, and `validation` stub jobs with deterministic tests.
+- [x] Security and observability skeleton: prompt/schema/code escape tests, Prometheus-text counters, `serve --dry-run`.
+- [x] CI/SBOM/provenance skeleton: GitHub Actions smoke workflow, local deterministic SBOM/provenance commands.
+- Deferred: Kubernetes, KServe/vLLM, Argo CD, Cosign/Trivy, real worker pools, real LLM endpoints, and production SLO enforcement.
 
-## Phase 4: Production v2（6か月以降）
+## Phase 4: Production v2 data-model stubs
 
-- 組立干渉、接触、運動、FEA の高度化
-- PLM / ERP / MES adapter
-- 材料DB、部品ライブラリ、BOM連携
-- 部門横断のテナント分離と規制案件運用
+- [x] Static material catalog stub for `PLA`, `PETG`, `ABS`, `6061-T6`, `POM`, `17-4PH` with explicit `skeleton_stub` / reference-only metadata.
+- [x] Decoupled BOM aggregation stub with validation errors, weight stub, and cost stub.
+- [x] Axis-aligned bbox assembly interference/separation/adjacency stub; contact, motion, and FEA remain future work.
+- Deferred: real material database, parts library, PLM/ERP/MES adapters, tenant isolation, regulatory workflow, and production-grade assembly/FEA validation.

@@ -24,7 +24,7 @@ else
   PYTHON_BIN="$(command -v "$PYTHON_BIN")"
 fi
 
-# Commands delegated to cad_agent_cli: status, validate-docs, phase1-contract-test, phase1-golden-pipeline, phase2-pilot-run.
+# Commands delegated to cad_agent_cli: status, validate-docs, phase1-contract-test, phase1-golden-pipeline, phase2-pilot-run, serve, sbom, provenance.
 if [[ "${1:-}" == "help" ]]; then
   set -- "--help"
 fi

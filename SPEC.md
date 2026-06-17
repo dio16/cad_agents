@@ -5,15 +5,15 @@
 本仕様は、原案 `docs/Origen/Design_document_for_a_machine_design_platform.md` を実装単位へ分解したものです。
 
 - LLM は設計計画器であり、CAD 実行器ではない。
-- CAD Runtime は OCCT / FreeCAD 互換の決定論的実行器である。
+- CAD Runtime / worker probe は OCCT・FreeCAD・Blender の executable を検出し、native mode を記録する。存在しない場合は deterministic surrogate adapter を使う。
 - Validation は品質ゲートであり、合否と理由を機械可読に返す。
 - 自由文と CAD 実行の間には、必ず JSON Schema と Parametric DSL の境界を置く。
 - STEP AP242 / B-Rep を正本形状とし、STL / OBJ / glTF / PNG / PDF は派生物として扱う。
 
 ## 2. 現在の実装成熟度
 
-- 実装済み: ローカル CLI、Phase 1 PoC contract/golden pipeline、Phase 2 Pilot adapter probe、DFM/AM catalog、review diff HTML、audit JSONL、Model Gateway trial。
-- 未実装: API Gateway/Auth、Project Service、非同期ジョブキュー、sandbox CAD worker pool、Observability、Production v1/v2 の PLM/ERP/MES adapter。
+- 実装済み: ローカル CLI、Phase 1 PoC contract/golden pipeline、Phase 2 Pilot adapter probe、FreeCAD/OCCT/Blender worker probe、DFM/AM catalog、review diff HTML、audit JSONL、Model Gateway trial、stdlib API server skeleton、Project Service stub、synchronous job queue simulation、security/observability tests、CI/SBOM/provenance stubs、Production v2 material/BOM/AABB assembly stubs。
+- 未実装: Kubernetes/KServe/Argo CD/Cosign/Trivy、実 sandbox CAD worker pool、実 PLM/ERP/MES adapter、実材料DB、部品ライブラリ、BOM連携、接触/運動/FEA、テナント分離、規制案件運用。
 - 本リポジトリの現在の成功基準は、設計案全体を本番運用することではなく、原案に基づく安全な I/O 境界・検証ゲート・PoC/Pilot パイプラインを再現可能に保つことです。
 
 ## 3. 正本データ階層
@@ -25,7 +25,7 @@
 | 生成命令 | Parametric DSL / Operation Graph | LLM 出力を安全に実行可能化する |
 | 形状 | STEP AP242 / B-Rep | 組立、交換、再利用の正本にする |
 | 派生物 | STL / OBJ / glTF / PNG / PDF | 造形、表示、共有、図面化に使う |
-| 検証 | Validation Report JSON | 幾何、工程、FEA の判定と差分を記録する |
+| 検証 | Validation Report JSON | 幾何、工程、将来拡張としての FEA 候補の判定と差分を記録する |
 
 ## 4. エージェント責任境界
 
@@ -35,7 +35,7 @@
 | Spec Composer | Requirement を Specification JSON に変換する | 製造条件や公差を独断で確定する |
 | DSL Compiler | Specification を Parametric DSL に変換する | 自由コード生成、未検証 DSL 実行要求 |
 | CAD Runtime | DSL を実行し STEP/B-Rep を生成する | 仕様解釈の変更、失敗の隠蔽 |
-| Validation | 幾何、DFM/AM、FEA を判定する | 不合格の合格書き換え |
+| Validation | 幾何、DFM/AM、将来拡張としての FEA 候補を判定する | 不合格の合格書き換え |
 | Orchestrator | ゲートと修正ループを制御する | 検証バイパス、承認省略 |
 | Policy / Audit | ルーティング、ログ、法規タグを管理する | 監査ログ改ざん、保持期間違反 |
 | Model Gateway | commercial / onprem / hybrid を切り替える | 機密情報の不適切ルーティング |
@@ -57,6 +57,10 @@
 ### Validation Report JSON
 
 必須キー: `traceability_id`, `specification_id`, `artifact_ids`, `dimensions_check`, `topology_check`, `unit_consistency`, `manufacturing_profile_rules`, `pass`, `failures`。
+
+### DFM/AM build-volume envelope
+
+`dfm.build_volume.max` は保守的な axis-aligned bbox check として、`specification.parameter_table.length` / `width` / `height` と `profile.max_bbox_mm` を軸ごとに比較する。いずれかの軸長が `profile.max_bbox_mm` を超える場合、Validation Report の `manufacturing_profile_rules` または `failures` に理由を記録する。
 
 ## 6. API境界
 
