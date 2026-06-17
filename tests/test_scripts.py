@@ -9,15 +9,15 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-SBOM_SCRIPT = ROOT / "scripts" / "generate_sbom.py"
-PROVENANCE_SCRIPT = ROOT / "scripts" / "provenance.py"
+SBOM_MODULE = "cad_agent.tools.generate_sbom"
+PROVENANCE_MODULE = "cad_agent.tools.provenance"
 RUNNER = ROOT / "run_cad_agent.sh"
 
 
 class ScriptContractTest(unittest.TestCase):
-    def _run_script(self, script: Path, output: Path, *extra_args: str, env: dict[str, str] | None = None) -> None:
+    def _run_script(self, module: str, output: Path, *extra_args: str, env: dict[str, str] | None = None) -> None:
         completed = subprocess.run(
-            [sys.executable, str(script), "--output", str(output), *extra_args],
+            [sys.executable, "-m", module, "--output", str(output), *extra_args],
             cwd=ROOT,
             check=True,
             text=True,
@@ -40,8 +40,8 @@ class ScriptContractTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp_dir:
             first = Path(temp_dir) / "sbom-1.json"
             second = Path(temp_dir) / "sbom-2.json"
-            self._run_script(SBOM_SCRIPT, first)
-            self._run_script(SBOM_SCRIPT, second)
+            self._run_script(SBOM_MODULE, first)
+            self._run_script(SBOM_MODULE, second)
 
             first_text = first.read_text(encoding="utf-8")
             second_text = second.read_text(encoding="utf-8")
@@ -62,8 +62,8 @@ class ScriptContractTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp_dir:
             first = Path(temp_dir) / "provenance-1.json"
             second = Path(temp_dir) / "provenance-2.json"
-            self._run_script(PROVENANCE_SCRIPT, first)
-            self._run_script(PROVENANCE_SCRIPT, second)
+            self._run_script(PROVENANCE_MODULE, first)
+            self._run_script(PROVENANCE_MODULE, second)
 
             first_text = first.read_text(encoding="utf-8")
             second_text = second.read_text(encoding="utf-8")
@@ -82,7 +82,7 @@ class ScriptContractTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp_dir:
             output = Path(temp_dir) / "provenance.json"
             self._run_script(
-                PROVENANCE_SCRIPT,
+                PROVENANCE_MODULE,
                 output,
                 env={"SOURCE_DATE_EPOCH": "1700000000"},
             )

@@ -4,6 +4,7 @@ import json
 import subprocess
 import sys
 import unittest
+from importlib.resources import files
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
@@ -36,15 +37,17 @@ class PlatformPocTest(unittest.TestCase):
         self.assertEqual(report["status"], "pass")
 
     def test_phase1_json_schema_files_are_present(self) -> None:
-        schema_dir = Path("schemas/phase1")
+        schema_dir = files("cad_agent.contracts.phase1")
         expected = {
             "requirement.schema.json",
             "specification.schema.json",
             "parametric_dsl.schema.json",
             "validation_report.schema.json",
         }
-        self.assertEqual({path.name for path in schema_dir.glob("*.schema.json")}, expected)
-        for schema_path in schema_dir.glob("*.schema.json"):
+        self.assertEqual({path.name for path in schema_dir.iterdir() if path.name.endswith(".schema.json")}, expected)
+        for schema_path in schema_dir.iterdir():
+            if not schema_path.name.endswith(".schema.json"):
+                continue
             schema = json.loads(schema_path.read_text(encoding="utf-8"))
             self.assertIn("required", schema)
             self.assertEqual(schema["type"], "object")
@@ -172,7 +175,7 @@ class PlatformPocTest(unittest.TestCase):
 
     def test_cli_status_and_phase1_contract_test(self) -> None:
         status = subprocess.run(
-            [sys.executable, "-m", "cad_agent_cli", "status"],
+            [sys.executable, "-m", "cad_agent.cli", "status"],
             cwd=ROOT,
             capture_output=True,
             text=True,
@@ -182,7 +185,7 @@ class PlatformPocTest(unittest.TestCase):
         self.assertEqual(json.loads(status.stdout)["status"], "aligned")
 
         contract_test = subprocess.run(
-            [sys.executable, "-m", "cad_agent_cli", "phase1-contract-test"],
+            [sys.executable, "-m", "cad_agent.cli", "phase1-contract-test"],
             cwd=ROOT,
             capture_output=True,
             text=True,

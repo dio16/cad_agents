@@ -8,6 +8,12 @@ build/
 # Virtual environment
 .venv/
 
+# Removed historical/generated directories
+/archive/
+/deliverables/
+/mechanisms/
+/reports/
+
 # IDE
 .vscode/
 .idea/
@@ -33,6 +39,7 @@ reports/fabrication_*/stl/
 reports/text_to_cad_reports/
 
 # Generated local artifacts
+*.Identifier
 artifacts/
 
 # Phase 1 generated local PoC outputs

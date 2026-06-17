@@ -1,8 +1,0 @@
-step,operation,uses,gate
-1,Install 608ZZ bearing into base pocket.,central_bearing,bearing fit
-2,Install carrier journal through the bearing.,carrier,free carrier rotation
-3,Fasten fixed internal ring to base standoffs.,"fixed_internal_ring, ring_fasteners",ring seats
-4,Install orbit/escape shaft and pinion.,"orbit_escape_shaft, orbit_escape_pinion",shaft support
-5,"Install hand input shaft, input pinion, and coaxial knob.","hand_input_shaft, hand_input_pinion, input_knob",input rotation
-6,Install balance staff and pallet arbor; engage pallet output pin with balance slot.,"balance_staff, pallet_arbor",pallet-balance capture
-7,Rotate input knob and inspect carrier/orbit/pallet/balance motion.,assembled model,motion contract
