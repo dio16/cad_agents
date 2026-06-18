@@ -180,15 +180,16 @@
 
 ## 5. 推奨する段階的実装方針
 
-### Phase A（今すぐ）：コア契約の固定（2〜4 週間目標）
+### Phase A（完了 / レビュー待ち）：コア契約の固定
 
 1. **MVP スコープを宣言**  
    当面は「単一部品・非安全重要・FDM/CNC 3軸プロトタイプ」のみを対象とする。これ以外は「将来拡張」と明記する。
 
 2. **DSL v1 仕様を定義**  
-   - op セットを固定：box, cylinder, through_hole, fillet, chamfer, linear_pattern（当面）
-   - 座標系、parameter reference（`$name`）、feature order の実行可能性を schema + 静的検証
-   - 新規 op 追加時は人間承認
+   - v1 allowlist は `box`, `cylinder`, `through_hole` に限定する。
+   - `fillet`, `chamfer`, `linear_pattern`、機構・組立・可動検証 op は、後の契約更新で明示承認されるまで延期。
+   - 座標系、parameter reference（`$name`）、feature order の実行可能性を schema + 静的検証。
+   - 新規 op 追加時は人間承認。
 
 3. **Validation contract v1**  
    - dimensions_check: bbox ± tolerance, volume > 0
@@ -275,8 +276,9 @@
 
 **次のアクション**:
 
-1. `SPEC.md` または新しい `DSL_V1_SPEC.md` 草案を作成し、DSL v1 の op セット、座標系、parameter reference、feature order、versioning を人間レビュー可能な形で文書化する。
-2. `CAD_RUNTIME_CONTRACT.md` または同等の文書を作成し、surrogate/native の境界、正本形式、error code、sandbox 要件を固定する。
-3. `VALIDATION_CONTRACT.md` または同等の文書を作成し、check 一覧、reason code、閾値、override ルールを固定する。
-4. `ORCHESTRATOR_WORKFLOW.md` を作成し、job 状態機械、revision loop、human approval workflow を定義する。
-5. 上記 4 文書をレビュー・承認した後、Phase B の実装（LLM エージェント、CAD Runtime 本格化、非同期 job queue）に着手する。
+1. `docs/MVP_SCOPE.md` は作成済み。MVP対象物、非ゴール、製造プロファイル、canonical/derived artifacts、承認境界をレビュー・承認待ちとする。
+2. `docs/MECHANISM_DSL_V1.md` は作成済み。DSL v1 の allowlist、units=mm、parameter reference、feature order、derivative outputs、extension governance をレビュー・承認待ちとする。
+3. `docs/CAD_RUNTIME_CONTRACT.md` は作成済み。surrogate/native の境界、正本形式、metadata/hash、error code、sandbox 要件をレビュー・承認待ちとする。
+4. `docs/VALIDATION_CONTRACT.md` は作成済み。check 一覧、reason code、現在の成熟度、future checks、override/escalation ルールをレビュー・承認待ちとする。
+5. `docs/ORCHESTRATOR_WORKFLOW.md` は作成済み。job 状態機械、revision loop、human approval workflow、traceability/audit 義務をレビュー・承認待ちとする。
+6. 上記 5 文書をレビュー・承認した後、Phase B の実装（LLM エージェント、CAD Runtime 本格化、非同期 job queue）に着手する。

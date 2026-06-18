@@ -1,5 +1,25 @@
 # Tasks
 
+## Meta: Prompt-driven workflow plan
+
+- [x] Goal reconciliation: `PWF-G001` limits the immediate goal to CADAGENT detailed design + implementation plan docs and prompt-driven workflow, not full CAD platform implementation.
+- [x] Root operational prompt: `prompt.md`
+- [x] CADAGENT detailed design: `docs/cad_agent_detailed_design.md`.
+- [x] CADAGENT implementation plan: `docs/cad_agent_implementation_plan.md`.
+- [x] Prompt workflow execution control: `docs/prompt_execution_plan.md`.
+- [x] Gate rules: Phase outputs, acceptance criteria, validation commands, review package, stop condition, and traceability IDs are defined.
+- [x] First-pass scope: docs-only workflow, except validation-harness maintenance required for `validate-docs`; no new CAD features, production API service, native worker pool, or external LLM endpoint integration.
+- [x] Final validation and @oracle final review: `status`, `validate-docs`, Phase 1/2 commands, `pytest`, and `git diff --check` pass.
+
+## Phase 0: Design-contract finalization
+
+- [x] Contract scope: Phase 0 is docs-only; no code under `cad_runtime/`, `dsl/`, `validation/`, `schemas/v1/*`, or example artifacts under `examples/gyro_kinetic_v1/*`.
+- [x] `docs/MVP_SCOPE.md`: define contract MVP, target object, non-goals, manufacturing profiles, artifacts, acceptance criteria, and approval boundaries.
+- [x] `docs/MECHANISM_DSL_V1.md`: define allowlist-first DSL v1, units, parameter references, feature order, derivative outputs, and extension governance.
+- [x] `docs/CAD_RUNTIME_CONTRACT.md`: define native vs deterministic surrogate runtime, validated DSL input, artifact formats, metadata/hash, error codes, sandbox policy, audit, and no raw code.
+- [x] `docs/VALIDATION_CONTRACT.md`: define validation as a gate, current checks, reason codes, maturity boundaries, override/escalation rules, and no failed-to-pass rewrites.
+- [x] `docs/ORCHESTRATOR_WORKFLOW.md`: define state machine, max revision loop 3, escalation conditions, human approval events, traceability/audit obligations, and future-only API references.
+
 ## Phase 0: Repository alignment
 
 - [x] 原案を正本として明示する。
