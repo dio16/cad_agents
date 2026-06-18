@@ -202,19 +202,10 @@ M .gitignore
   - Split Phase 1 section into `Phase 1 transition decision`, `Phase 1 validation gate`, `Oracle review`, and `Commit boundary`.
   - Kept old Phase 0 plan details as history but moved current decision material above it.
 
-## Commit boundary
-- Include:
-  - Phase 0 contract docs: `docs/MVP_SCOPE.md`, `docs/MECHANISM_DSL_V1.md`, `docs/CAD_RUNTIME_CONTRACT.md`, `docs/VALIDATION_CONTRACT.md`, `docs/ORCHESTRATOR_WORKFLOW.md`.
-  - Planning/maintained docs: `docs/cad_agent_detailed_design.md`, `docs/cad_agent_implementation_plan.md`, `docs/prompt_execution_plan.md`, `prompt.md`, `TASKS.md`, `docs/design_gaps_ja.md`, `docs/operations_ja.md`.
-  - Validation harness: `src/cad_agent/tools/validate_platform_contracts.py`.
-  - Deepwork transition record: `.slim/deepwork/cadagent-implementation-pass.md` via `git add --force`.
-  - `.gitignore` hygiene: keep `.slim/deepwork/` ignored and use a forward-slash ignore for `.github/instructions/codacy.instructions.md` so it is excluded from the commit package.
-- Exclude:
-  - `.github/instructions/codacy.instructions.md`.
-  - Do not stage broad generated artifacts.
-- Pre-push checks:
-  - `git status --short --cached` confirms `.github/instructions/codacy.instructions.md` is absent.
-  - `git status --short` may still show unrelated unstaged `.gitignore` / `.github/instructions/codacy.instructions.md` if not staged.
+## Final commit and push
+- Commit: `b40e77e CADAGENT Phase 0 contracts and Phase 1 transition`.
+- Push: `git push origin HEAD` created remote branch `dev` successfully.
+- Final status after push: clean working tree.
 
 ## Phase 0 plan draft after @oracle must-fix edits
 
