@@ -333,6 +333,19 @@ class APIServerTest(unittest.TestCase):
         self.assertIn("# TYPE cad_api_requests_total counter", body)
         self.assertIn('cad_api_requests_total{method="GET",status="200"} 1', body)
 
+    def test_health_and_metrics_still_work(self) -> None:
+        status_code, body, content_type = self._route("GET", "/health", AUTH_HEADERS)
+
+        self.assertEqual(status_code, 200)
+        self.assertEqual(body, {"status": "ok"})
+        self.assertEqual(content_type, "application/json; charset=utf-8")
+
+        status_code, body, content_type = self._route("GET", "/metrics", AUTH_HEADERS)
+
+        self.assertEqual(status_code, 200)
+        self.assertEqual(content_type, "text/plain; charset=utf-8")
+        self.assertIn("# TYPE cad_api_requests_total counter", body)
+
     @staticmethod
     def _existing_artifact_id() -> str | None:
         for index_path in ARTIFACT_INDEX_PATHS:
