@@ -114,7 +114,7 @@
 - Deferred: Kubernetes, KServe/vLLM, Argo CD, Cosign/Trivy, real worker pools, real LLM endpoints, and production SLO enforcement.
 - [x] CAD-P03 Task 03.1 — workflow state machine and audit event shape: `src/cad_agent/orchestrator.py`, `tests/test_orchestrator.py`; validation `uv run pytest tests/test_orchestrator.py -q`, `uv run pytest -q`, and `git diff --check`; reviewer verdict `pass` after fix round; forbidden production API/worker/schema scope check passed.
 - [x] CAD-P03 Task 03.2 — enforce spec approval before CAD generation: `run_cad()` now requires current `spec_approved`; validation `uv run pytest tests/test_orchestrator.py -q`, `uv run pytest -q`, and `git diff --check`; reviewer verdict `pass`.
-- [ ] CAD-P03 Task 03.3 — convert validation failure to revision request.
+- [x] CAD-P03 Task 03.3 — convert validation failure to revision request: validation failures now create revision requests, store reason codes/failure locations, increment failure count, and escalate after three failures; validation `uv run pytest tests/test_orchestrator.py -q`, `uv run pytest -q`, and `git diff --check`; reviewer verdict `pass` after fix round.
 - [ ] CAD-P03 Task 03.4 — enforce export approval gate.
 - [ ] CAD-P03 Task 03.5 — integrate audit JSONL with Phase 2 style.
 - [ ] CAD-P03 Task 03.6 — close phase with deviation check.
