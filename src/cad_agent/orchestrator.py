@@ -38,7 +38,7 @@ STATES = frozenset(
 TRANSITIONS: dict[str, frozenset[str]] = {
     CREATED: frozenset({SPEC_PENDING_APPROVAL, SPEC_APPROVED, ESCALATED_TO_HUMAN}),
     SPEC_PENDING_APPROVAL: frozenset({SPEC_APPROVED, REVISION_REQUESTED, ESCALATED_TO_HUMAN}),
-    SPEC_APPROVED: frozenset({DSL_GENERATED, REVISION_REQUESTED, ESCALATED_TO_HUMAN}),
+    SPEC_APPROVED: frozenset({DSL_GENERATED, CAD_BUILT, REVISION_REQUESTED, ESCALATED_TO_HUMAN}),
     DSL_GENERATED: frozenset({CAD_BUILT, REVISION_REQUESTED, ESCALATED_TO_HUMAN}),
     CAD_BUILT: frozenset({VALIDATION_RUNNING, REVISION_REQUESTED, ESCALATED_TO_HUMAN}),
     VALIDATION_RUNNING: frozenset({VALIDATION_PASSED, VALIDATION_FAILED, REVISION_REQUESTED, ESCALATED_TO_HUMAN}),
@@ -96,9 +96,9 @@ class Workflow:
             "specification_id": specification_id,
             **_json_ready(payload),
         }
-        self.approval_decisions.append(approval)
         self._transition(SPEC_APPROVED)
         event = self._record_event("specification_approved", traceability_id=specification_id, decision=approval, **payload)
+        self.approval_decisions.append(approval)
         return WorkflowDecision(approved=True, approval_id=event["traceability_id"], payload=approval)
 
     def generate_dsl(self, traceability_id: str | None = None, **payload: object) -> WorkflowDecision:
@@ -107,15 +107,10 @@ class Workflow:
         return WorkflowDecision(approved=True, approval_id=event["traceability_id"], payload=event["payload"])
 
     def run_cad(self, dsl: dict[str, Any], traceability_id: str | None = None, **payload: object) -> WorkflowDecision:
-        if self._state != SPEC_APPROVED:
+        if self._state not in {SPEC_APPROVED, DSL_GENERATED}:
             return WorkflowDecision(blocked=True, reason="SPEC_APPROVAL_REQUIRED", payload={"dsl": _json_ready(dsl), **_json_ready(payload)})
         self._transition(CAD_BUILT)
         event = self._record_event("cad_built", traceability_id=traceability_id or dsl.get("traceability_id"), dsl=_json_ready(dsl), **payload)
-        return WorkflowDecision(approved=True, approval_id=event["traceability_id"], payload=event["payload"])
-
-    def mark_cad_built(self, traceability_id: str | None = None, **payload: object) -> WorkflowDecision:
-        self._transition(CAD_BUILT)
-        event = self._record_event("cad_built", traceability_id=traceability_id, **payload)
         return WorkflowDecision(approved=True, approval_id=event["traceability_id"], payload=event["payload"])
 
     def start_validation(self, traceability_id: str | None = None, **payload: object) -> WorkflowDecision:
@@ -131,6 +126,7 @@ class Workflow:
         resolved_traceability_id = traceability_id or normalized.get("traceability_id") or normalized.get("specification_id")
 
         if passed:
+            self.failure_count = 0
             self._transition(VALIDATION_PASSED)
             event = self._record_event("validation_passed", traceability_id=resolved_traceability_id, result=normalized, **payload)
             return WorkflowDecision(approved=True, approval_id=event["traceability_id"], payload=event["payload"])
@@ -197,9 +193,9 @@ class Workflow:
             "export_id": export_id,
             **_json_ready(payload),
         }
-        self.approval_decisions.append(approval)
         self._transition(EXPORTED)
         event = self._record_event("export_approved", traceability_id=export_id, decision=approval, **payload)
+        self.approval_decisions.append(approval)
         return WorkflowDecision(approved=True, approval_id=event["traceability_id"], payload=approval)
 
     def escalate_to_human(self, reason: str, traceability_id: str | None = None, **payload: object) -> WorkflowDecision:
@@ -213,27 +209,7 @@ class Workflow:
         self._state = next_state
 
     def _can_transition(self, next_state: str) -> bool:
-        if next_state not in STATES:
-            return False
-        if self._state == ESCALATED_TO_HUMAN:
-            return False
-        if next_state == ESCALATED_TO_HUMAN:
-            return True
-        if next_state in {VALIDATION_FAILED, VALIDATION_PASSED, REVISION_REQUESTED}:
-            return self._state != EXPORTED
-        if next_state == SPEC_APPROVED:
-            return self._state in {CREATED, SPEC_PENDING_APPROVAL}
-        if next_state == DSL_GENERATED:
-            return self._state in {SPEC_APPROVED, REVISION_REQUESTED}
-        if next_state == CAD_BUILT:
-            return self._state in {SPEC_APPROVED, DSL_GENERATED}
-        if next_state == VALIDATION_RUNNING:
-            return self._state in {SPEC_APPROVED, CAD_BUILT}
-        if next_state == EXPORT_PENDING_APPROVAL:
-            return self._state == VALIDATION_PASSED
-        if next_state == EXPORTED:
-            return self._state == EXPORT_PENDING_APPROVAL
-        return next_state in TRANSITIONS[self._state]
+        return next_state in TRANSITIONS.get(self._state, frozenset())
 
     def _record_event(self, event_type: str, traceability_id: str | None = None, **payload: object) -> dict[str, Any]:
         event_payload = {"state": self._state, **_json_ready(payload)}
