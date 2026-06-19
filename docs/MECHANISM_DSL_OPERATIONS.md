@@ -23,7 +23,7 @@ Generated DSL:
 ```json
 {
   "units": "mm",
-  "traceability_id": "<plan.traceability_id or tr_dsl_mechanism>",
+  "traceability_id": "tr_dsl_shaft_<deterministic-hash-or-plan-id>",
   "parameters": {
     "radius": "<diameter_mm / 2>",
     "length": "<length_mm>"
@@ -41,9 +41,16 @@ Generated DSL:
 }
 ```
 
+The emitted `traceability_id` is always schema-valid for the Phase 1
+Parametric DSL schema. If the mechanism plan already contains a valid
+`tr_dsl_*` ID, the compiler preserves it; otherwise it emits a deterministic
+`tr_dsl_shaft_<hash>` ID.
+
 A string beginning with `$` is treated as a reference to an existing numeric
 parameter. If the referenced parameter is absent or non-numeric, compilation
-fails with `INVALID_PARAMETER_REFERENCE`.
+fails with `INVALID_PARAMETER_REFERENCE`. `positions_mm` must be a non-empty
+array of two-number coordinate pairs; otherwise compilation fails with
+`INVALID_POSITIONS_MM`.
 
 ## Explicitly not approved
 
