@@ -36,6 +36,93 @@
 14. `docs/validation_security_ja.md`
 15. `docs/operations_ja.md`
 
+## Current executable boundary
+
+- P2 Pilot is completed and validated, but production worker deployment remains deferred.
+- Current executable work is limited to approved docs/status reconciliation, workflow prompt improvements, and validation evidence updates unless a new approval gate explicitly authorizes code work.
+- `TASKS.md` is the task inventory. `AGENTS.md`, `prompt.md`, current user approval, validation results, and stop conditions are authority files. If they conflict, stop and ask for clarification.
+- The next implementation candidate is `CAD-P03` bounded workflow safety gate, but it is not executable until explicit approval is granted.
+
+## Task Queue Mode
+
+This workflow is task-queue driven. At the start of every run:
+
+1. Read `TASKS.md`.
+2. Build a task inventory:
+   - completed tasks
+   - pending tasks
+   - blocked tasks
+   - tasks requiring explicit approval
+3. Classify each pending task as one of:
+   - `executable_now`: already approved, within current allowed scope, and has clear validation evidence
+   - `approval_required`: changes CAD/API/schema/LLM/CAD feature/production behavior or expands workflow authority
+   - `blocked`: depends on missing input, failed validation, or unresolved ambiguity
+   - `closed_evidence_only`: already marked complete; do not reopen unless the user explicitly requests continuation
+4. Select the next executable task only if it is within the current approval boundary.
+5. If the selected task requires approval, ask the user for explicit permission. If permission is granted, classify it as executable and continue; if permission is denied or unclear, stop and return a review package.
+6. If no executable task exists, stop and return a review package with:
+   - current status
+   - completed evidence
+   - next proposed task
+   - approval required, if any
+
+## Task Execution Loop
+
+For each approved executable task:
+
+1. Read the task and its deliverable boundaries.
+2. Identify:
+   - task ID
+   - expected deliverable
+   - allowed files
+   - forbidden files
+   - validation commands
+   - approval boundary
+3. Check `.slim/deepwork` lifecycle rules before using or creating deepwork evidence:
+   - classify existing plan files as `active`, `closed`, or `archived`
+   - do not resume closed plans unless explicitly requested
+   - if no active plan exists and work is required, create or request a new active plan
+4. Use the most relevant available skill before implementation work.
+5. Make the smallest safe change that satisfies the task.
+6. Do not expand scope.
+7. Validate using the task’s validation commands or the current phase’s allowed validation commands.
+8. Record evidence in the active deepwork file or review package.
+9. Update `TASKS.md` only if:
+   - validation passed, or
+   - the task is explicitly docs/status-only and the evidence is sufficient, or
+   - the user explicitly approves the update.
+10. Continue to the next executable task by default. Stop after one task only when the task is risky, ambiguous, approval-required and not yet approved, validation failed, or the user explicitly requests single-task mode.
+
+Stop immediately if any of the following occurs:
+
+- validation fails
+- must-fix review item remains open
+- approval is required and the user has not granted it
+- task boundaries are ambiguous
+- the task requires forbidden code, raw code, external API, LLM endpoint, network command, new tooling, CAD feature, native worker, production API service, or schema change without explicit approval
+- no executable task remains under the current approval boundary
+
+## Meta-Improvement Loop
+
+While the task execution loop is active, continuously evaluate workflow operation.
+
+After each task, or after detecting a repeated pattern, record a meta-improvement note:
+
+```md
+### Meta-improvement log
+- Observed pattern:
+- Skill usage:
+- Subagent routing opportunity:
+- Routine work that could be skillized:
+- Workflow clarity issue:
+- Proposed improvement:
+- Approval needed?: yes/no
+```
+
+Meta-improvements may apply only safe documentation or prompt wording improvements that preserve existing approval boundaries, forbidden actions, and stop conditions.
+
+Do not use meta-improvement to expand executable scope, change CAD/API/schema/LLM behavior, alter validation gates, or bypass review. Those changes require explicit approval.
+
 ## 出力すべき成果物
 
 - `docs/cad_agent_detailed_design.md`

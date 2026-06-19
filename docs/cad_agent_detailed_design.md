@@ -23,6 +23,10 @@ The core design principle is separation of responsibility:
 
 The initial pass creates planning/design documents only. A later bounded Phase 1 hardening pass updated the existing PoC/native CadQuery path without expanding into production deployment. Future implementation must remain gated by review and validation.
 
+Full-design implementation status: this detailed design is not fully implemented. The repository contains real bounded PoC/Pilot/skeleton code, including the Phase 1 golden CAD path, Phase 2 DFM/AM pilot, local artifact hashing/indexing, API/job/project skeletons, and Phase 3/4 data-model stubs. Missing or only stubbed items include real LLM requirement/spec extraction, a Mechanism Planner, a Specification-to-DSL compiler, enforced human approval/export gates, a full Orchestrator revision-loop state machine, production API/worker/auth infrastructure, durable artifact storage, full assembly DSL/interference, motion validation, and FEA.
+
+Approval samples are not workflow enforcement: existing approval helpers and sample JSONL records document audit shape only; they do not yet block CAD generation, validation override, or print/export without approval. The bounded workflow safety gate is tracked as `CAD-P03` in `docs/cad_agent_implementation_plan.md` and is the recommended next implementation phase.
+
 ## 3. Goals and non-goals
 
 ### Goals

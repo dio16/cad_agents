@@ -11,6 +11,44 @@
 - [x] First-pass scope: docs-only workflow, except validation-harness maintenance required for `validate-docs`; no new CAD features, production API service, native worker pool, or external LLM endpoint integration.
 - [x] Final validation and @oracle final review: `status`, `validate-docs`, Phase 1/2 commands, `pytest`, and `git diff --check` pass.
 
+## Prompt task-loop workflow
+
+- [x] Confirm P2 Pilot completion status: P2-1 through P2-6 are complete and Phase 2 Pilot is validated; production worker deployment remains deferred.
+- [x] `prompt.md` reads `TASKS.md` as the task inventory at the start of every run.
+- [x] `prompt.md` classifies tasks as `executable_now`, `approval_required`, `blocked`, or `closed_evidence_only`.
+- [x] `prompt.md` continues executing approved executable tasks by default; it stops only for validation failure, ambiguity, forbidden scope, no executable task, or ungranted approval requirement.
+- [x] `prompt.md` respects `AGENTS.md` deepwork lifecycle rules before using or creating `.slim/deepwork` evidence.
+- [x] `prompt.md` updates `TASKS.md` only after validation evidence, docs/status-only sufficiency, or explicit user approval.
+- [x] `prompt.md` includes a meta-improvement loop for workflow clarity, skill usage, subagent routing, and routine skillization.
+- [x] `prompt.md` asks for approval when a task requires explicit permission; if the user grants permission, the task loop continues with that task.
+- [x] `prompt.md` stops when no executable task exists under the current approval boundary.
+- [ ] Execute the next approved executable task from `TASKS.md` when explicit approval makes one available.
+- [ ] Execute `CAD-P03` bounded workflow safety gate only after explicit approval.
+
+## Status summary
+
+- Phase 2 Pilot, Phase 3 Production v1 readiness skeleton, and Phase 4 Production v2 data-model stubs are implemented and validated.
+- These completed phases remain skeleton/Pilot maturity only; production deployment, real worker pools, real LLM endpoints, production-grade material DB/adapters, FEA, and motion validation remain deferred.
+- Current implementation work is status/documentation reconciliation only unless a new approval gate explicitly authorizes code work.
+
+## CADAGENT phase implementation plans
+
+- [x] Create nested plan folders under `docs/cadagent_plans/CAD-P00` through `CAD-P09`.
+- [x] Create per-phase detailed implementation plan: `docs/cadagent_plans/CAD-P00/implementation-plan.md`.
+- [x] Create per-phase detailed implementation plan: `docs/cadagent_plans/CAD-P01/implementation-plan.md`.
+- [x] Create per-phase detailed implementation plan: `docs/cadagent_plans/CAD-P02/implementation-plan.md`.
+- [x] Create per-phase detailed implementation plan: `docs/cadagent_plans/CAD-P03/implementation-plan.md`.
+- [x] Create per-phase detailed implementation plan: `docs/cadagent_plans/CAD-P04/implementation-plan.md`.
+- [x] Create per-phase detailed implementation plan: `docs/cadagent_plans/CAD-P05/implementation-plan.md`.
+- [x] Create per-phase detailed implementation plan: `docs/cadagent_plans/CAD-P06/implementation-plan.md`.
+- [x] Create per-phase detailed implementation plan: `docs/cadagent_plans/CAD-P07/implementation-plan.md`.
+- [x] Create per-phase detailed implementation plan: `docs/cadagent_plans/CAD-P08/implementation-plan.md`.
+- [x] Create per-phase detailed implementation plan: `docs/cadagent_plans/CAD-P09/implementation-plan.md`.
+- [x] Add deviation-check requirement to each plan: verify against `docs/cad_agent_detailed_design.md`, `docs/cad_agent_implementation_plan.md`, phase non-goals, and deferred production boundaries before marking complete.
+- [ ] Execute `CAD-P03` bounded workflow safety gate when explicitly approved.
+- [ ] Update this file with each phase status: `not started`, `in progress`, `blocked`, or `completed`.
+- [ ] Record each completed phase's validation commands, reviewer verdict, and deviation-check verdict.
+
 ## Phase 0: Design-contract finalization
 
 - [x] Contract scope: Phase 0 is docs-only; no code under `cad_runtime/`, `dsl/`, `validation/`, `schemas/v1/*`, or example artifacts under `examples/gyro_kinetic_v1/*`.
@@ -54,16 +92,20 @@
 
 目的: Phase 1 の単一部品パイプラインを維持したまま、実 worker 接続点、製造プロファイル、レビュー、監査、モデルルーティングを Pilot 用に通す。
 
+- [x] Pilot implementation validated; production worker deployment remains future work.
+
 | ID | タスク | 完了条件 |
 |---|---|---|
-| P2-1 | FreeCAD headless / OCCT worker probe | ✅ `phase2-pilot-run` で executable を検出した場合のみ native mode を記録し、未導入環境では deterministic surrogate adapter を記録 |
-| P2-2 | Blender render / mesh worker probe | ✅ `phase2-pilot-run` で Blender adapter を probe し、native executable 不在時は OBJ surrogate mesh を生成 |
-| P2-3 | DFM/AM プロファイルカタログ | ✅ `fdm_standard` / `cnc_3axis_soft_metal` の profile catalog を保持し、Pilot golden path では `fdm_standard` の仕様の壁厚・穴径・材料・`dfm.build_volume.max`（`max_bbox_mm` に対する保守的 axis-aligned bbox 比較）を検証 |
-| P2-4 | Review UI、diff viewer、版比較 | ✅ Phase 1 baseline と revised spec の parameter diff を HTML review viewer に保存 |
-| P2-5 | 監査ログ、保持期間、データ分類 | ✅ `audit_log.jsonl` に `data_classification`、`retention_days`、`model_route` を保存 |
-| P2-6 | commercial / onprem / hybrid の Model Gateway 試験 | ✅ public commercial は許可、confidential commercial は onprem fallback として fail 判定 |
+| P2-1 | - [x] FreeCAD headless / OCCT worker probe | ✅ `phase2-pilot-run` で executable を検出した場合のみ native mode を記録し、未導入環境では deterministic surrogate adapter を記録 |
+| P2-2 | - [x] Blender render / mesh worker probe | ✅ `phase2-pilot-run` で Blender adapter を probe し、native executable 不在時は OBJ surrogate mesh を生成 |
+| P2-3 | - [x] DFM/AM プロファイルカタログ | ✅ `fdm_standard` / `cnc_3axis_soft_metal` の profile catalog を保持し、Pilot golden path では `fdm_standard` の仕様の壁厚・穴径・材料・`dfm.build_volume.max`（`max_bbox_mm` に対する保守的 axis-aligned bbox 比較）を検証 |
+| P2-4 | - [x] Review UI、diff viewer、版比較 | ✅ Phase 1 baseline と revised spec の parameter diff を HTML review viewer に保存 |
+| P2-5 | - [x] 監査ログ、保持期間、データ分類 | ✅ `audit_log.jsonl` に `data_classification`、`retention_days`、`model_route` を保存 |
+| P2-6 | - [x] commercial / onprem / hybrid の Model Gateway 試験 | ✅ public commercial は許可、confidential commercial は onprem fallback として fail 判定 |
 
 ## Phase 3: Production v1 readiness skeleton
+
+- [x] Skeleton implementation and contract coverage complete; production deployment remains deferred.
 
 - [x] API Gateway / Project Service skeleton: stdlib HTTP server, in-memory project CRUD, API-key stub, artifact index lookup only.
 - [x] Synchronous job queue simulation: `cad_golden`, `phase2_pilot`, and `validation` stub jobs with deterministic tests.
@@ -72,6 +114,8 @@
 - Deferred: Kubernetes, KServe/vLLM, Argo CD, Cosign/Trivy, real worker pools, real LLM endpoints, and production SLO enforcement.
 
 ## Phase 4: Production v2 data-model stubs
+
+- [x] Skeleton implementation and contract coverage complete; production database/adapters/FEA remain deferred.
 
 - [x] Static material catalog stub for `PLA`, `PETG`, `ABS`, `6061-T6`, `POM`, `17-4PH` with explicit `skeleton_stub` / reference-only metadata.
 - [x] Decoupled BOM aggregation stub with validation errors, weight stub, and cost stub.
