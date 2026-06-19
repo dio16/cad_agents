@@ -17,6 +17,11 @@ MOVING_PART_ID_NOT_FOUND = "MOVING_PART_ID_NOT_FOUND"
 MISSING_PART_ID = "MISSING_PART_ID"
 MISSING_PART_TRACEABILITY = "MISSING_PART_TRACEABILITY"
 INVALID_PARTS = "INVALID_PARTS"
+MISSING_CLEARANCE = "MISSING_CLEARANCE"
+MISSING_MIN_CLEARANCE = "MISSING_MIN_CLEARANCE"
+INVALID_CLEARANCE = "INVALID_CLEARANCE"
+INVALID_MIN_CLEARANCE = "INVALID_MIN_CLEARANCE"
+INSUFFICIENT_CLEARANCE = "INSUFFICIENT_CLEARANCE"
 UNSUPPORTED_MOTION_TYPE = "UNSUPPORTED_MOTION_TYPE"
 INVALID_MOTION_STATE = "INVALID_MOTION_STATE"
 
@@ -30,11 +35,17 @@ class MotionValidationResult:
     report: dict[str, Any] = field(default_factory=dict)
 
 
-def validate_motion(state: dict[str, Any]) -> MotionValidationResult:
-    """Validate the bounded motion-state contract for approved mechanism fixtures.
+@dataclass(frozen=True, slots=True)
+class ClearanceCheck:
+    reason_code: str
+    location: str
 
-    Task 08.1 only implements deterministic schema/state checks. Clearance and
-    sweep collision rules are explicitly deferred to later CAD-P08 tasks.
+
+def validate_motion(state: dict[str, Any]) -> MotionValidationResult:
+    """Validate bounded motion-state and clearance contract for approved mechanism fixtures.
+
+    Task 08.2 adds deterministic clearance checks. Sweep collision rules remain
+    deferred to later CAD-P08 tasks.
     """
     if not isinstance(state, dict):
         return _fail(INVALID_MOTION_STATE, "motion state must be an object", "$", state)
@@ -55,6 +66,11 @@ def validate_motion(state: dict[str, Any]) -> MotionValidationResult:
     elif not isinstance(axis, str) or axis not in ALLOWED_ROTATION_AXES:
         reason_codes.append(INVALID_ROTATION_AXIS)
         failure_locations.append("$.rotation_axis")
+
+    clearance_check = _validate_clearance(state)
+    if clearance_check is not None:
+        reason_codes.append(clearance_check.reason_code)
+        failure_locations.append(clearance_check.location)
 
     angular_range = state.get("angular_range_deg")
     if angular_range is None:
@@ -140,6 +156,11 @@ def _checks_from_reason_codes(reason_codes: list[str]) -> list[dict[str, Any]]:
         MISSING_PART_ID: "part_traceability_check",
         MISSING_PART_TRACEABILITY: "part_traceability_check",
         INVALID_PARTS: "parts_shape_check",
+        MISSING_CLEARANCE: "clearance_check",
+        MISSING_MIN_CLEARANCE: "clearance_check",
+        INVALID_CLEARANCE: "clearance_check",
+        INVALID_MIN_CLEARANCE: "clearance_check",
+        INSUFFICIENT_CLEARANCE: "clearance_check",
         UNSUPPORTED_MOTION_TYPE: "motion_type_check",
         INVALID_MOTION_STATE: "motion_state_shape_check",
     }
@@ -158,10 +179,41 @@ def _revision_feedback(reason_codes: list[str]) -> list[dict[str, str]]:
         MISSING_PART_ID: "Every part in parts must include a non-empty part_id.",
         MISSING_PART_TRACEABILITY: "Every part in parts must include a non-empty traceability_id.",
         INVALID_PARTS: "parts must be an array of part objects when provided.",
+        MISSING_CLEARANCE: "Add clearance_mm when min_clearance_mm is provided.",
+        MISSING_MIN_CLEARANCE: "Add min_clearance_mm when clearance_mm is provided.",
+        INVALID_CLEARANCE: "clearance_mm must be a finite non-negative number.",
+        INVALID_MIN_CLEARANCE: "min_clearance_mm must be a finite non-negative number.",
+        INSUFFICIENT_CLEARANCE: "Increase clearance_mm so it is greater than or equal to min_clearance_mm.",
         UNSUPPORTED_MOTION_TYPE: "Current bounded motion validation supports motion_type=rotation only.",
         INVALID_MOTION_STATE: "Motion state must be a JSON object.",
     }
     return [{"reason_code": code, "message": feedback.get(code, "Revise motion validation input.")} for code in reason_codes]
+
+
+def _validate_clearance(state: dict[str, Any]) -> ClearanceCheck | None:
+    clearance = state.get("clearance_mm")
+    min_clearance = state.get("min_clearance_mm")
+    has_clearance = clearance is not None
+    has_min_clearance = min_clearance is not None
+
+    if not has_clearance and not has_min_clearance:
+        return None
+    if has_clearance and not has_min_clearance:
+        return ClearanceCheck(MISSING_MIN_CLEARANCE, "$.min_clearance_mm")
+    if has_min_clearance and not has_clearance:
+        return ClearanceCheck(MISSING_CLEARANCE, "$.clearance_mm")
+
+    if not _is_valid_clearance_value(clearance):
+        return ClearanceCheck(INVALID_CLEARANCE, "$.clearance_mm")
+    if not _is_valid_clearance_value(min_clearance):
+        return ClearanceCheck(INVALID_MIN_CLEARANCE, "$.min_clearance_mm")
+    if clearance < min_clearance:
+        return ClearanceCheck(INSUFFICIENT_CLEARANCE, "$.clearance_mm")
+    return None
+
+
+def _is_valid_clearance_value(value: Any) -> bool:
+    return _is_finite_number(value) and value >= 0
 
 
 def _is_valid_angular_range(value: Any) -> bool:

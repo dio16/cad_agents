@@ -1,10 +1,10 @@
 # Motion Validation Contract
 
 ## Status
-CAD-P08 Task 08.1 contract. Bounded motion-state schema and deterministic validation report shape only.
+CAD-P08 Task 08.2 contract. Bounded motion-state schema, deterministic clearance validation, and report shape.
 
 ## Purpose
-Define the input and output contract for bounded motion validation of approved mechanism fixtures. The validator reports pass/fail and reason codes for the motion-state representation before any later sweep, clearance, or workflow-gate work is added.
+Define the input and output contract for bounded motion validation of approved mechanism fixtures. The validator reports pass/fail and reason codes for the motion-state representation and deterministic clearance rule before any later sweep or workflow-gate work is added.
 
 ## Source traceability
 - `docs/cadagent_plans/CAD-P08/implementation-plan.md:26-50`
@@ -12,9 +12,10 @@ Define the input and output contract for bounded motion validation of approved m
 - `docs/cad_agent_implementation_plan.md:71-75`
 - `docs/VALIDATION_CONTRACT.md:18-20`
 
-## In scope for Task 08.1
+## In scope for Task 08.2
 - Bounded rotational motion-state input schema.
 - Deterministic schema/state validation.
+- Deterministic clearance rule when clearance fields are provided.
 - Machine-readable reason codes.
 - Motion validation report shape suitable for the CAD-P03 workflow gate.
 - Traceability from input state, declared parts, and validation report.
@@ -23,7 +24,6 @@ Define the input and output contract for bounded motion validation of approved m
 - FEA or safety analysis.
 - Production dynamic simulation.
 - Rotational sweep collision detection.
-- Clearance enforcement.
 - Full motion validation for unapproved mechanism DSL.
 - Approval or override authority. A failed motion validation result remains failed until the Orchestrator receives a valid revision.
 
@@ -65,8 +65,8 @@ The validator consumes mechanism motion-state JSON. Current bounded validation s
 | `mechanism_id` | string | Mechanism identifier for report context. |
 | `motion_type` | string | Defaults to `rotation`; any other value fails as unsupported for this bounded phase. |
 | `parts` | object[] | Declared parts. If provided, every `moving_part_ids` entry must match a `parts[].part_id`. Each part must include `part_id` and `traceability_id`. |
-| `clearance_mm` | number | Reserved for CAD-P08 Task 08.2. Ignored by Task 08.1. |
-| `min_clearance_mm` | number | Reserved for CAD-P08 Task 08.2. Ignored by Task 08.1. |
+| `clearance_mm` | number | Optional but coupled with `min_clearance_mm`. If present, must be a finite non-negative number and must be present with `min_clearance_mm`. |
+| `min_clearance_mm` | number | Optional but coupled with `clearance_mm`. If present, must be a finite non-negative number. If both are present, validation fails when `clearance_mm < min_clearance_mm`. If both are absent, clearance validation is skipped. |
 
 ## Output/report shape
 
@@ -131,13 +131,19 @@ Failure report shape:
 | `MISSING_PART_ID` | A declared part lacks `part_id`. | Add a non-empty `part_id`. |
 | `MISSING_PART_TRACEABILITY` | A declared part lacks `traceability_id`. | Add a non-empty `traceability_id`. |
 | `INVALID_PARTS` | `parts` is malformed. | Provide `parts` as an array of part objects. |
+| `MISSING_CLEARANCE` | `min_clearance_mm` is present but `clearance_mm` is absent. | Add `clearance_mm` when `min_clearance_mm` is provided. |
+| `MISSING_MIN_CLEARANCE` | `clearance_mm` is present but `min_clearance_mm` is absent. | Add `min_clearance_mm` when `clearance_mm` is provided. |
+| `INVALID_CLEARANCE` | `clearance_mm` is not a finite non-negative number. | Provide a finite non-negative `clearance_mm`. |
+| `INVALID_MIN_CLEARANCE` | `min_clearance_mm` is not a finite non-negative number. | Provide a finite non-negative `min_clearance_mm`. |
+| `INSUFFICIENT_CLEARANCE` | `clearance_mm` is below `min_clearance_mm`. | Increase `clearance_mm` so it is greater than or equal to `min_clearance_mm`. |
 
 ## Workflow gate behavior
 - Motion validation is a quality gate, not an approval authority.
 - A failure must be passed to the Orchestrator as a validation failure.
 - The Orchestrator must keep the workflow in a failed or revision-requested state and must not request export while motion validation is failed.
 - Validation failures are not rewritten as pass.
-- Clearance and sweep checks are not executed by Task 08.1 and must not be treated as passed.
+- The deterministic clearance check is executed when either clearance field is present.
+- Sweep checks are not executed by Task 08.2 and must not be treated as passed.
 
 ## Traceability
 - The report always includes `traceability_id`.
