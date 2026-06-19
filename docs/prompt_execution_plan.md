@@ -38,7 +38,7 @@ Phase 0 design-contract docs（`MVP_SCOPE.md`、`MECHANISM_DSL_V1.md`、`CAD_RUN
 
 現リポジトリは local CLI / PoC / Pilot maturity です。
 
-- Phase 1 PoC: Requirement / Specification / Parametric DSL / Validation Report の contract、DSL AST、単一部品 golden pipeline、artifact hash index、human approval sample を検証可能。
+- Phase 1 PoC/native CadQuery path: Requirement / Specification / Parametric DSL / Validation Report の contract、DSL AST、単一部品 golden pipeline、CadQuery export failure handling、artifact hash index、human approval sample を検証可能。
 - Phase 2 Pilot: FreeCAD/OCCT と Blender の executable probe、DFM/AM profile catalog、review diff HTML、audit JSONL、Model Gateway route trial を検証可能。
 - Production v1/v2 items exist only as skeleton / contract placeholders, not as production-ready implementation.
 - Native FreeCAD/OCCT/Blender、実 worker pool、実 LLM endpoints、PLM/ERP/MES、実 FEA、実 material DB、部品ライブラリ、BOM連携は将来拡張です。
@@ -50,7 +50,7 @@ Phase 0 design-contract docs（`MVP_SCOPE.md`、`MECHANISM_DSL_V1.md`、`CAD_RUN
 |---|---|---|---|---|
 | Origen platform architecture | Docs only / partial skeleton | `PWF-P00`, `PWF-P01` | Architecture summary and planning traceability | Production v1/v2 implementation |
 | CADAGENT Phase 0 design contracts | Deferred in this pass; approved Phase 0 finalization creates the five contract docs | `PWF-P01` | Deferred contract list and review notes only | Separate approved Phase 0 design-contract finalization pass |
-| CADAGENT Phase 1 native CAD | PoC surrogate / golden path exists | `PWF-P00`, `PWF-P03` | Validation evidence and maturity statement | Native worker implementation |
+| CADAGENT Phase 1 native CAD | PoC/native CadQuery path exists and was hardened | `PWF-P00`, `PWF-P03` | Validation evidence, hardening record, maturity statement | Native worker implementation |
 | CADAGENT Phase 2 DFM/AM | Pilot probe/report exists | `PWF-P03` | Validation evidence and operations note | Stronger DFM/AM validation |
 | LLM agents | Prompt/design boundary only | `PWF-P01`, `PWF-P02` | Workflow plan and execution prompt | Real LLM endpoint integration |
 
@@ -84,7 +84,7 @@ Out of scope for first pass:
 | `docs/Origen/` | Store detailed execution plan here | Origen remains source-material storage only. |
 | `docs/MVP_SCOPE.md`, `MECHANISM_DSL_V1.md`, `CAD_RUNTIME_CONTRACT.md`, `VALIDATION_CONTRACT.md`, `ORCHESTRATOR_WORKFLOW.md` | 作成しない in this pass; approved Phase 0 finalization creates them docs-only | これらはCADAGENT実装契約文書であり、このprompt workflow passの対象外。明示承認済みのPhase 0 passでは実装コードではなく契約文書として作成可能。 |
 | `schemas/v1/*` | Add or update | Schema implementation belongs to a future CADAGENT pass. |
-| `cad_runtime/`, `dsl/`, `validation/` | Add implementation code | CAD feature and validation implementation are out of scope. |
+| `cad_runtime/`, `dsl/`, `validation/` | Add implementation code outside approved hardening | CAD feature and validation implementation are out of scope unless explicitly approved. |
 | `examples/gyro_kinetic_v1/*` | Add example artifacts | First target examples are future implementation work. |
 | Native worker pool, real LLM endpoint, production API service | Add or integrate | Production architecture is future scope. |
 | `PWF-P05` | Execute without explicit approval | Optional tooling is proposal-only in this pass. |
@@ -305,6 +305,7 @@ Each phase review records:
 | Risk | Mitigation |
 |---|---|
 | Plan expands into full CADAGENT implementation | `PWF-G001` boundary and non-goal enforcement |
+| Phase 1 hardening is mistaken for production deployment | Keep hardening limited to the existing PoC/native CadQuery path and require approval for production workers/APIs/LLM endpoints. |
 | Docs diverge from `prompt.md` | Keep `docs/cad_agent_detailed_design.md`, `docs/cad_agent_implementation_plan.md`, and `docs/prompt_execution_plan.md` cross-referenced. |
 | Validation commands become too heavy | Minimal validation per phase; full validation at final gate |
 | Stale Origen details copied into the prompt | Keep Origen as source material, not direct implementation source |
@@ -320,6 +321,7 @@ Definition of done for this first pass:
 - `docs/prompt_execution_plan.md` exists as the prompt workflow execution-control plan.
 - `TASKS.md` and `docs/operations_ja.md` are extended without rewriting the existing Phase 0–4 roadmap.
 - `validate-docs`, Phase 1/2 commands, `pytest`, and diff checks pass.
+- Phase 1 hardening is documented as bounded PoC/native CadQuery work, not production deployment.
 - Phase 5 optional tooling is deferred unless explicitly approved later.
 
 ## Decision log
@@ -334,3 +336,5 @@ Definition of done for this first pass:
 | PWF-D006 | `TASKS.md` は拡張するが書き換えない | 既存Phase 0〜4 を壊さず、prompt-driven workflow を追加するため。 |
 | PWF-D007 | 既存deepwork progress file は保持する | 過去の設計レビュー・実装履歴を失わないため。 |
 | PWF-D008 | CADAGENT実装契約文書はこのprompt workflow passでは作成しない | 本passは詳細設計書・実装計画書に限定し、実装契約は承認済みPhase 0 design-contract finalization passへ任せるため。 |
+| PWF-D009 | Phase 1 hardening は既存PoC/native CadQuery path に限定 | Production worker/API/queue/auth/LLM endpoint を追加せず、既存 golden path の検証性を高めるため。 |
+| PWF-D010 | `phase1-contract-test` は一時出力を使用 | stale ignored report が review evidence を汚染しないようにするため。 |

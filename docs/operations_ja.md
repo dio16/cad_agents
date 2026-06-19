@@ -2,7 +2,7 @@
 
 ## ローカルコマンド
 
-このリポジトリの maintained script は文書・契約整合性チェック、Phase 1 PoC の最小パイプライン検証、Phase 2 Pilot の adapter / review / audit / gateway 検証を提供します。
+このリポジトリの maintained script は文書・契約整合性チェック、Phase 1 PoC/native CadQuery hardening の最小パイプライン検証、Phase 2 Pilot の adapter / review / audit / gateway 検証を提供します。
 
 ```bash
 bash ./run_cad_agent.sh status
@@ -23,12 +23,18 @@ bash ./run_cad_agent.sh provenance --output /tmp/cad_agent_provenance.json
 - `docs/cad_agent_detailed_design.md`: CADAGENTの詳細設計を定義します。
 - `docs/cad_agent_implementation_plan.md`: CADAGENTの実装計画、Gate、Validation、Stop conditionsを定義します。
 - `docs/prompt_execution_plan.md`: 修正後ゴール、現在の成熟度、Phase map、Acceptance criteria、Validation commands、Review package template を定義します。
-- 最初の適用範囲は docs-only workflow です。実装は文書中心とし、`validate-docs`を維持するためのvalidation-harness更新以外は新規実行機能・CAD feature・Production API service・native worker pool・外部LLM endpoint を追加しません。
-- Phase 0 design-contract finalization passでは、CADAGENT実装契約文書（`MVP_SCOPE.md`、`MECHANISM_DSL_V1.md`、`CAD_RUNTIME_CONTRACT.md`、`VALIDATION_CONTRACT.md`、`ORCHESTRATOR_WORKFLOW.md`）を契約文書として作成します。それ以外の pass では、実装コード・`schemas/v1/*`・API endpoint schema・native worker pool は作成しません。
+- 最初の適用範囲は docs-only workflow です。実装は文書中心とし、`validate-docs`を維持するためのvalidation-harness更新、または明示承認済みのPhase 1 hardening pass以外は、新規実行機能・CAD feature・Production API service・native worker pool・外部LLM endpoint を追加しません。
+- Phase 0 design-contract finalization passでは、CADAGENT実装契約文書（`MVP_SCOPE.md`、`MECHANISM_DSL_V1.md`、`CAD_RUNTIME_CONTRACT.md`、`VALIDATION_CONTRACT.md`、`ORCHESTRATOR_WORKFLOW.md`）を契約文書として作成します。明示承認済みのPhase 1 hardening passを除き、それ以外の pass では、実装コード・`schemas/v1/*`・API endpoint schema・native worker pool は作成しません。
+
+## Phase 1 hardening pass
+
+明示承認済みのPhase 1 hardening passでは、既存のPoC/native CadQuery golden pathのみを対象にします。追加された検証項目は、CadQuery export失敗の`EXPORT_FAILED`化、z軸方向のみ許可、parameter referenceの解決先確認、`step_ap242`必須化、`phase1-contract-test`の一時出力化、artifact hash再計算、`cad_kernel`メタデータ確認です。
+
+このpassは production native worker deployment、production API、queue、auth、実LLM endpoint、新DSL operation、example artifacts の追加を許可しません。
 
 ## CI/CD skeleton
 
-現在の CI は Production v1/v2 の完全運用ではなく、GitHub Actions 上で既存の文書・契約・Phase 1/2・SBOM/provenance・serve dry-run を通す smoke workflow です。
+現在の CI は Production v1/v2 の完全運用ではなく、GitHub Actions 上で既存の文書・契約・Phase 1/2 hardening・SBOM/provenance・serve dry-run を通す smoke workflow です。
 
 ```mermaid
 flowchart TD

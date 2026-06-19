@@ -1,5 +1,12 @@
 # Deepwork progress: CADAGENT implementation pass
 
+- status: closed
+- closed_at: 2026-06-19
+- final_verdict: pass
+- final_validation: bash ./run_cad_agent.sh status; validate-docs; phase1-contract-test; phase1-golden-pipeline --output-dir /tmp/cadagent_phase1_final; uv run pytest -q; git diff --check; forbidden-path check; artifact/hash checks
+- deferred_items: production native worker deployment remains future scope; unrelated .github/instructions/codacy.instructions.md excluded from Phase 0/1 package
+- reopen_condition: explicit user request to reopen/continue with stated scope; otherwise reconcile/summary only.
+
 ## Goal
 User requested: `実装計画に基づき実装。`
 

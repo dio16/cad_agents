@@ -35,11 +35,20 @@
 |---|---|---|
 | P1-1 | Requirement JSON Schema | ✅ `cad_agent.platform_poc` の contract test で required fields と unknowns/assumptions 分離を確認 |
 | P1-2 | Specification JSON Schema | ✅ `parameter_table`、`constraints`、`validation_plan` を contract test で確認 |
-| P1-3 | Parametric DSL Schema | ✅ `units=mm`、parameter 参照整合、feature order を AST validator で確認 |
-| P1-4 | CAD Runtime MVP | ✅ allowlist DSL から STEP AP242 surrogate と STL を生成し、AST/volume 失敗理由を返す |
+| P1-3 | Parametric DSL Schema | ✅ `units=mm`、parameter 参照整合、feature order、z軸方向のみ許可を AST validator で確認 |
+| P1-4 | CAD Runtime MVP | ✅ allowlist DSL から STEP AP242 と STL を生成し、CadQuery export失敗は`EXPORT_FAILED`として返す |
 | P1-5 | Validation MVP | ✅ bbox、volume、topology proxy、unit consistency、DFM/AM 最小ルールを Validation Report に保存 |
-| P1-6 | Artifact Store MVP | ✅ `traceability_id` と `artifact_hash` を `artifact_index.jsonl` に保存 |
+| P1-6 | Artifact Store MVP | ✅ `traceability_id` と `artifact_hash` を `artifact_index.jsonl` に保存し、hashを再計算 |
 | P1-7 | Human Approval Gate | ✅ 仕様変更/validation override の承認記録を JSONL に保存 |
+
+### Phase 1 hardening pass
+
+- [x] Existing PoC/native CadQuery path のみを対象に、production worker/API/queue/auth/LLM endpoint を追加しない範囲で hardening 実施。
+- [x] `step_ap242` を `derivative_outputs` に必須化し、z軸方向以外の feature axis を検証失敗にする。
+- [x] parameter reference 文字列が numeric parameter に解決されることを AST validator で確認。
+- [x] CadQuery STEP/STL export 失敗を `EXPORT_FAILED` validation failure として返す。
+- [x] `phase1-contract-test` を一時出力ディレクトリで実行し、リポジトリ内の stale report を生成しない。
+- [x] artifact hash 再計算と `cad_kernel` メタデータ確認を validation evidence に含める。
 
 ## Phase 2: Pilot（10〜16週）
 

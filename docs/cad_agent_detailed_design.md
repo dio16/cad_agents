@@ -2,10 +2,10 @@
 
 ## 1. Document status
 
-- Status: maintained planning/design artifact
+- Status: maintained planning/design artifact; Phase 1 hardening record included
 - Source: `docs/Origen/cad_agent_design_spec_and_implementation_plan.md`
 - Related prompt workflow: `docs/prompt_execution_plan.md`
-- Scope boundary: this document defines CADAGENT design intent and maintained planning contracts. It does not implement CAD features, native workers, schemas, API services, LLM endpoints, or production architecture.
+- Scope boundary: this document defines CADAGENT design intent and maintained planning contracts, and records bounded Phase 1 hardening. It does not authorize production CAD features, native workers, schemas, API services, LLM endpoints, or production architecture.
 
 ## 2. Executive summary
 
@@ -21,7 +21,7 @@ The core design principle is separation of responsibility:
 | Validation | Geometry, manufacturing, assembly, and motion quality gates | Mark failed artifacts as pass |
 | Orchestrator / Audit | Workflow, revision loop, approval, traceability | Bypass gates or omit audit records |
 
-This pass creates planning/design documents only. Future implementation must remain gated by review and validation.
+The initial pass creates planning/design documents only. A later bounded Phase 1 hardening pass updated the existing PoC/native CadQuery path without expanding into production deployment. Future implementation must remain gated by review and validation.
 
 ## 3. Goals and non-goals
 
@@ -51,6 +51,7 @@ This pass creates planning/design documents only. Future implementation must rem
 
 Future approved work may implement:
 
+- Bounded Phase 1 hardening of the existing PoC/native CadQuery path.
 - Native CAD Runtime with OCCT / FreeCAD / CadQuery integration.
 - Deterministic DSL operation registry.
 - Geometry, DFM/AM, assembly, and motion validation.
@@ -78,7 +79,7 @@ Future approved work may implement:
 |---|---|---|
 | Local CLI | Present | Use existing `run_cad_agent.sh` commands for validation. |
 | Phase 1 PoC | Present | Requirement, Specification, Parametric DSL, Validation Report contracts exist. |
-| Phase 1 PoC/native CadQuery path | Present | Use for validation and artifact-hash checks; production worker deployment remains future work. |
+| Phase 1 PoC/native CadQuery path | Present and hardened | Use for validation and artifact-hash checks; production worker deployment remains future work. |
 | Phase 2 Pilot | Present | DFM/AM profile, review diff, audit, and gateway probes exist. |
 | Native CAD worker | Not guaranteed | Treat production native worker deployment as future work unless explicitly approved. |
 | Production API service | Skeleton only | Do not present as production-ready. |
@@ -183,6 +184,7 @@ Approval is required for:
 | Mode | Allowed use | Notes |
 |---|---|---|
 | Native CAD | Approved Phase 1 PoC/native CadQuery path | OCCT / FreeCAD / CadQuery path for validated DSL; production worker deployment remains future scope. |
+| Phase 1 hardening | Existing PoC/native CadQuery path | Export failures, z-only axes, parameter references, `step_ap242`, temp contract-test output, and artifact/hash metadata checks are hardened. |
 | Deterministic surrogate | Current PoC/Pilot fallback | Records native availability and keeps validation meaningful when native executable is absent. |
 | Raw code execution | Forbidden by default | Requires explicit approval and audit if ever allowed. |
 
@@ -193,6 +195,7 @@ Runtime failures must be classified, not hidden.
 | Error class | Meaning |
 |---|---|
 | `UNSUPPORTED_DSL_OP` | Operation is not allowlisted. |
+| `DSL_AST_VALIDATION_FAILED` | Schema or AST validation failed before CAD build. |
 | `INVALID_PARAMETER_REFERENCE` | Parameter cannot be resolved. |
 | `CAD_BUILD_FAILED` | CAD generation failed. |
 | `BOOLEAN_FAILED` | Boolean operation failed. |
@@ -211,6 +214,17 @@ Runtime failures must be classified, not hidden.
 | DFM/AM validation | Manufacturing profile checks | Pilot profile checks present. |
 | Assembly validation | Part placement and interference | Future work beyond current stubs. |
 | Motion validation | Rotational sweep and clearance | Future work. |
+
+### Phase 1 hardening checks
+
+Phase 1 hardening keeps the single-part PoC/native CadQuery path explicit and auditable:
+
+- `derivative_outputs` must include `step_ap242`.
+- Feature axes are restricted to z-only in both schema and AST checks.
+- Parameter reference strings must resolve to numeric parameters.
+- CadQuery STEP/STL export failures are surfaced as `EXPORT_FAILED` instead of being hidden.
+- `phase1-contract-test` writes reports to a temporary directory, not to repository-local `reports/phase1_contract_test.json`.
+- Artifact validation recomputes `sha256` hashes and verifies metadata includes `cad_kernel`.
 
 ### Validation report requirements
 
@@ -302,6 +316,12 @@ Security rules:
 - It avoids stale validation terms.
 - It is included in maintained doc validation.
 
+### For bounded Phase 1 hardening
+
+- Existing PoC/native CadQuery behavior is hardened without production deployment.
+- Export failures, z-only axes, parameter references, `step_ap242`, temp contract-test output, and artifact/hash metadata checks are documented.
+- Phase 1 validation commands pass.
+
 ### For future approved CADAGENT implementation
 
 - Requirement JSON is generated and schema-validated.
@@ -321,3 +341,4 @@ Security rules:
 | `kinetic object v1` | Human-readable first target label. |
 | `deterministic surrogate` | Current PoC/Pilot fallback when native executables are absent. |
 | `native CAD` | Approved Phase 1 PoC/native CadQuery path; production worker deployment remains future scope. |
+| `Phase 1 hardening` | Bounded hardening of the existing PoC/native CadQuery path, not production deployment. |

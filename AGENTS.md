@@ -208,3 +208,13 @@ append-style JSONLログ記録（将来の不変ストレージを目標）
 1. **仕様を変えたくなったら、エージェントは変更案を出すだけで実行しない**
 2. **検証が不合格になったら、必ず理由を明記してから修正する**
 3. **機密/regulated/export-controlled案件はオンプレルートへ**
+
+## 11. `.slim/deepwork/` 計画ファイルの lifecycle
+
+- `.slim/deepwork/` は作業中の session state であり、未処理 backlog ではない。
+- 計画ファイルを使う前に、該当ファイルを `active` / `closed` / `archived` のいずれかに分類する。
+- `status: closed` または明確な最終レビュー `pass` / `conditional pass` と最終検証結果がある計画は、ユーザーが明示的に「再開」「継続」「再実装」と指示しない限り再検証・再実装しない。
+- 完了済み計画が残っている場合は、作業対象として扱う前に「既存計画は完了済み。新規実装ではなく最終状態の reconcile/summary でよい」と確認する。
+- 新規 Deepwork は、進行中の `status: active` の計画を優先する。該当する active 計画がない場合は、新しい plan file を作成し、冒頭に `status: active` を明記する。
+- 計画を閉じる際は、同じ deepwork file に `status: closed`、`closed_at`、最終検証コマンド、最終レビュー verdict、未解決/延期 items を記録する。
+- `closed` 計画を再開する場合は、再開理由と再開後の scope を deepwork file に追記し、再開前の最終検証結果を無効化しない。

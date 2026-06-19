@@ -44,7 +44,7 @@ bash ./run_cad_agent.sh provenance --output /tmp/cad_agent_provenance.json
 bash ./run_cad_agent.sh status
 ```
 
-`run_cad_agent.sh` は、プラットフォーム文書チェック、Phase 1 PoC の contract/golden pipeline、Phase 2 Pilot 検証、`serve --dry-run`、決定論的 SBOM/provenance stub を提供します。Phase 1 PoC は Requirement JSON、Specification JSON、Parametric DSL AST、決定論的 STEP/STL 生成、Validation Report、artifact hash index、Human Approval Gate 記録を検証します。Phase 2 Pilot は FreeCAD/OCCT と Blender の adapter probe、DFM/AM profile catalog、review diff HTML、audit retention/data classification、Model Gateway ルート判定を検証します。現在の PoC/Pilot 成熟度: native の FreeCAD/OCCT/Blender 実行は約束せず、executable を probe し、存在する場合のみ native mode を記録し、ない場合は deterministic surrogate adapter を使います。Production v1/v2 追加は分離された skeleton/contract で、stdlib API server、in-memory project/job service、security/observability tests、CI/SBOM/provenance commands、静的 material/BOM/AABB assembly stubs を含みます。
+`run_cad_agent.sh` は、プラットフォーム文書チェック、Phase 1 PoC/native CadQuery hardening、Phase 2 Pilot 検証、`serve --dry-run`、決定論的 SBOM/provenance stub を提供します。Phase 1 hardening は Requirement JSON、Specification JSON、Parametric DSL AST、z軸方向のみ許可、parameter reference、`step_ap242`必須、CadQuery STEP/STL export失敗処理、Validation Report、artifact hash index、Human Approval Gate 記録を検証します。Phase 2 Pilot は FreeCAD/OCCT と Blender の adapter probe、DFM/AM profile catalog、review diff HTML、audit retention/data classification、Model Gateway ルート判定を検証します。現在の PoC/Pilot 成熟度: production worker deployment は約束せず、Phase 1 path は利用可能な場合に native CadQuery を記録し、ない場合は deterministic surrogate の境界を明示します。Production v1/v2 追加は分離された skeleton/contract で、stdlib API server、in-memory project/job service、security/observability tests、CI/SBOM/provenance commands、静的 material/BOM/AABB assembly stubs を含みます。
 
 ## ライセンス
 

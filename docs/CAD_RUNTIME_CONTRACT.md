@@ -20,7 +20,7 @@ Define the contract boundary between validated Parametric DSL and deterministic 
 - Canonical artifacts: STEP / B-Rep.
 - Derived artifacts: STL, 3MF, glTF/GLB, PNG, PDF review report.
 - Metadata expectations: traceability IDs, source spec/dsl/report references, runtime mode, artifact hash, timestamp, and surrogate/native status.
-- V1/runtime error codes: `CAD_BUILD_FAILED`, `UNSUPPORTED_DSL_OP`, `INVALID_PARAMETER_REFERENCE`, `NON_POSITIVE_VOLUME`, `BOOLEAN_FAILED`, `KERNEL_TIMEOUT`, `EXPORT_FAILED`.
+- V1/runtime error codes: `CAD_BUILD_FAILED`, `DSL_AST_VALIDATION_FAILED`, `UNSUPPORTED_DSL_OP`, `INVALID_PARAMETER_REFERENCE`, `NON_POSITIVE_VOLUME`, `BOOLEAN_FAILED`, `KERNEL_TIMEOUT`, `EXPORT_FAILED`.
 - Reserved future error codes: `FILLET_FAILED`, `GEAR_GENERATION_FAILED`, `ASSEMBLY_CONSTRAINT_FAILED`.
 
 ## Out of scope / deferred

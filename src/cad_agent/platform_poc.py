@@ -4,10 +4,12 @@ import argparse
 import hashlib
 import json
 import math
-from dataclasses import asdict, dataclass
+import re
+import tempfile
+from dataclasses import asdict
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any
 
 from .schema_gate import ContractResult, validate_against_schema
 
@@ -20,6 +22,7 @@ ALLOWED_DSL_OPS = {"box", "cylinder", "through_hole"}
 ADDITIVE_OPS = {"box", "cylinder"}
 SUBTRACTIVE_OPS = {"through_hole"}
 ALLOWED_OUTPUTS = {"step_ap242", "stl"}
+PARAMETER_REFERENCE_PATTERN = re.compile(r"^\$[A-Za-z_][A-Za-z0-9_]*$")
 
 
 def utc_now() -> str:
@@ -64,24 +67,15 @@ def _parameter_names(document: dict[str, Any]) -> set[str]:
     return set(params) if isinstance(params, dict) else set()
 
 
-def _walk_values(value: Any) -> Iterable[Any]:
-    if isinstance(value, dict):
-        for nested in value.values():
-            yield from _walk_values(nested)
-    elif isinstance(value, list):
-        for nested in value:
-            yield from _walk_values(nested)
-    else:
-        yield value
-
-
 def validate_parametric_dsl_semantics(document: dict[str, Any]) -> list[ContractResult]:
     params = _parameter_names(document)
+    parameter_values = document.get("parameters", {})
     features = document.get("features", [])
     seen_additive = False
     seen_subtractive = False
     op_failures: list[str] = []
     order_failures: list[str] = []
+    axis_failures: list[str] = []
     ref_failures: list[str] = []
     derivative_outputs = document.get("derivative_outputs", [])
     output_failures = sorted(set(derivative_outputs) - ALLOWED_OUTPUTS) if isinstance(derivative_outputs, list) else []
@@ -101,12 +95,29 @@ def validate_parametric_dsl_semantics(document: dict[str, Any]) -> list[Contract
                 order_failures.append(f"feature[{index}] subtractive op precedes additive base")
             if seen_subtractive and op in ADDITIVE_OPS:
                 order_failures.append(f"feature[{index}] additive op follows subtractive op")
-            for value in _walk_values(feature):
-                if isinstance(value, str) and value.startswith("$") and value[1:] not in params:
-                    ref_failures.append(value)
+            axis = feature.get("axis")
+            if axis is not None and axis != "z":
+                axis_failures.append(f"feature[{index}] axis={axis}")
+            for key, value in feature.items():
+                if not key.endswith("_mm") or not isinstance(value, str):
+                    continue
+                if value.startswith("$"):
+                    name = value[1:]
+                    if not PARAMETER_REFERENCE_PATTERN.match(value):
+                        ref_failures.append(value)
+                    elif name not in params:
+                        ref_failures.append(value)
+                    elif not isinstance(parameter_values, dict) or not isinstance(parameter_values[name], (int, float)):
+                        ref_failures.append(f"{value} resolves to non-numeric parameter")
+                else:
+                    try:
+                        float(value)
+                    except ValueError:
+                        ref_failures.append(f"{value} is not a parameter reference or numeric value")
     return [
         ContractResult("Parametric DSL operations are allowlisted", "pass" if not op_failures else "fail", "; ".join(op_failures)),
         ContractResult("Parametric DSL feature order is executable", "pass" if not order_failures else "fail", "; ".join(order_failures)),
+        ContractResult("Parametric DSL axis support is z-only", "pass" if not axis_failures else "fail", "; ".join(axis_failures)),
         ContractResult("Parametric DSL parameter references resolve", "pass" if not ref_failures else "fail", ",".join(sorted(set(ref_failures)))),
         ContractResult("Parametric DSL derivative outputs supported", "pass" if not output_failures else "fail", ",".join(output_failures)),
     ]
@@ -122,11 +133,12 @@ def contract_status(checks: list[ContractResult]) -> str:
     return "pass" if all(check.status == "pass" for check in checks) else "fail"
 
 
-def contract_report() -> dict[str, Any]:
+def contract_report(output_dir: Path | None = None) -> dict[str, Any]:
     requirement = golden_requirement()
     specification = golden_specification()
     dsl = golden_dsl()
-    runtime = run_cad_runtime(dsl, DEFAULT_OUTPUT_DIR / dsl["traceability_id"])
+    runtime_output_dir = output_dir / dsl["traceability_id"] if output_dir else DEFAULT_OUTPUT_DIR / dsl["traceability_id"]
+    runtime = run_cad_runtime(dsl, runtime_output_dir)
     validation = validate_artifacts(specification, dsl, runtime)
     groups = {
         "requirement_schema": validate_requirement_schema(requirement),
@@ -269,6 +281,22 @@ def _model_volume_mm3(model: Any) -> float:
     return float(model.val().Volume())
 
 
+def _export_cadquery_artifact(model: Any, traceability_id: str, export_format: str, path: Path) -> tuple[dict[str, Any] | None, str | None]:
+    import cadquery as cq
+
+    try:
+        cq.exporters.export(model, str(path), exportType=export_format)
+    except Exception as exc:  # pragma: no cover - exercised by focused export-failure test with a fake module
+        return None, f"{export_format} export failed: {exc}"
+    suffix = path.suffix.lstrip(".")
+    return {
+        "artifact_id": f"art_{traceability_id}_{suffix}",
+        "format": "step_ap242" if export_format == "STEP" else "stl",
+        "path": str(path),
+        "artifact_hash": stable_hash_file(path),
+    }, None
+
+
 def run_cad_runtime(dsl: dict[str, Any], output_dir: Path = DEFAULT_OUTPUT_DIR) -> dict[str, Any]:
     ast_checks = validate_parametric_dsl_ast(dsl)
     if contract_status(ast_checks) != "pass":
@@ -309,19 +337,35 @@ def run_cad_runtime(dsl: dict[str, Any], output_dir: Path = DEFAULT_OUTPUT_DIR) 
         if model is None:
             step_path.write_text(_step_text(traceability_id, bbox, volume), encoding="utf-8")
         else:
-            import cadquery as cq
-
-            cq.exporters.export(model, str(step_path), exportType="STEP")
-        artifacts.append({"artifact_id": f"art_{traceability_id}_step", "format": "step_ap242", "path": str(step_path), "artifact_hash": stable_hash_file(step_path)})
+            artifact, export_error = _export_cadquery_artifact(model, traceability_id, "STEP", step_path)
+            if export_error is not None:
+                return {
+                    "status": "fail",
+                    "traceability_id": traceability_id,
+                    "reason_code": "EXPORT_FAILED",
+                    "detail": export_error,
+                    "failed_export": {"format": "step_ap242", "path": str(step_path)},
+                    "artifacts": artifacts,
+                }
+            assert artifact is not None
+            artifacts.append(artifact)
     if "stl" in dsl["derivative_outputs"]:
         stl_path = output_dir / f"{traceability_id}.stl"
         if model is None:
             stl_path.write_text(_mesh_for_box(*bbox), encoding="utf-8")
         else:
-            import cadquery as cq
-
-            cq.exporters.export(model, str(stl_path), exportType="STL")
-        artifacts.append({"artifact_id": f"art_{traceability_id}_stl", "format": "stl", "path": str(stl_path), "artifact_hash": stable_hash_file(stl_path)})
+            artifact, export_error = _export_cadquery_artifact(model, traceability_id, "STL", stl_path)
+            if export_error is not None:
+                return {
+                    "status": "fail",
+                    "traceability_id": traceability_id,
+                    "reason_code": "EXPORT_FAILED",
+                    "detail": export_error,
+                    "failed_export": {"format": "stl", "path": str(stl_path)},
+                    "artifacts": artifacts,
+                }
+            assert artifact is not None
+            artifacts.append(artifact)
 
     metadata = {
         "traceability_id": traceability_id,
@@ -632,8 +676,8 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     if args.command == "contract-test":
-        report = contract_report()
-        write_json(DEFAULT_REPORT_DIR / "phase1_contract_test.json", report)
+        with tempfile.TemporaryDirectory() as temp_dir:
+            report = contract_report(Path(temp_dir) / "runtime")
         print(json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True))
         return 0 if report["status"] == "pass" else 2
     report = run_golden_pipeline(args.output_dir)

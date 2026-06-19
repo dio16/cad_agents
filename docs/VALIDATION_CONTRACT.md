@@ -13,8 +13,8 @@ Define Validation as a quality gate that reports pass/fail, reason codes, and es
 
 ## In scope
 - Validation layers: schema, CAD geometry, manufacturing profile, assembly proxy, and motion/future checks.
-- Current maturity: bbox, volume, topology proxy, unit consistency, and DFM-AM rules.
-- Current PoC checks: `schema_check`, `unit_check`, `parameter_check`, `feature_order_check`, `brep_validity_check`, `mesh_watertight_check`, `dfm_fdm_check`.
+- Current maturity: bbox, volume, topology proxy, unit consistency, DFM-AM rules, z-only feature axes, parameter-reference resolution, and export failure propagation.
+- Current PoC checks: `schema_check`, `unit_check`, `parameter_check`, `feature_order_check`, `axis_check`, `parameter_reference_check`, `brep_validity_check`, `mesh_watertight_check`, `dfm_fdm_check`, `export_check`.
 - Future contracted checks: `assembly_clearance_check`, `motion_axis_check`, `motion_sweep_collision_check`, `gear_mesh_check`, `export_check`.
 - Reason codes must identify the failed check and the deterministic rule that failed.
 - Validation Report is passed to the Orchestrator and Revision Agent.
