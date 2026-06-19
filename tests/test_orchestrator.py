@@ -48,15 +48,37 @@ def test_validation_failure_creates_revision_request() -> None:
     assert result.revision_request.reason_codes == ["WALL_THICKNESS_BELOW_MIN"]
 
 
+def test_validation_failure_from_created_is_rejected() -> None:
+    workflow = Workflow()
+
+    with pytest.raises(ValueError, match="invalid workflow transition"):
+        workflow.handle_validation({"passed": False, "reason_codes": ["RETRY_FAILURE"]})
+
+    assert workflow.state == CREATED
+    assert workflow.failure_count == 0
+    assert workflow.revision_requests == []
+
+
 def test_three_failures_escalate_to_human() -> None:
     workflow = Workflow()
 
-    for _ in range(3):
-        workflow.handle_validation({"passed": False, "reason_codes": ["RETRY_FAILURE"]})
+    for index in range(3):
+        if index > 0:
+            workflow._transition(SPEC_PENDING_APPROVAL)
+            workflow.approve_specification(f"spec_retry_{index}")
+        else:
+            workflow.approve_specification("spec-initial")
+
+        workflow.run_cad({"traceability_id": f"tr_cad_retry_{index}"})
+        workflow.start_validation(f"tr_val_retry_{index}")
+        result = workflow.handle_validation({"passed": False, "reason_codes": ["RETRY_FAILURE"]})
 
     assert workflow.state == "escalated_to_human"
+    assert result.blocked is True
+    assert result.reason == "MAX_REVISION_LOOPS_REACHED"
     assert workflow.failure_count == 3
     assert len(workflow.revision_requests) == 3
+    assert all(request["reason_codes"] == ["RETRY_FAILURE"] for request in workflow.revision_requests)
 
 
 def test_validation_failure_creates_revision_request_with_reason_codes() -> None:
