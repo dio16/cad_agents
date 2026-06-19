@@ -10,6 +10,7 @@ APPROVED_MECHANISM_OPERATIONS = frozenset({"shaft"})
 TRACEABILITY_ID_PATTERN = re.compile(r"^tr_dsl_[A-Za-z0-9_]+$")
 PARAMETER_REFERENCE_PATTERN = re.compile(r"^\$[A-Za-z_][A-Za-z0-9_]*$")
 UNSUPPORTED_MECHANISM_OP = "UNSUPPORTED_MECHANISM_OP"
+NEW_OPERATION_APPROVAL_REQUIRED = "NEW_OPERATION_APPROVAL_REQUIRED"
 INVALID_MECHANISM_PLAN = "INVALID_MECHANISM_PLAN"
 INVALID_PARAMETER_REFERENCE = "INVALID_PARAMETER_REFERENCE"
 INVALID_POSITIONS_MM = "INVALID_POSITIONS_MM"
@@ -44,11 +45,13 @@ def compile_mechanism_plan(plan: dict[str, Any]) -> CompileResult:
         if "code" in operation or "raw_code" in operation:
             return CompileResult(valid=False, reason_code=UNSUPPORTED_MECHANISM_OP)
         op = operation.get("op")
+        if op is None:
+            return CompileResult(valid=False, reason_code=INVALID_MECHANISM_PLAN)
         if op in APPROVED_MECHANISM_OPERATIONS:
             has_mechanism_operation = True
             continue
         if op not in ALLOWED_DSL_OPERATIONS:
-            return CompileResult(valid=False, reason_code=UNSUPPORTED_MECHANISM_OP)
+            return CompileResult(valid=False, reason_code=NEW_OPERATION_APPROVAL_REQUIRED)
 
     if has_mechanism_operation:
         return _compile_approved_mechanism_plan(plan, operations)
@@ -162,8 +165,10 @@ def _validate_phase1_feature(feature: Any, parameters: dict[str, Any], index: in
         return CompileResult(valid=False, reason_code=INVALID_FEATURE_SHAPE)
 
     op = feature.get("op")
+    if op is None:
+        return CompileResult(valid=False, reason_code=INVALID_FEATURE_SHAPE)
     if op not in ALLOWED_DSL_OPERATIONS:
-        return CompileResult(valid=False, reason_code=UNSUPPORTED_MECHANISM_OP)
+        return CompileResult(valid=False, reason_code=NEW_OPERATION_APPROVAL_REQUIRED)
 
     if op == "box":
         required = {"length_mm", "width_mm", "height_mm"}
@@ -262,6 +267,7 @@ __all__ = [
     "INVALID_MECHANISM_PLAN",
     "INVALID_PARAMETER_REFERENCE",
     "INVALID_POSITIONS_MM",
+    "NEW_OPERATION_APPROVAL_REQUIRED",
     "UNSUPPORTED_MECHANISM_OP",
     "compile_mechanism_plan",
 ]

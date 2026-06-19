@@ -6,6 +6,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from cad_agent.dsl_compiler import NEW_OPERATION_APPROVAL_REQUIRED
+
+
 CREATED = "created"
 SPEC_PENDING_APPROVAL = "spec_pending_approval"
 SPEC_APPROVED = "spec_approved"
@@ -70,8 +73,29 @@ class RevisionRequest:
     payload: dict[str, Any] = field(default_factory=dict)
 
 
+@dataclass(frozen=True, slots=True)
+class NewOperationApprovalRequest:
+    operation: str
+    requires_human_approval: bool
+    reason_code: str
+    approval_type: str = "new_operation"
+    status: str = "approval_required"
+    traceability_id: str | None = None
+    payload: dict[str, Any] = field(default_factory=dict)
+
+
 def audit_event(event_type: str, **payload: object) -> dict[str, Any]:
     return {"type": event_type, "traceability_id": payload.get("traceability_id"), "payload": _json_ready(payload)}
+
+
+def request_new_operation(operation: str, traceability_id: str | None = None, **payload: object) -> NewOperationApprovalRequest:
+    return NewOperationApprovalRequest(
+        operation=operation,
+        requires_human_approval=True,
+        reason_code=NEW_OPERATION_APPROVAL_REQUIRED,
+        traceability_id=traceability_id,
+        payload=_json_ready(payload),
+    )
 
 
 class Workflow:
@@ -107,6 +131,12 @@ class Workflow:
         self._transition(DSL_GENERATED)
         event = self._record_event("dsl_generated", traceability_id=traceability_id, **payload)
         return WorkflowDecision(approved=True, approval_id=event["traceability_id"], payload=event["payload"])
+
+    def request_new_operation_approval(self, operation: str, traceability_id: str | None = None, **payload: object) -> WorkflowDecision:
+        request = request_new_operation(operation, traceability_id=traceability_id, **payload)
+        self._transition(ESCALATED_TO_HUMAN)
+        event = self._record_event("new_operation_approval_required", traceability_id=traceability_id, request=request, **payload)
+        return WorkflowDecision(blocked=True, reason=NEW_OPERATION_APPROVAL_REQUIRED, approval_id=event["traceability_id"], payload=event["payload"])
 
     def run_cad(self, dsl: dict[str, Any], traceability_id: str | None = None, **payload: object) -> WorkflowDecision:
         if self._state != SPEC_APPROVED:
@@ -329,5 +359,7 @@ __all__ = [
     "Workflow",
     "WorkflowDecision",
     "RevisionRequest",
+    "NewOperationApprovalRequest",
     "audit_event",
+    "request_new_operation",
 ]

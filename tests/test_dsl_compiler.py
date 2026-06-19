@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from cad_agent.dsl_compiler import compile_mechanism_plan
+from cad_agent.dsl_compiler import NEW_OPERATION_APPROVAL_REQUIRED, compile_mechanism_plan
 from cad_agent.platform_poc import validate_parametric_dsl_ast
 from cad_agent.schema_gate import ContractResult
 
@@ -88,7 +88,17 @@ def test_compiler_rejects_unapproved_mechanism_operation() -> None:
     result = compile_mechanism_plan(plan)
 
     assert result.valid is False
-    assert result.reason_code == "UNSUPPORTED_MECHANISM_OP"
+    assert result.reason_code == NEW_OPERATION_APPROVAL_REQUIRED
+    assert result.dsl == {}
+
+
+def test_compiler_new_operation_requires_approval() -> None:
+    plan = {"operations": [{"op": "custom_gear"}]}
+
+    result = compile_mechanism_plan(plan)
+
+    assert result.valid is False
+    assert result.reason_code == NEW_OPERATION_APPROVAL_REQUIRED
     assert result.dsl == {}
 
 

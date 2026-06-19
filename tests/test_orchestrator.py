@@ -4,6 +4,7 @@ import json
 
 import pytest
 
+import cad_agent.orchestrator as orchestrator
 from cad_agent.assembly_checks import (
     AABB_INTERFERENCE,
     AssemblyPart,
@@ -15,10 +16,12 @@ from cad_agent.orchestrator import (
     CAD_BUILT,
     CREATED,
     DSL_GENERATED,
+    ESCALATED_TO_HUMAN,
     EXPORTED,
     SPEC_APPROVED,
     SPEC_PENDING_APPROVAL,
     VALIDATION_PASSED,
+    NEW_OPERATION_APPROVAL_REQUIRED,
     Workflow,
     audit_event,
 )
@@ -42,6 +45,31 @@ def test_audit_event_shape_is_json_serializable() -> None:
         "payload": {"traceability_id": "tr_spec_1"},
     }
     assert json.dumps(event, sort_keys=True)
+
+
+def test_new_operation_requires_approval() -> None:
+    result = orchestrator.request_new_operation("custom_gear")
+
+    assert result.requires_human_approval is True
+    assert result.reason_code == NEW_OPERATION_APPROVAL_REQUIRED
+
+
+def test_workflow_new_operation_approval_request_blocks_and_records_audit(tmp_path) -> None:
+    workflow = orchestrator.Workflow(audit_path=tmp_path / "audit.jsonl")
+
+    result = workflow.request_new_operation_approval("custom_gear", traceability_id="tr_dsl_new_op")
+
+    assert result.blocked is True
+    assert result.reason == NEW_OPERATION_APPROVAL_REQUIRED
+    assert workflow.state == ESCALATED_TO_HUMAN
+    assert workflow.events[-1]["type"] == "new_operation_approval_required"
+    assert workflow.events[-1]["payload"]["request"]["operation"] == "custom_gear"
+    assert workflow.events[-1]["payload"]["request"]["requires_human_approval"] is True
+
+    lines = (tmp_path / "audit.jsonl").read_text().splitlines()
+    records = [json.loads(line) for line in lines]
+    assert records[-1]["event_type"] == "new_operation_approval_required"
+    assert records[-1]["payload"]["request"]["reason_code"] == NEW_OPERATION_APPROVAL_REQUIRED
 
 
 def test_validation_failure_creates_revision_request() -> None:
