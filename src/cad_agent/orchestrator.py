@@ -40,7 +40,7 @@ STATES = frozenset(
 )
 
 TRANSITIONS: dict[str, frozenset[str]] = {
-    CREATED: frozenset({SPEC_PENDING_APPROVAL, SPEC_APPROVED, ESCALATED_TO_HUMAN}),
+    CREATED: frozenset({SPEC_PENDING_APPROVAL, SPEC_APPROVED, VALIDATION_FAILED, ESCALATED_TO_HUMAN}),
     SPEC_PENDING_APPROVAL: frozenset({SPEC_APPROVED, REVISION_REQUESTED, ESCALATED_TO_HUMAN}),
     SPEC_APPROVED: frozenset({DSL_GENERATED, CAD_BUILT, VALIDATION_FAILED, REVISION_REQUESTED, ESCALATED_TO_HUMAN}),
     DSL_GENERATED: frozenset({CAD_BUILT, REVISION_REQUESTED, ESCALATED_TO_HUMAN}),
@@ -53,6 +53,8 @@ TRANSITIONS: dict[str, frozenset[str]] = {
     EXPORTED: frozenset({REVISION_REQUESTED, ESCALATED_TO_HUMAN}),
     ESCALATED_TO_HUMAN: frozenset(),
 }
+
+MOTION_VALIDATION_PASSED_NOT_EXPORT_APPROVAL = "MOTION_VALIDATION_PASSED_NOT_EXPORT_APPROVAL"
 
 
 @dataclass(frozen=True, slots=True)
@@ -151,6 +153,8 @@ class Workflow:
         return WorkflowDecision(approved=True, approval_id=event["traceability_id"], payload=event["payload"])
 
     def handle_validation(self, validation_result: dict[str, Any], traceability_id: str | None = None, **payload: object) -> WorkflowDecision:
+        if self._state == CREATED:
+            raise ValueError(f"invalid workflow transition: {self._state} -> {VALIDATION_FAILED}")
         normalized = _json_ready(validation_result)
         passed = bool(normalized.get("passed", normalized.get("pass", False)))
         reason_codes = _reason_codes(normalized)
@@ -187,6 +191,83 @@ class Workflow:
             return WorkflowDecision(blocked=True, reason="MAX_REVISION_LOOPS_REACHED", revision_request=revision_request, approval_id=escalation["traceability_id"])
 
         return WorkflowDecision(blocked=True, reason="VALIDATION_FAILED", revision_request=revision_request)
+
+    def handle_motion_validation(self, motion_validation_result: Any, traceability_id: str | None = None, **payload: object) -> WorkflowDecision:
+        normalized = _motion_validation_report(motion_validation_result)
+        passed = _motion_validation_passed(normalized)
+        reason_codes = _reason_codes(normalized)
+        failure_locations = _failure_locations(normalized)
+        resolved_traceability_id = traceability_id or normalized.get("traceability_id") or normalized.get("mechanism_id")
+
+        if passed:
+            if self._state == VALIDATION_RUNNING:
+                self._transition(VALIDATION_PASSED)
+                event = self._record_event(
+                    "motion_validation_passed",
+                    traceability_id=resolved_traceability_id,
+                    result=normalized,
+                    validation_type="motion_validation",
+                    **payload,
+                )
+                return WorkflowDecision(approved=True, approval_id=event["traceability_id"], payload=event["payload"])
+
+            event = self._record_event(
+                "motion_validation_passed_without_export_approval",
+                traceability_id=resolved_traceability_id,
+                result=normalized,
+                validation_type="motion_validation",
+                **payload,
+            )
+            return WorkflowDecision(
+                blocked=True,
+                reason=MOTION_VALIDATION_PASSED_NOT_EXPORT_APPROVAL,
+                approval_id=event["traceability_id"],
+                payload=event["payload"],
+            )
+
+        if self._state in {CREATED, VALIDATION_RUNNING}:
+            self._transition(VALIDATION_FAILED)
+        elif self._state not in {VALIDATION_FAILED, REVISION_REQUESTED, ESCALATED_TO_HUMAN}:
+            return WorkflowDecision(
+                blocked=True,
+                reason="MOTION_VALIDATION_FAILED",
+                payload={"result": normalized, **_json_ready(payload)},
+            )
+
+        self._record_event(
+            "motion_validation_failed",
+            traceability_id=resolved_traceability_id,
+            result=normalized,
+            validation_type="motion_validation",
+            **payload,
+        )
+        self.failure_count += 1
+
+        revision_request = self.request_revision(
+            reason_codes=reason_codes,
+            failure_locations=failure_locations,
+            traceability_id=resolved_traceability_id,
+            motion_validation_result=normalized,
+            **payload,
+        )
+
+        if self.failure_count >= self.max_revision_loops:
+            self._transition(ESCALATED_TO_HUMAN)
+            escalation = self._record_event(
+                "motion_validation_escalated_to_human",
+                traceability_id=resolved_traceability_id,
+                reason="MAX_REVISION_LOOPS_REACHED",
+                revision_request=asdict(revision_request),
+                **payload,
+            )
+            return WorkflowDecision(
+                blocked=True,
+                reason="MAX_REVISION_LOOPS_REACHED",
+                revision_request=revision_request,
+                approval_id=escalation["traceability_id"],
+            )
+
+        return WorkflowDecision(blocked=True, reason="MOTION_VALIDATION_FAILED", revision_request=revision_request)
 
     def handle_assembly_validation(self, assembly_validation_result: dict[str, Any], traceability_id: str | None = None, **payload: object) -> WorkflowDecision:
         normalized = _json_ready(assembly_validation_result)
@@ -287,6 +368,28 @@ class Workflow:
             handle.write(json.dumps(record, ensure_ascii=False, sort_keys=True) + "\n")
 
 
+def _motion_validation_report(value: Any) -> dict[str, Any]:
+    normalized = _json_ready(value)
+    if isinstance(normalized, dict) and isinstance(normalized.get("report"), dict):
+        report = dict(normalized["report"])
+        report.setdefault("valid", normalized.get("valid", report.get("valid")))
+        report.setdefault("reason_code", normalized.get("reason_code"))
+        return report
+    if isinstance(normalized, dict):
+        return normalized
+    return {"valid": False, "reason_codes": ["INVALID_MOTION_VALIDATION_RESULT"]}
+
+
+def _motion_validation_passed(report: dict[str, Any]) -> bool:
+    if "valid" in report:
+        return bool(report["valid"])
+    if "passed" in report:
+        return bool(report["passed"])
+    if "pass" in report:
+        return bool(report["pass"])
+    return report.get("status") == "pass" or report.get("overall") == "pass"
+
+
 def _reason_codes(validation_result: dict[str, Any]) -> list[str]:
     reason_codes = validation_result.get("reason_codes")
     if isinstance(reason_codes, list):
@@ -354,6 +457,7 @@ __all__ = [
     "VALIDATION_FAILED",
     "VALIDATION_PASSED",
     "VALIDATION_RUNNING",
+    "MOTION_VALIDATION_PASSED_NOT_EXPORT_APPROVAL",
     "STATES",
     "TRANSITIONS",
     "Workflow",

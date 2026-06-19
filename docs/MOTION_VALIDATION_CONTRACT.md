@@ -1,10 +1,10 @@
 # Motion Validation Contract
 
 ## Status
-CAD-P08 Task 08.3 contract. Bounded motion-state schema, deterministic clearance validation, and complete report shape.
+CAD-P08 Task 08.4 contract. Bounded motion-state schema, deterministic clearance validation, complete report shape, and CAD-P03 workflow gate connection.
 
 ## Purpose
-Define the input and output contract for bounded motion validation of approved mechanism fixtures. The validator reports pass/fail and reason codes for the motion-state representation and deterministic clearance rule before any later sweep or workflow-gate work is added.
+Define the input and output contract for bounded motion validation of approved mechanism fixtures. The validator reports pass/fail and reason codes for the motion-state representation and deterministic clearance rule; the CAD-P03 workflow consumes failed motion validation as a blocking validation result before any later sweep work is added.
 
 ## Source traceability
 - `docs/cadagent_plans/CAD-P08/implementation-plan.md:26-50`
@@ -12,12 +12,13 @@ Define the input and output contract for bounded motion validation of approved m
 - `docs/cad_agent_implementation_plan.md:71-75`
 - `docs/VALIDATION_CONTRACT.md:18-20`
 
-## In scope for Task 08.3
+## In scope for Task 08.4
 - Bounded rotational motion-state input schema.
 - Deterministic schema/state validation.
 - Deterministic clearance rule when clearance fields are provided.
 - Machine-readable reason codes.
 - Complete motion validation report shape suitable for the CAD-P03 workflow gate.
+- Workflow handling through `Workflow.handle_motion_validation(...)`.
 - Traceability from input state, declared parts, and validation report.
 
 ## Non-goals
@@ -139,11 +140,13 @@ Failure report shape:
 
 ## Workflow gate behavior
 - Motion validation is a quality gate, not an approval authority.
-- A failure must be passed to the Orchestrator as a validation failure.
+- `Workflow.handle_motion_validation(...)` accepts either a motion validation report or a `MotionValidationResult`.
+- A failed motion validation result is recorded as a validation failure and moves the workflow to `validation_failed` or `revision_requested`.
 - The Orchestrator must keep the workflow in a failed or revision-requested state and must not request export while motion validation is failed.
 - Validation failures are not rewritten as pass.
+- A passing motion validation result does not approve export. Export still requires the normal CAD-P03 path and export approval.
 - The deterministic clearance check is executed when either clearance field is present.
-- Sweep checks are not executed by Task 08.3 and must not be treated as passed.
+- Sweep checks are not executed by Task 08.4 and must not be treated as passed.
 
 ## Traceability
 - The report always includes `traceability_id`.

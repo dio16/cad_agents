@@ -12,6 +12,10 @@ from cad_agent.assembly_checks import (
     assembly_report_to_validation_result,
     check_interference,
 )
+from cad_agent.motion_validation import (
+    INSUFFICIENT_CLEARANCE,
+    validate_motion,
+)
 from cad_agent.orchestrator import (
     CAD_BUILT,
     CREATED,
@@ -21,10 +25,29 @@ from cad_agent.orchestrator import (
     SPEC_APPROVED,
     SPEC_PENDING_APPROVAL,
     VALIDATION_PASSED,
+    MOTION_VALIDATION_PASSED_NOT_EXPORT_APPROVAL,
     NEW_OPERATION_APPROVAL_REQUIRED,
     Workflow,
     audit_event,
 )
+
+
+def passing_motion_validation_report() -> dict[str, object]:
+    state = {
+        "traceability_id": "tr_motion_gate_pass",
+        "mechanism_id": "mech_gate_pass",
+        "motion_type": "rotation",
+        "rotation_axis": "z",
+        "angular_range_deg": {"start_deg": 0.0, "end_deg": 90.0},
+        "moving_part_ids": ["rotor"],
+        "parts": [{"part_id": "rotor", "traceability_id": "tr_part_rotor_gate_pass"}],
+    }
+    return validate_motion(state).report
+
+
+def failing_motion_validation_report() -> dict[str, object]:
+    state = {"rotation_axis": "z", "clearance_mm": 0.2, "min_clearance_mm": 1.0}
+    return validate_motion(state).report
 
 
 def test_state_machine_records_spec_approval_transition() -> None:
@@ -105,6 +128,51 @@ def test_assembly_failure_blocks_export_through_workflow_gate() -> None:
     assert result.revision_request.reason_codes == [AABB_INTERFERENCE]
     assert export_result.blocked is True
     assert export_result.reason == "VALIDATION_NOT_PASSED"
+
+
+def test_motion_failure_blocks_export_through_workflow_gate() -> None:
+    workflow = Workflow()
+    motion_result = workflow.handle_motion_validation(failing_motion_validation_report())
+
+    export_result = workflow.request_export("tr_motion")
+
+    assert workflow.state == "revision_requested"
+    assert motion_result.blocked is True
+    assert motion_result.revision_request is not None
+    assert motion_result.revision_request.reason_codes[0] == INSUFFICIENT_CLEARANCE
+    assert INSUFFICIENT_CLEARANCE in motion_result.revision_request.reason_codes
+    assert export_result.blocked is True
+    assert export_result.reason == "VALIDATION_NOT_PASSED"
+
+
+def test_motion_validation_pass_does_not_approve_export_from_created() -> None:
+    workflow = Workflow()
+
+    result = workflow.handle_motion_validation(passing_motion_validation_report())
+    export_result = workflow.request_export("tr_motion_pass")
+
+    assert workflow.state == CREATED
+    assert result.blocked is True
+    assert result.reason == MOTION_VALIDATION_PASSED_NOT_EXPORT_APPROVAL
+    assert export_result.blocked is True
+    assert export_result.reason == "VALIDATION_NOT_PASSED"
+
+
+def test_motion_validation_pass_does_not_replace_export_approval() -> None:
+    workflow = Workflow()
+    workflow.approve_specification("spec-1")
+    workflow.run_cad({"traceability_id": "tr_motion_pass"})
+    workflow.start_validation("tr_motion_pass")
+
+    result = workflow.handle_motion_validation(passing_motion_validation_report())
+
+    assert workflow.state == VALIDATION_PASSED
+    assert result.approved is True
+
+    export_result = workflow.request_export("tr_motion_pass")
+
+    assert export_result.blocked is True
+    assert export_result.reason == "EXPORT_APPROVAL_REQUIRED"
 
 
 def test_validation_failure_from_created_is_rejected() -> None:
