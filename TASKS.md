@@ -112,7 +112,7 @@
 - [x] Security and observability skeleton: prompt/schema/code escape tests, Prometheus-text counters, `serve --dry-run`.
 - [x] CI/SBOM/provenance skeleton: GitHub Actions smoke workflow, local deterministic SBOM/provenance commands.
 - Deferred: Kubernetes, KServe/vLLM, Argo CD, Cosign/Trivy, real worker pools, real LLM endpoints, and production SLO enforcement.
-- [x] CAD-P03 Task 03.1 — workflow state machine and audit event shape: `src/cad_agent/orchestrator.py`, `tests/test_orchestrator.py`; validation `uv run pytest tests/test_orchestrator.py -q` and `uv run pytest -q`; reviewer verdict `pass`; forbidden production API/worker/schema scope check passed.
+- [x] CAD-P03 Task 03.1 — workflow state machine and audit event shape: `src/cad_agent/orchestrator.py`, `tests/test_orchestrator.py`; validation `uv run pytest tests/test_orchestrator.py -q`, `uv run pytest -q`, and `git diff --check`; reviewer verdict `pass` after fix round; forbidden production API/worker/schema scope check passed.
 - [ ] CAD-P03 Task 03.2 — enforce spec approval before CAD generation.
 - [ ] CAD-P03 Task 03.3 — convert validation failure to revision request.
 - [ ] CAD-P03 Task 03.4 — enforce export approval gate.
