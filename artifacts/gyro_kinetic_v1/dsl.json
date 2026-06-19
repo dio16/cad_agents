@@ -1,0 +1,40 @@
+{
+  "traceability_id": "tr_dsl_gyro_kinetic_v1",
+  "units": "mm",
+  "parameters": {
+    "length": 48.0,
+    "width": 24.0,
+    "height": 8.0,
+    "wall_t": 4.0,
+    "hole_d": 4.0,
+    "hole_pitch": 24.0
+  },
+  "features": [
+    {
+      "op": "box",
+      "length_mm": "$length",
+      "width_mm": "$width",
+      "height_mm": "$height"
+    },
+    {
+      "op": "through_hole",
+      "axis": "z",
+      "diameter_mm": "$hole_d",
+      "depth_mm": "$height",
+      "positions_mm": [
+        [
+          -12.0,
+          0.0
+        ],
+        [
+          12.0,
+          0.0
+        ]
+      ]
+    }
+  ],
+  "derivative_outputs": [
+    "step_ap242",
+    "stl"
+  ]
+}

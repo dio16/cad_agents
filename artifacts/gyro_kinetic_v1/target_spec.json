@@ -1,0 +1,118 @@
+{
+  "traceability_id": "tr_target_gyro_kinetic_v1",
+  "target_name": "gyro_kinetic_v1",
+  "approval": {
+    "specification_freeze": true,
+    "approved_by": "user",
+    "approval_event": "artifacts/gyro_kinetic_v1/target_spec.json を承認",
+    "recorded_at": "2026-06-20T00:00:00+00:00"
+  },
+  "requirement": {
+    "traceability_id": "tr_req_gyro_kinetic_v1",
+    "product_type": "single_part",
+    "functional_requirements": [
+      "provide a deterministic kinetic gyro demonstration core with two axial through holes",
+      "fit desktop FDM prototype manufacturing without additional CAD features"
+    ],
+    "dimensions": {
+      "length_mm": 48.0,
+      "width_mm": 24.0,
+      "height_mm": 8.0,
+      "hole_diameter_mm": 4.0,
+      "hole_pitch_mm": 24.0
+    },
+    "manufacturing": {
+      "primary_process": "FDM",
+      "printer_class": "desktop"
+    },
+    "unknowns": [
+      "rotor bearing fit tolerance",
+      "service spin speed"
+    ],
+    "assumptions": [
+      "non-safety-critical deterministic PoC",
+      "holes are axial z-axis mounting holes"
+    ]
+  },
+  "specification": {
+    "traceability_id": "tr_spec_gyro_kinetic_v1",
+    "requirement_id": "tr_req_gyro_kinetic_v1",
+    "parameter_table": {
+      "length": 48.0,
+      "width": 24.0,
+      "height": 8.0,
+      "wall_t": 4.0,
+      "hole_d": 4.0,
+      "hole_pitch": 24.0
+    },
+    "constraints": [
+      "length == 48 mm",
+      "width == 24 mm",
+      "height == 8 mm",
+      "wall_t >= 2.0 mm",
+      "hole_d >= 3.0 mm",
+      "units == mm"
+    ],
+    "material_candidates": [
+      "PLA",
+      "PETG"
+    ],
+    "manufacturing_profile": "fdm_standard",
+    "validation_plan": [
+      "dimensions_check",
+      "topology_check",
+      "unit_consistency",
+      "manufacturing_profile_rules"
+    ],
+    "unresolved_risks": [
+      "bearing fit not yet validated",
+      "spin speed not yet validated"
+    ]
+  },
+  "dsl": {
+    "traceability_id": "tr_dsl_gyro_kinetic_v1",
+    "units": "mm",
+    "parameters": {
+      "length": 48.0,
+      "width": 24.0,
+      "height": 8.0,
+      "wall_t": 4.0,
+      "hole_d": 4.0,
+      "hole_pitch": 24.0
+    },
+    "features": [
+      {
+        "op": "box",
+        "length_mm": "$length",
+        "width_mm": "$width",
+        "height_mm": "$height"
+      },
+      {
+        "op": "through_hole",
+        "axis": "z",
+        "diameter_mm": "$hole_d",
+        "depth_mm": "$height",
+        "positions_mm": [
+          [
+            -12.0,
+            0.0
+          ],
+          [
+            12.0,
+            0.0
+          ]
+        ]
+      }
+    ],
+    "derivative_outputs": [
+      "step_ap242",
+      "stl"
+    ]
+  },
+  "validation_plan": [
+    "dimensions_check",
+    "topology_check",
+    "unit_consistency",
+    "manufacturing_profile_rules"
+  ]
+}

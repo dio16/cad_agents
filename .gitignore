@@ -39,8 +39,11 @@ reports/fabrication_*/stl/
 reports/text_to_cad_reports/
 
 # Generated local artifacts
-*.Identifier
 artifacts/
+!artifacts/
+!artifacts/gyro_kinetic_v1/
+!artifacts/gyro_kinetic_v1/*.json
+
 
 # Phase 1 generated local PoC outputs
 artifacts/phase1_poc/

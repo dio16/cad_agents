@@ -1,0 +1,35 @@
+{
+  "traceability_id": "tr_spec_gyro_kinetic_v1",
+  "requirement_id": "tr_req_gyro_kinetic_v1",
+  "parameter_table": {
+    "length": 48.0,
+    "width": 24.0,
+    "height": 8.0,
+    "wall_t": 4.0,
+    "hole_d": 4.0,
+    "hole_pitch": 24.0
+  },
+  "constraints": [
+    "length == 48 mm",
+    "width == 24 mm",
+    "height == 8 mm",
+    "wall_t >= 2.0 mm",
+    "hole_d >= 3.0 mm",
+    "units == mm"
+  ],
+  "material_candidates": [
+    "PLA",
+    "PETG"
+  ],
+  "manufacturing_profile": "fdm_standard",
+  "validation_plan": [
+    "dimensions_check",
+    "topology_check",
+    "unit_consistency",
+    "manufacturing_profile_rules"
+  ],
+  "unresolved_risks": [
+    "bearing fit not yet validated",
+    "spin speed not yet validated"
+  ]
+}
