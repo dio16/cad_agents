@@ -123,6 +123,14 @@ class APIServerTest(unittest.TestCase):
         self.assertEqual(body["status"], "error")
         self.assertIn("allow_raw_code", body["message"])
 
+    def test_workflow_run_requires_spec_approval(self) -> None:
+        status_code, body, content_type = self._route("POST", "/v1/workflows/run", AUTH_HEADERS, {"traceability_id": "tr-test"})
+
+        self.assertEqual(status_code, 400)
+        self.assertEqual(content_type, "application/json; charset=utf-8")
+        self.assertEqual(body["reason"], "SPEC_APPROVAL_REQUIRED")
+        self.assertTrue(body["blocked"])
+
     def test_specifications_generate_stub(self) -> None:
         status_code, body, content_type = self._route("POST", "/v1/specifications/generate", AUTH_HEADERS)
 

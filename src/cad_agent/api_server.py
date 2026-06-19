@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from dataclasses import asdict
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
 from time import perf_counter
@@ -9,6 +10,7 @@ from urllib.parse import urlparse
 
 from cad_agent.job_queue import JobQueue
 from cad_agent.observability import increment_api_request, record_job_enqueued, record_job_result, render_metrics
+from cad_agent.orchestrator import CREATED, Workflow, WorkflowDecision
 from cad_agent.platform_poc import golden_requirement, golden_specification
 from cad_agent.project_service import create_project
 from cad_agent.security_policy import check_api_key, is_allowed_raw_code
@@ -134,6 +136,35 @@ def _stub_specification() -> dict[str, Any]:
 
 def _error_body(message: str) -> dict[str, str]:
     return {"status": "error", "message": message}
+
+
+def _local_workflow_dsl(payload: dict[str, Any]) -> dict[str, Any]:
+    traceability_id = payload.get("traceability_id")
+    return {
+        "units": "mm",
+        "parameters": {},
+        "features": [],
+        "derivative_outputs": {},
+        "traceability_id": traceability_id,
+    }
+
+
+def _workflow_decision_response(workflow: Workflow, decision: WorkflowDecision) -> dict[str, Any]:
+    return {"state": workflow.state, **asdict(decision)}
+
+
+def _run_local_workflow(payload: dict[str, Any]) -> tuple[int, dict[str, Any], str]:
+    traceability_id = payload.get("traceability_id")
+    if traceability_id is not None and not isinstance(traceability_id, str):
+        return 400, _error_body("traceability_id must be a string"), JSON_CONTENT_TYPE
+
+    workflow = Workflow(CREATED)
+    decision = workflow.run_cad(
+        _local_workflow_dsl(payload),
+        traceability_id=traceability_id,
+    )
+    status_code = 400 if decision.blocked else 200
+    return status_code, _workflow_decision_response(workflow, decision), JSON_CONTENT_TYPE
 
 
 def _append_unique_artifact_id(artifact_ids: list[str], artifact_id: Any) -> None:
@@ -291,6 +322,9 @@ def _route_request(
 
         if path_only == "/v1/specifications/generate":
             return 200, _stub_specification(), JSON_CONTENT_TYPE
+
+        if path_only == "/v1/workflows/run":
+            return _run_local_workflow(payload)
 
         if path_only == "/v1/cad/jobs":
             return _create_cad_job(payload)
