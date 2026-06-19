@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Any
+
 from cad_agent.motion_validation import (
     INSUFFICIENT_CLEARANCE,
     INVALID_ANGULAR_RANGE,
@@ -14,6 +16,37 @@ from cad_agent.motion_validation import (
     MOVING_PART_ID_NOT_FOUND,
     validate_motion,
 )
+
+
+REPORT_KEYS = {
+    "traceability_id",
+    "mechanism_id",
+    "analysis_scope",
+    "valid",
+    "status",
+    "overall",
+    "reason_codes",
+    "failure_locations",
+    "checks",
+    "revision_feedback",
+}
+
+
+def assert_report_shape(result: Any, expected_reason_code: str | None = None) -> None:
+    report = result.report
+    assert REPORT_KEYS <= report.keys()
+    assert isinstance(report["reason_codes"], list)
+    assert isinstance(report["failure_locations"], list)
+    assert isinstance(report["checks"], list)
+    assert isinstance(report["revision_feedback"], list)
+    if expected_reason_code is None:
+        assert report["reason_codes"] == []
+        assert report["checks"] == []
+        assert report["revision_feedback"] == []
+    else:
+        assert expected_reason_code in report["reason_codes"]
+        assert any(check.get("reason_code") == expected_reason_code for check in report["checks"])
+        assert any(feedback.get("reason_code") == expected_reason_code for feedback in report["revision_feedback"])
 
 
 def valid_motion_state() -> dict[str, object]:
@@ -38,11 +71,11 @@ def motion_state_with_clearance(clearance_mm: float, min_clearance_mm: float) ->
 def test_missing_rotation_axis_fails() -> None:
     result = validate_motion({"parts": []})
 
+    assert_report_shape(result, MISSING_ROTATION_AXIS)
     assert result.valid is False
     assert result.reason_code == MISSING_ROTATION_AXIS
     assert result.report["status"] == "fail"
     assert result.report["reason_codes"][0] == MISSING_ROTATION_AXIS
-    assert MISSING_ROTATION_AXIS in result.report["reason_codes"]
     assert "$.rotation_axis" in result.report["failure_locations"]
     assert result.report["analysis_scope"] == "bounded_motion_state_schema_v0"
     assert result.report["traceability_id"].startswith("tr_motion_")
@@ -51,6 +84,7 @@ def test_missing_rotation_axis_fails() -> None:
 def test_valid_rotation_motion_state_passes() -> None:
     result = validate_motion(valid_motion_state())
 
+    assert_report_shape(result)
     assert result.valid is True
     assert result.reason_code is None
     assert result.report["status"] == "pass"
@@ -71,6 +105,17 @@ def test_insufficient_clearance_fails() -> None:
     assert result.report["reason_codes"][0] == INSUFFICIENT_CLEARANCE
     assert INSUFFICIENT_CLEARANCE in result.report["reason_codes"]
     assert "$.clearance_mm" in result.report["failure_locations"]
+
+
+def test_motion_report_contains_reason_codes_for_insufficient_clearance() -> None:
+    state = {"rotation_axis": "z", "clearance_mm": 0.2, "min_clearance_mm": 1.0}
+
+    result = validate_motion(state)
+
+    assert_report_shape(result, INSUFFICIENT_CLEARANCE)
+    assert result.report["overall"] == "fail"
+    assert result.report["status"] == "fail"
+    assert result.report["reason_codes"][0] == INSUFFICIENT_CLEARANCE
 
 
 def test_sufficient_clearance_passes() -> None:

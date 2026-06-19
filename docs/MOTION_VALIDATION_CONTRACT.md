@@ -1,7 +1,7 @@
 # Motion Validation Contract
 
 ## Status
-CAD-P08 Task 08.2 contract. Bounded motion-state schema, deterministic clearance validation, and report shape.
+CAD-P08 Task 08.3 contract. Bounded motion-state schema, deterministic clearance validation, and complete report shape.
 
 ## Purpose
 Define the input and output contract for bounded motion validation of approved mechanism fixtures. The validator reports pass/fail and reason codes for the motion-state representation and deterministic clearance rule before any later sweep or workflow-gate work is added.
@@ -12,12 +12,12 @@ Define the input and output contract for bounded motion validation of approved m
 - `docs/cad_agent_implementation_plan.md:71-75`
 - `docs/VALIDATION_CONTRACT.md:18-20`
 
-## In scope for Task 08.2
+## In scope for Task 08.3
 - Bounded rotational motion-state input schema.
 - Deterministic schema/state validation.
 - Deterministic clearance rule when clearance fields are provided.
 - Machine-readable reason codes.
-- Motion validation report shape suitable for the CAD-P03 workflow gate.
+- Complete motion validation report shape suitable for the CAD-P03 workflow gate.
 - Traceability from input state, declared parts, and validation report.
 
 ## Non-goals
@@ -70,7 +70,7 @@ The validator consumes mechanism motion-state JSON. Current bounded validation s
 
 ## Output/report shape
 
-The validator returns a deterministic result object and a JSON report.
+The validator returns a deterministic result object and a JSON report. Every report includes `traceability_id`, `mechanism_id`, `analysis_scope`, `valid`, `status`, `overall`, `reason_codes`, `failure_locations`, `checks`, and `revision_feedback`. The `reason_codes` list is ordered; the first code is the primary failure reason used by `result.reason_code`.
 
 ```json
 {
@@ -143,7 +143,7 @@ Failure report shape:
 - The Orchestrator must keep the workflow in a failed or revision-requested state and must not request export while motion validation is failed.
 - Validation failures are not rewritten as pass.
 - The deterministic clearance check is executed when either clearance field is present.
-- Sweep checks are not executed by Task 08.2 and must not be treated as passed.
+- Sweep checks are not executed by Task 08.3 and must not be treated as passed.
 
 ## Traceability
 - The report always includes `traceability_id`.

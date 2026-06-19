@@ -44,8 +44,8 @@ class ClearanceCheck:
 def validate_motion(state: dict[str, Any]) -> MotionValidationResult:
     """Validate bounded motion-state and clearance contract for approved mechanism fixtures.
 
-    Task 08.2 adds deterministic clearance checks. Sweep collision rules remain
-    deferred to later CAD-P08 tasks.
+    Task 08.3 ensures the motion validation report shape is complete. Sweep
+    collision rules remain deferred to later CAD-P08 tasks.
     """
     if not isinstance(state, dict):
         return _fail(INVALID_MOTION_STATE, "motion state must be an object", "$", state)
