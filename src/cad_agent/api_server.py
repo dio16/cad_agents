@@ -10,7 +10,7 @@ from urllib.parse import urlparse
 
 from cad_agent.job_queue import JobQueue
 from cad_agent.observability import increment_api_request, record_job_enqueued, record_job_result, render_metrics
-from cad_agent.orchestrator import CREATED, SPEC_APPROVED, Workflow, WorkflowDecision
+from cad_agent.orchestrator import CREATED, EXPORT_PENDING_APPROVAL, SPEC_APPROVED, VALIDATION_PASSED, Workflow, WorkflowDecision
 from cad_agent.platform_poc import golden_requirement, golden_specification
 from cad_agent.project_service import create_project
 from cad_agent.security_policy import check_api_key, is_allowed_raw_code
@@ -29,6 +29,7 @@ NOT_IMPLEMENTED_BODY = {
 }
 SUPPORTED_JOB_TYPES = {"cad_golden", "phase2_pilot", "validation"}
 DEFAULT_JOB_QUEUE = JobQueue()
+_EXPORT_APPROVALS: dict[str, bool] = {}
 _PARSE_ERROR = object()
 
 
@@ -36,6 +37,10 @@ def _utc_now() -> str:
     from datetime import datetime, timezone
 
     return datetime.now(timezone.utc).isoformat()
+
+
+def reset_export_decisions() -> None:
+    _EXPORT_APPROVALS.clear()
 
 
 def _json_bytes(data: Any) -> bytes:
@@ -181,6 +186,45 @@ def _revision_request_response(payload: dict[str, Any]) -> tuple[int, dict[str, 
         "revision_request": asdict(revision_request),
     }
     return 200, response, JSON_CONTENT_TYPE
+
+
+def _validate_optional_traceability_id(payload: dict[str, Any]) -> tuple[str | None, tuple[int, dict[str, str], str] | None]:
+    traceability_id = payload.get("traceability_id")
+    if traceability_id is not None and not isinstance(traceability_id, str):
+        return None, (400, _error_body("traceability_id must be a string"), JSON_CONTENT_TYPE)
+    return traceability_id, None
+
+
+def _export_decision_response(workflow: Workflow, decision: WorkflowDecision) -> dict[str, Any]:
+    return {"state": workflow.state, **asdict(decision)}
+
+
+def _export_decision_response_payload(payload: dict[str, Any]) -> tuple[int, dict[str, Any], str]:
+    traceability_id, error_response = _validate_optional_traceability_id(payload)
+    if error_response is not None:
+        return error_response
+
+    if traceability_id is not None and _EXPORT_APPROVALS.get(traceability_id):
+        workflow = Workflow(EXPORT_PENDING_APPROVAL)
+        decision = workflow.approve_export(traceability_id)
+        return 200, _export_decision_response(workflow, decision), JSON_CONTENT_TYPE
+
+    workflow = Workflow(VALIDATION_PASSED)
+    decision = workflow.request_export(traceability_id=traceability_id)
+    status_code = 400 if decision.blocked else 200
+    return status_code, _export_decision_response(workflow, decision), JSON_CONTENT_TYPE
+
+
+def _export_approval_response(payload: dict[str, Any]) -> tuple[int, dict[str, Any], str]:
+    traceability_id, error_response = _validate_optional_traceability_id(payload)
+    if error_response is not None:
+        return error_response
+
+    workflow = Workflow(EXPORT_PENDING_APPROVAL)
+    decision = workflow.approve_export(traceability_id)
+    if traceability_id is not None:
+        _EXPORT_APPROVALS[traceability_id] = True
+    return 200, _export_decision_response(workflow, decision), JSON_CONTENT_TYPE
 
 
 def _run_local_workflow(payload: dict[str, Any]) -> tuple[int, dict[str, Any], str]:
@@ -362,7 +406,13 @@ def _route_request(
         if path_only == "/v1/revisions":
             return _revision_request_response(payload)
 
-        if path_only in {"/v1/validation/jobs", "/v1/exports"}:
+        if path_only == "/v1/approvals/export":
+            return _export_approval_response(payload)
+
+        if path_only == "/v1/exports":
+            return _export_decision_response_payload(payload)
+
+        if path_only == "/v1/validation/jobs":
             return 501, NOT_IMPLEMENTED_BODY, JSON_CONTENT_TYPE
 
     return 404, _error_body("endpoint not found"), JSON_CONTENT_TYPE
