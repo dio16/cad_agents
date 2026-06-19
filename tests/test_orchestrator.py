@@ -125,6 +125,27 @@ def test_three_validation_failures_escalate_to_human() -> None:
     assert workflow.events[-1]["type"] == "validation_escalated_to_human"
 
 
+def test_export_blocked_without_validation_pass() -> None:
+    workflow = Workflow()
+    workflow.approve_specification("spec-1")
+    workflow.run_cad({"dsl": "golden"})
+
+    result = workflow.request_export()
+
+    assert result.blocked is True
+    assert result.reason == "VALIDATION_NOT_PASSED"
+
+
+def test_export_blocked_without_export_approval() -> None:
+    workflow = Workflow()
+    workflow.mark_validation_passed()
+
+    result = workflow.request_export()
+
+    assert result.blocked is True
+    assert result.reason == "EXPORT_APPROVAL_REQUIRED"
+
+
 def test_export_approval_moves_workflow_to_exported() -> None:
     workflow = Workflow()
     workflow.approve_specification("spec-1")
