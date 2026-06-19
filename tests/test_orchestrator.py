@@ -149,6 +149,36 @@ def test_export_blocked_without_export_approval() -> None:
     assert result.reason == "EXPORT_APPROVAL_REQUIRED"
 
 
+def test_audit_jsonl_records_export_decision(tmp_path):
+    workflow = Workflow(audit_path=tmp_path / "audit.jsonl")
+    workflow.approve_specification("spec-1")
+    workflow.run_cad({"traceability_id": "tr_cad"})
+    workflow.start_validation("tr_val_1")
+    workflow.handle_validation({"passed": True, "reason_codes": []})
+    workflow.request_export("tr_val_1")
+    workflow.approve_export("export-1")
+
+    lines = (tmp_path / "audit.jsonl").read_text().splitlines()
+    records = [json.loads(line) for line in lines]
+    export_events = [record for record in records if "export_approved" in json.dumps(record, ensure_ascii=False)]
+
+    assert len(records) == 6
+    assert [record["event_type"] for record in records] == [
+        "specification_approved",
+        "cad_built",
+        "validation_started",
+        "validation_passed",
+        "export_requested",
+        "export_approved",
+    ]
+    assert any("export_approved" in line for line in lines)
+    assert len(export_events) == 1
+    assert export_events[0]["event_type"] == "export_approved"
+    assert export_events[0]["traceability_id"] == "export-1"
+    assert "timestamp" in export_events[0]
+    assert export_events[0]["payload"]["decision"]["approval_type"] == "export"
+
+
 def test_export_approval_moves_workflow_to_exported() -> None:
     workflow = Workflow()
     workflow.approve_specification("spec-1")

@@ -116,7 +116,7 @@
 - [x] CAD-P03 Task 03.2 — enforce spec approval before CAD generation: `run_cad()` now requires current `spec_approved`; validation `uv run pytest tests/test_orchestrator.py -q`, `uv run pytest -q`, and `git diff --check`; reviewer verdict `pass`.
 - [x] CAD-P03 Task 03.3 — convert validation failure to revision request: validation failures now create revision requests, store reason codes/failure locations, increment failure count, and escalate after three failures; validation `uv run pytest tests/test_orchestrator.py -q`, `uv run pytest -q`, and `git diff --check`; reviewer verdict `pass` after fix round.
 - [x] CAD-P03 Task 03.4 — enforce export approval gate: `request_export()` now blocks without `validation_passed` or pending export approval; `approve_export()` moves `export_pending_approval` to `exported`; validation `uv run pytest tests/test_orchestrator.py -q`, `uv run pytest -q`, and `git diff --check`; reviewer verdict `pass` after fix round.
-- [ ] CAD-P03 Task 03.5 — integrate audit JSONL with Phase 2 style.
+- [x] CAD-P03 Task 03.5 — integrate audit JSONL with Phase 2 style: `Workflow(audit_path=...)` now appends one JSON object per event with `event_type`, `type`, `traceability_id`, `timestamp`, `recorded_at`, `payload`, `retention_days`, and `data_classification`; validation `uv run pytest tests/test_orchestrator.py -q`, `uv run pytest -q`, and `git diff --check`; no production API/auth/worker/storage, real LLM endpoint, mechanism DSL, motion validation, FEA, or production CAD feature added.
 - [ ] CAD-P03 Task 03.6 — close phase with deviation check.
 
 ## Phase 4: Production v2 data-model stubs

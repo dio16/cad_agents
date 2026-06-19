@@ -1,7 +1,8 @@
 from __future__ import annotations
 
+import json
 from dataclasses import asdict, dataclass, field, is_dataclass
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -74,12 +75,13 @@ def audit_event(event_type: str, **payload: object) -> dict[str, Any]:
 
 
 class Workflow:
-    def __init__(self, state: str = CREATED, max_revision_loops: int = 3) -> None:
+    def __init__(self, state: str = CREATED, max_revision_loops: int = 3, audit_path: Path | None = None) -> None:
         if state not in STATES:
             raise ValueError(f"unknown workflow state: {state}")
         self._state = state
         self.max_revision_loops = max_revision_loops
         self.failure_count = 0
+        self.audit_path = audit_path
         self.events: list[dict[str, Any]] = []
         self.approval_decisions: list[dict[str, Any]] = []
         self.revision_requests: list[dict[str, Any]] = []
@@ -217,7 +219,28 @@ class Workflow:
             event_payload.setdefault("traceability_id", traceability_id)
         event = audit_event(event_type, **event_payload)
         self.events.append(event)
+        self._append_audit_record(event)
         return event
+
+    def _append_audit_record(self, event: dict[str, Any]) -> None:
+        if self.audit_path is None:
+            return
+        timestamp = datetime.now(timezone.utc).isoformat()
+        timestamp_suffix = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S%f")
+        record = {
+            "event_id": f"evt_{timestamp_suffix}",
+            "recorded_at": timestamp,
+            "timestamp": timestamp,
+            "event_type": event["type"],
+            "type": event["type"],
+            "traceability_id": event.get("traceability_id"),
+            "payload": event["payload"],
+            "retention_days": int(event["payload"].get("retention_days", 365)),
+            "data_classification": event["payload"].get("data_classification", "internal"),
+        }
+        self.audit_path.parent.mkdir(parents=True, exist_ok=True)
+        with self.audit_path.open("a", encoding="utf-8") as handle:
+            handle.write(json.dumps(record, ensure_ascii=False, sort_keys=True) + "\n")
 
 
 def _reason_codes(validation_result: dict[str, Any]) -> list[str]:
