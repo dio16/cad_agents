@@ -12,7 +12,7 @@
 
 ## 2. 現在の実装成熟度
 
-- 実装済み: ローカル CLI、Phase 1 PoC contract/golden pipeline、Phase 2 Pilot adapter probe、FreeCAD/OCCT/Blender worker probe、DFM/AM catalog、review diff HTML、audit JSONL、Model Gateway trial、stdlib API server skeleton、Project Service stub、synchronous job queue simulation、security/observability tests、CI/SBOM/provenance stubs、Production v2 material/BOM/AABB assembly stubs。
+- 実装済み: ローカル CLI、Phase 1 PoC/native CadQuery hardening、Phase 2 Pilot adapter probe、FreeCAD/OCCT/Blender worker probe、DFM/AM catalog、review diff HTML、audit JSONL、Model Gateway trial、stdlib API server skeleton、Project Service stub、synchronous job queue simulation、security/observability tests、CI/SBOM/provenance stubs、Production v2 material/BOM/AABB assembly stubs。
 - 未実装: Kubernetes/KServe/Argo CD/Cosign/Trivy、実 sandbox CAD worker pool、実 PLM/ERP/MES adapter、実材料DB、部品ライブラリ、BOM連携、接触/運動/FEA、テナント分離、規制案件運用。
 - 本リポジトリの現在の成功基準は、設計案全体を本番運用することではなく、原案に基づく安全な I/O 境界・検証ゲート・PoC/Pilot パイプラインを再現可能に保つことです。
 

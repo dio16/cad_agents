@@ -1,5 +1,25 @@
 # Tasks
 
+## Meta: Prompt-driven workflow plan
+
+- [x] Goal reconciliation: `PWF-G001` limits the immediate goal to CADAGENT detailed design + implementation plan docs and prompt-driven workflow, not full CAD platform implementation.
+- [x] Root operational prompt: `prompt.md`
+- [x] CADAGENT detailed design: `docs/cad_agent_detailed_design.md`.
+- [x] CADAGENT implementation plan: `docs/cad_agent_implementation_plan.md`.
+- [x] Prompt workflow execution control: `docs/prompt_execution_plan.md`.
+- [x] Gate rules: Phase outputs, acceptance criteria, validation commands, review package, stop condition, and traceability IDs are defined.
+- [x] First-pass scope: docs-only workflow, except validation-harness maintenance required for `validate-docs`; no new CAD features, production API service, native worker pool, or external LLM endpoint integration.
+- [x] Final validation and @oracle final review: `status`, `validate-docs`, Phase 1/2 commands, `pytest`, and `git diff --check` pass.
+
+## Phase 0: Design-contract finalization
+
+- [x] Contract scope: Phase 0 is docs-only; no code under `cad_runtime/`, `dsl/`, `validation/`, `schemas/v1/*`, or example artifacts under `examples/gyro_kinetic_v1/*`.
+- [x] `docs/MVP_SCOPE.md`: define contract MVP, target object, non-goals, manufacturing profiles, artifacts, acceptance criteria, and approval boundaries.
+- [x] `docs/MECHANISM_DSL_V1.md`: define allowlist-first DSL v1, units, parameter references, feature order, derivative outputs, and extension governance.
+- [x] `docs/CAD_RUNTIME_CONTRACT.md`: define native vs deterministic surrogate runtime, validated DSL input, artifact formats, metadata/hash, error codes, sandbox policy, audit, and no raw code.
+- [x] `docs/VALIDATION_CONTRACT.md`: define validation as a gate, current checks, reason codes, maturity boundaries, override/escalation rules, and no failed-to-pass rewrites.
+- [x] `docs/ORCHESTRATOR_WORKFLOW.md`: define state machine, max revision loop 3, escalation conditions, human approval events, traceability/audit obligations, and future-only API references.
+
 ## Phase 0: Repository alignment
 
 - [x] 原案を正本として明示する。
@@ -15,11 +35,20 @@
 |---|---|---|
 | P1-1 | Requirement JSON Schema | ✅ `cad_agent.platform_poc` の contract test で required fields と unknowns/assumptions 分離を確認 |
 | P1-2 | Specification JSON Schema | ✅ `parameter_table`、`constraints`、`validation_plan` を contract test で確認 |
-| P1-3 | Parametric DSL Schema | ✅ `units=mm`、parameter 参照整合、feature order を AST validator で確認 |
-| P1-4 | CAD Runtime MVP | ✅ allowlist DSL から STEP AP242 surrogate と STL を生成し、AST/volume 失敗理由を返す |
+| P1-3 | Parametric DSL Schema | ✅ `units=mm`、parameter 参照整合、feature order、z軸方向のみ許可を AST validator で確認 |
+| P1-4 | CAD Runtime MVP | ✅ allowlist DSL から STEP AP242 と STL を生成し、CadQuery export失敗は`EXPORT_FAILED`として返す |
 | P1-5 | Validation MVP | ✅ bbox、volume、topology proxy、unit consistency、DFM/AM 最小ルールを Validation Report に保存 |
-| P1-6 | Artifact Store MVP | ✅ `traceability_id` と `artifact_hash` を `artifact_index.jsonl` に保存 |
+| P1-6 | Artifact Store MVP | ✅ `traceability_id` と `artifact_hash` を `artifact_index.jsonl` に保存し、hashを再計算 |
 | P1-7 | Human Approval Gate | ✅ 仕様変更/validation override の承認記録を JSONL に保存 |
+
+### Phase 1 hardening pass
+
+- [x] Existing PoC/native CadQuery path のみを対象に、production worker/API/queue/auth/LLM endpoint を追加しない範囲で hardening 実施。
+- [x] `step_ap242` を `derivative_outputs` に必須化し、z軸方向以外の feature axis を検証失敗にする。
+- [x] parameter reference 文字列が numeric parameter に解決されることを AST validator で確認。
+- [x] CadQuery STEP/STL export 失敗を `EXPORT_FAILED` validation failure として返す。
+- [x] `phase1-contract-test` を一時出力ディレクトリで実行し、リポジトリ内の stale report を生成しない。
+- [x] artifact hash 再計算と `cad_kernel` メタデータ確認を validation evidence に含める。
 
 ## Phase 2: Pilot（10〜16週）
 

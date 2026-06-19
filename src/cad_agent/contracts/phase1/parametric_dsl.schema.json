@@ -32,13 +32,16 @@
                 "const": "box"
               },
               "length_mm": {
-                "type": "string"
+                "type": "string",
+                "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"
               },
               "width_mm": {
-                "type": "string"
+                "type": "string",
+                "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"
               },
               "height_mm": {
-                "type": "string"
+                "type": "string",
+                "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"
               }
             },
             "required": ["op", "length_mm", "width_mm", "height_mm"],
@@ -51,14 +54,16 @@
                 "const": "cylinder"
               },
               "radius_mm": {
-                "type": "string"
+                "type": "string",
+                "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"
               },
               "height_mm": {
-                "type": "string"
+                "type": "string",
+                "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"
               },
               "axis": {
                 "type": "string",
-                "enum": ["x", "y", "z"]
+                "enum": ["z"]
               },
               "positions_mm": {
                 "$ref": "#/$defs/coordinate_pair_array"
@@ -75,13 +80,15 @@
               },
               "axis": {
                 "type": "string",
-                "enum": ["x", "y", "z"]
+                "enum": ["z"]
               },
               "diameter_mm": {
-                "type": "string"
+                "type": "string",
+                "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"
               },
               "depth_mm": {
-                "type": "string"
+                "type": "string",
+                "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"
               },
               "positions_mm": {
                 "$ref": "#/$defs/coordinate_pair_array"
@@ -138,6 +145,9 @@
       "type": "array",
       "minItems": 1,
       "uniqueItems": true,
+      "contains": {
+        "const": "step_ap242"
+      },
       "items": {
         "enum": ["step_ap242", "stl"]
       }

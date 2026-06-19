@@ -49,3 +49,7 @@ reports/phase2_pilot_report.json
 
 # OpenCode deepwork session state
 .slim/deepwork/
+
+
+#Ignore vscode AI rules
+.github/instructions/codacy.instructions.md

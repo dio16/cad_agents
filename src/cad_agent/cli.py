@@ -2,10 +2,11 @@ from __future__ import annotations
 
 import argparse
 import json
+import tempfile
 from pathlib import Path
 
 from cad_agent.phase2_pilot import DEFAULT_PHASE2_OUTPUT_DIR, run_phase2_pilot
-from cad_agent.platform_poc import DEFAULT_OUTPUT_DIR, DEFAULT_REPORT_DIR, contract_report, run_golden_pipeline
+from cad_agent.platform_poc import DEFAULT_OUTPUT_DIR, contract_report, run_golden_pipeline
 from cad_agent.tools.validate_platform_contracts import validate
 
 
@@ -86,10 +87,8 @@ def main(argv: list[str] | None = None) -> int:
         _print_json(report)
         return code
     if args.command == "phase1-contract-test":
-        report = contract_report()
-        report_path = DEFAULT_REPORT_DIR / "phase1_contract_test.json"
-        report_path.parent.mkdir(parents=True, exist_ok=True)
-        report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2, sort_keys=True), encoding="utf-8")
+        with tempfile.TemporaryDirectory() as temp_dir:
+            report = contract_report(Path(temp_dir) / "runtime")
         _print_json(report)
         return 0 if report["status"] == "pass" else 2
     if args.command == "phase1-golden-pipeline":

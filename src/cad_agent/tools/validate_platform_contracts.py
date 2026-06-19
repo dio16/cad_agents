@@ -7,6 +7,24 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
 
+PROMPT_WORKFLOW_DOCS = [
+    Path("prompt.md"),
+    Path("docs/prompt_execution_plan.md"),
+]
+
+PHASE0_CONTRACT_DOCS = [
+    Path("docs/MVP_SCOPE.md"),
+    Path("docs/MECHANISM_DSL_V1.md"),
+    Path("docs/CAD_RUNTIME_CONTRACT.md"),
+    Path("docs/VALIDATION_CONTRACT.md"),
+    Path("docs/ORCHESTRATOR_WORKFLOW.md"),
+]
+
+CAD_AGENT_PLANNING_DOCS = [
+    Path("docs/cad_agent_detailed_design.md"),
+    Path("docs/cad_agent_implementation_plan.md"),
+]
+
 REQUIRED_DOCS = [
     Path("docs/Origen/Design_document_for_a_machine_design_platform.md"),
     Path("README.md"),
@@ -15,6 +33,9 @@ REQUIRED_DOCS = [
     Path("SPEC.md"),
     Path("TASKS.md"),
     Path("AGENTS.md"),
+    *PROMPT_WORKFLOW_DOCS,
+    *PHASE0_CONTRACT_DOCS,
+    *CAD_AGENT_PLANNING_DOCS,
     Path("docs/architecture_ja.md"),
     Path("docs/api_contracts_ja.md"),
     Path("docs/validation_security_ja.md"),
@@ -74,9 +95,10 @@ def validate() -> tuple[int, dict[str, object]]:
         text = read(path)
         add(checks, f"{path} points to Origen proposal", "docs/Origen/Design_document_for_a_machine_design_platform.md" in text)
 
-    current_docs = [p for p in (ROOT / "docs").glob("*.md")]
-    current_docs += [ROOT / n for n in ["README.md", "README_JA.md", "GOAL.md", "SPEC.md", "TASKS.md"]]
-    for path in current_docs:
+    docs_scanned_for_stale_terms = [p for p in (ROOT / "docs").glob("*.md")]
+    docs_scanned_for_stale_terms += [ROOT / path for path in PROMPT_WORKFLOW_DOCS]
+    docs_scanned_for_stale_terms += [ROOT / n for n in ["README.md", "README_JA.md", "GOAL.md", "SPEC.md", "TASKS.md"]]
+    for path in docs_scanned_for_stale_terms:
         rel = path.relative_to(ROOT)
         text = path.read_text(encoding="utf-8")
         for term in STALE_TERMS:

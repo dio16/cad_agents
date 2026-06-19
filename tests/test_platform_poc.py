@@ -3,10 +3,12 @@ from __future__ import annotations
 import json
 import subprocess
 import sys
+import types
 import unittest
 from importlib.resources import files
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from unittest.mock import patch
 
 from cad_agent.platform_poc import (
     contract_report,
@@ -25,6 +27,7 @@ from cad_agent.platform_poc import (
     validate_specification_schema,
     validate_validation_report_schema,
 )
+import cad_agent.platform_poc as platform_poc
 from cad_agent.schema_gate import validate_against_schema
 
 
@@ -33,7 +36,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 class PlatformPocTest(unittest.TestCase):
     def test_contract_report_passes(self) -> None:
-        report = contract_report()
+        with TemporaryDirectory() as temp_dir:
+            report = contract_report(Path(temp_dir) / "runtime")
         self.assertEqual(report["status"], "pass")
 
     def test_phase1_json_schema_files_are_present(self) -> None:
@@ -143,6 +147,82 @@ class PlatformPocTest(unittest.TestCase):
 
         self.assertEqual(contract_status(checks), "fail")
         self.assertIn("positions_mm", checks[0].detail)
+
+    def test_parametric_dsl_schema_rejects_non_reference_dimension_string(self) -> None:
+        dsl = golden_dsl()
+        dsl["features"][0]["length_mm"] = "abc"
+
+        checks = validate_parametric_dsl_schema(dsl)
+
+        self.assertEqual(contract_status(checks), "fail")
+        self.assertIn("abc", checks[0].detail)
+
+    def test_ast_validator_rejects_non_reference_dimension_string(self) -> None:
+        dsl = golden_dsl()
+        dsl["features"][0]["length_mm"] = "abc"
+
+        checks = validate_parametric_dsl_ast(dsl)
+
+        self.assertEqual(contract_status(checks), "fail")
+        ref_check = next(check for check in checks if check.name == "Parametric DSL parameter references resolve")
+        self.assertEqual(ref_check.status, "fail")
+        self.assertIn("abc", ref_check.detail)
+
+    def test_parametric_dsl_schema_rejects_axis_other_than_z(self) -> None:
+        dsl = golden_dsl()
+        dsl["features"][1]["axis"] = "x"
+
+        checks = validate_parametric_dsl_schema(dsl)
+
+        self.assertEqual(contract_status(checks), "fail")
+        self.assertIn("axis", checks[0].detail)
+
+    def test_ast_validator_rejects_axis_other_than_z(self) -> None:
+        dsl = golden_dsl()
+        dsl["features"][1]["axis"] = "x"
+
+        checks = validate_parametric_dsl_ast(dsl)
+
+        self.assertEqual(contract_status(checks), "fail")
+        axis_check = next(check for check in checks if check.name == "Parametric DSL axis support is z-only")
+        self.assertEqual(axis_check.status, "fail")
+        self.assertIn("axis=x", axis_check.detail)
+
+    def test_parametric_dsl_schema_requires_step_ap242_output(self) -> None:
+        dsl = golden_dsl()
+        dsl["derivative_outputs"] = ["stl"]
+
+        checks = validate_parametric_dsl_schema(dsl)
+
+        self.assertEqual(contract_status(checks), "fail")
+        self.assertIn("does not contain", checks[0].detail)
+
+    def test_runtime_returns_export_failed_for_cadquery_export_error(self) -> None:
+        exporter = types.ModuleType("cadquery")
+        exporters = types.ModuleType("cadquery.exporters")
+
+        def fail_export(*args: object, **kwargs: object) -> None:
+            raise RuntimeError("export unavailable")
+
+        setattr(exporters, "export", fail_export)
+        setattr(exporter, "exporters", exporters)
+
+        dsl = golden_dsl()
+        with TemporaryDirectory() as temp_dir:
+            with (
+                patch.object(platform_poc, "_cadquery_available", return_value=True),
+                patch.object(platform_poc, "_build_cadquery_model", return_value=object()),
+                patch.object(platform_poc, "_model_bbox_mm", return_value=(64.0, 32.0, 8.0)),
+                patch.object(platform_poc, "_model_volume_mm3", return_value=16384.0),
+                patch.dict(sys.modules, {"cadquery": exporter}),
+            ):
+                result = platform_poc.run_cad_runtime(dsl, Path(temp_dir) / "runtime")
+
+        self.assertEqual(result["status"], "fail")
+        self.assertEqual(result["reason_code"], "EXPORT_FAILED")
+        self.assertIn("STEP export failed", result["detail"])
+        self.assertEqual(result["failed_export"], {"format": "step_ap242", "path": str(Path(temp_dir) / "runtime" / f"{dsl['traceability_id']}.step")})
+        self.assertEqual(result["artifacts"], [])
 
     def test_ast_validator_rejects_unknown_parameter_reference(self) -> None:
         dsl = golden_dsl()
