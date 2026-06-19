@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections.abc import Iterable
 from typing import Any
 
-from .common import AgentRouteResult, failure, retry_schema, success
+from .common import AgentRouteResult, failure, retry_schema, success, write_agent_route_audit
 
 REQUIRED_SPECIFICATION_FIELDS = {
     "traceability_id",
@@ -24,14 +24,21 @@ def compose_specification(
     **metadata: Any,
 ) -> AgentRouteResult:
     """Compose a deterministic Phase 1 Specification JSON fixture."""
+    audit_path = metadata.pop("audit_path", None)
     if attempts is not None:
-        return retry_schema(attempts, max_retries=max_retries, validator=_has_required_specification_fields, **metadata)
+        result = retry_schema(attempts, max_retries=max_retries, validator=_has_required_specification_fields, **metadata)
+        write_agent_route_audit(result, audit_path)
+        return result
 
     if requirement is not None and not isinstance(requirement, (dict, str)):
-        return failure("INVALID_AGENT_INPUT", "spec_composer", "requirement must be text or structured JSON", **metadata)
+        result = failure("INVALID_AGENT_INPUT", "spec_composer", "requirement must be text or structured JSON", **metadata)
+        write_agent_route_audit(result, audit_path)
+        return result
 
     requirement_id = _requirement_id(requirement)
-    return success(specification_fixture(requirement_id=requirement_id), "spec_composer", **metadata)
+    result = success(specification_fixture(requirement_id=requirement_id), "spec_composer", **metadata)
+    write_agent_route_audit(result, audit_path)
+    return result
 
 
 def specification_fixture(requirement_id: str = "tr_req_agent_fixture") -> dict[str, Any]:

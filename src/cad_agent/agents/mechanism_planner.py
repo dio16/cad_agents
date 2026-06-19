@@ -2,15 +2,20 @@ from __future__ import annotations
 
 from typing import Any
 
-from .common import AgentRouteResult, failure, success
+from .common import AgentRouteResult, failure, success, write_agent_route_audit
 
 
 def plan_mechanism(requirement: dict[str, Any] | str | None = None, **metadata: Any) -> AgentRouteResult:
     """Return a deterministic bounded mechanism plan fixture."""
+    audit_path = metadata.pop("audit_path", None)
     if requirement is not None and not isinstance(requirement, (dict, str)):
-        return failure("INVALID_AGENT_INPUT", "mechanism_planner", "requirement must be text or structured JSON", **metadata)
+        result = failure("INVALID_AGENT_INPUT", "mechanism_planner", "requirement must be text or structured JSON", **metadata)
+        write_agent_route_audit(result, audit_path)
+        return result
 
-    return success(mechanism_plan_fixture(requirement=requirement), "mechanism_planner", **metadata)
+    result = success(mechanism_plan_fixture(requirement=requirement), "mechanism_planner", **metadata)
+    write_agent_route_audit(result, audit_path)
+    return result
 
 
 def mechanism_plan_fixture(requirement: dict[str, Any] | str | None = None) -> dict[str, Any]:

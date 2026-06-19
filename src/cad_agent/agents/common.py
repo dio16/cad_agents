@@ -3,6 +3,8 @@ from __future__ import annotations
 import json
 from collections.abc import Callable, Iterable
 from dataclasses import asdict, dataclass, field
+from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any
 
 SCHEMA_RETRY_EXHAUSTED = "SCHEMA_RETRY_EXHAUSTED"
@@ -23,6 +25,10 @@ def route_metadata(
     **extra: Any,
 ) -> dict[str, Any]:
     metadata = {"route": route, "deterministic": True, "model": "local_fixture", **extra}
+    if data_classification is not None:
+        metadata["data_classification"] = data_classification
+    if model_route is not None:
+        metadata["model_route"] = model_route
     if data_classification is not None or model_route is not None:
         from cad_agent.security_policy import route_model as route_model_decision
 
@@ -40,6 +46,39 @@ def failure(reason_code: str, route: str, message: str, **extra: Any) -> AgentRo
         reason_code=reason_code,
         metadata=route_metadata(route, error=message, **extra),
     )
+
+
+def write_agent_route_audit(result: AgentRouteResult, audit_path: str | Path | None) -> None:
+    if audit_path is None:
+        return
+    path = Path(audit_path)
+    metadata = result.metadata
+    model_routing = metadata.get("model_routing", {})
+    attempt_count = int(metadata.get("attempt_count", 0) or 0)
+    timestamp = datetime.now(timezone.utc)
+    event = {
+        "event_id": f"evt_{timestamp.strftime('%Y%m%d%H%M%S%f')}",
+        "recorded_at": timestamp.isoformat(),
+        "event_type": "agent_route_decision",
+        "route": metadata.get("route"),
+        "data_classification": metadata.get("data_classification", "internal"),
+        "model_route": metadata.get("model_route") or model_routing.get("selected_route"),
+        "model_routing": model_routing,
+        "retry_count": max(0, attempt_count - 1),
+        "schema_status": "pass" if result.valid else "fail",
+        "valid": result.valid,
+        "reason_code": result.reason_code,
+        "traceability_id": _traceability_id(result.json),
+        "retention_days": 365,
+    }
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a", encoding="utf-8") as handle:
+        handle.write(json.dumps(event, ensure_ascii=False, sort_keys=True) + "\n")
+
+
+def _traceability_id(document: dict[str, Any]) -> str | None:
+    value = document.get("traceability_id") if isinstance(document, dict) else None
+    return value if isinstance(value, str) else None
 
 
 def retry_schema(
@@ -106,4 +145,5 @@ __all__ = [
     "retry_schema",
     "route_metadata",
     "success",
+    "write_agent_route_audit",
 ]

@@ -1,8 +1,32 @@
+import json
+
 from cad_agent.agents.common import retry_schema
 from cad_agent.agents.mechanism_planner import plan_mechanism
 from cad_agent.agents.requirement_extractor import extract_requirement, requirement_fixture
 from cad_agent.agents.spec_composer import compose_specification
 from cad_agent.platform_poc import validate_requirement_schema, validate_specification_schema
+
+
+def test_agent_route_audit_records_route(tmp_path) -> None:
+    audit_path = tmp_path / "audit.jsonl"
+
+    result = extract_requirement(
+        "Design a confidential fixture.",
+        audit_path=audit_path,
+        data_classification="confidential",
+        model_route="commercial",
+    )
+
+    event = json.loads(audit_path.read_text().splitlines()[0])
+
+    assert result.valid is True
+    assert event["event_type"] == "agent_route_decision"
+    assert event["route"] == "requirement_extractor"
+    assert event["data_classification"] == "confidential"
+    assert event["model_route"] == "commercial"
+    assert event["retry_count"] == 0
+    assert event["schema_status"] == "pass"
+    assert event["model_routing"]["requires_approval"] is True
 
 
 def test_requirement_extractor_route_metadata_includes_model_routing_decision() -> None:

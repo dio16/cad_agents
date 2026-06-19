@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections.abc import Iterable
 from typing import Any
 
-from .common import AgentRouteResult, failure, retry_schema, success
+from .common import AgentRouteResult, failure, retry_schema, success, write_agent_route_audit
 
 REQUIRED_REQUIREMENT_FIELDS = {
     "traceability_id",
@@ -27,19 +27,30 @@ def extract_requirement(
     This is a bounded local/mock LLM-agent route. It does not call external model
     endpoints and does not execute user-provided code.
     """
+    audit_path = metadata.pop("audit_path", None)
     if attempts is not None:
-        return retry_schema(attempts, max_retries=max_retries, validator=_has_required_requirement_fields, **metadata)
+        result = retry_schema(attempts, max_retries=max_retries, validator=_has_required_requirement_fields, **metadata)
+        write_agent_route_audit(result, audit_path)
+        return result
 
     if isinstance(input_text, dict):
         missing = sorted(REQUIRED_REQUIREMENT_FIELDS - set(input_text))
         if missing:
-            return failure("INVALID_AGENT_INPUT", "requirement_extractor", f"missing requirement fields: {', '.join(missing)}", **metadata)
-        return success(dict(input_text), "requirement_extractor", **metadata)
+            result = failure("INVALID_AGENT_INPUT", "requirement_extractor", f"missing requirement fields: {', '.join(missing)}", **metadata)
+            write_agent_route_audit(result, audit_path)
+            return result
+        result = success(dict(input_text), "requirement_extractor", **metadata)
+        write_agent_route_audit(result, audit_path)
+        return result
 
     if not isinstance(input_text, str) or not input_text.strip():
-        return failure("INVALID_AGENT_INPUT", "requirement_extractor", "requirement input must be non-empty text or structured JSON", **metadata)
+        result = failure("INVALID_AGENT_INPUT", "requirement_extractor", "requirement input must be non-empty text or structured JSON", **metadata)
+        write_agent_route_audit(result, audit_path)
+        return result
 
-    return success(requirement_fixture(), "requirement_extractor", input_kind="human_text", **metadata)
+    result = success(requirement_fixture(), "requirement_extractor", input_kind="human_text", **metadata)
+    write_agent_route_audit(result, audit_path)
+    return result
 
 
 def _has_required_requirement_fields(document: dict[str, Any]) -> bool:
