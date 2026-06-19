@@ -36,6 +36,29 @@ def test_audit_event_shape_is_json_serializable() -> None:
     assert json.dumps(event, sort_keys=True)
 
 
+def test_validation_failure_creates_revision_request() -> None:
+    workflow = Workflow()
+    workflow.approve_specification("spec-1")
+
+    result = workflow.handle_validation({"passed": False, "reason_codes": ["WALL_THICKNESS_BELOW_MIN"]})
+
+    assert workflow.state == "revision_requested"
+    assert workflow.failure_count == 1
+    assert result.revision_request is not None
+    assert result.revision_request.reason_codes == ["WALL_THICKNESS_BELOW_MIN"]
+
+
+def test_three_failures_escalate_to_human() -> None:
+    workflow = Workflow()
+
+    for _ in range(3):
+        workflow.handle_validation({"passed": False, "reason_codes": ["RETRY_FAILURE"]})
+
+    assert workflow.state == "escalated_to_human"
+    assert workflow.failure_count == 3
+    assert len(workflow.revision_requests) == 3
+
+
 def test_validation_failure_creates_revision_request_with_reason_codes() -> None:
     workflow = Workflow()
     workflow.approve_specification("spec-1")
