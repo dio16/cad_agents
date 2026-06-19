@@ -5,6 +5,14 @@ from cad_agent.agents.spec_composer import compose_specification
 from cad_agent.platform_poc import validate_requirement_schema, validate_specification_schema
 
 
+def test_requirement_extractor_route_metadata_includes_model_routing_decision() -> None:
+    result = extract_requirement("Design a confidential fixture.", data_classification="confidential", model_route="commercial")
+
+    assert result.valid is True
+    assert result.metadata["model_routing"]["allowed"] is False
+    assert result.metadata["model_routing"]["requires_approval"] is True
+
+
 def test_requirement_extractor_returns_schema_valid_json() -> None:
     result = extract_requirement("Design a small kinetic object.")
 

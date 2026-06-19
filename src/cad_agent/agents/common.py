@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 from collections.abc import Callable, Iterable
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 from typing import Any
 
 SCHEMA_RETRY_EXHAUSTED = "SCHEMA_RETRY_EXHAUSTED"
@@ -16,8 +16,18 @@ class AgentRouteResult:
     metadata: dict[str, Any] = field(default_factory=dict)
 
 
-def route_metadata(route: str, **extra: Any) -> dict[str, Any]:
-    return {"route": route, "deterministic": True, "model": "local_fixture", **extra}
+def route_metadata(
+    route: str,
+    data_classification: str | None = None,
+    model_route: str | None = None,
+    **extra: Any,
+) -> dict[str, Any]:
+    metadata = {"route": route, "deterministic": True, "model": "local_fixture", **extra}
+    if data_classification is not None or model_route is not None:
+        from cad_agent.security_policy import route_model as route_model_decision
+
+        metadata["model_routing"] = asdict(route_model_decision(data_classification or "internal", model_route))
+    return metadata
 
 
 def success(json_data: dict[str, Any], route: str, **extra: Any) -> AgentRouteResult:
