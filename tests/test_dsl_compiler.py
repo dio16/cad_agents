@@ -1,5 +1,19 @@
+from dataclasses import dataclass
+
 from cad_agent.dsl_compiler import compile_mechanism_plan
 from cad_agent.platform_poc import validate_parametric_dsl_ast
+from cad_agent.schema_gate import ContractResult
+
+
+@dataclass(frozen=True)
+class Phase1Validation:
+    passed: bool
+    checks: tuple[ContractResult, ...]
+
+
+def validate_phase1_dsl(dsl: dict[str, object]) -> Phase1Validation:
+    checks = tuple(validate_parametric_dsl_ast(dsl))
+    return Phase1Validation(passed=all(check.status == "pass" for check in checks), checks=checks)
 
 
 def assert_parametric_dsl_ast_passes(dsl: dict[str, object]) -> None:
@@ -56,6 +70,16 @@ def test_compiler_emits_schema_valid_traceability_id_for_invalid_plan_id() -> No
     assert result.dsl["traceability_id"].startswith("tr_dsl_shaft_")
     assert result.dsl["traceability_id"] != "tr-mech-1"
     assert_parametric_dsl_ast_passes(result.dsl)
+
+
+def test_compiler_output_passes_phase1_validation() -> None:
+    plan = {"traceability_id": "tr-mech-2", "operations": [{"op": "shaft", "diameter_mm": 10, "length_mm": 50}]}
+
+    dsl = compile_mechanism_plan(plan).dsl
+    validation = validate_phase1_dsl(dsl)
+
+    assert validation.passed is True
+    assert dsl["traceability_id"].startswith("tr_dsl_shaft_")
 
 
 def test_compiler_rejects_unapproved_mechanism_operation() -> None:
