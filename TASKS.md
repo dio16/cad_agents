@@ -143,6 +143,19 @@
 - [x] CAD-P06 Task 06.4 — approval gate for new operations: added `NEW_OPERATION_APPROVAL_REQUIRED`, `request_new_operation(...)`, and `Workflow.request_new_operation_approval(...)`; validation `uv run pytest tests/test_dsl_compiler.py tests/test_orchestrator.py -q` → `34 passed`, `uv run pytest -q` → `138 passed, 2 subtests passed`, `git diff --check` clean; reviewer verdict `pass` after manual reconciliation of empty oracle output.
 - [x] CAD-P06 Task 06.5 — close phase with deviation check: forbidden real-LLM/raw-code scope check passed (`git diff -- src/cad_agent/dsl_compiler.py src/cad_agent/agents` returned no changes); final validation passed with `uv run pytest -q` → `138 passed, 2 subtests passed`, `bash ./run_cad_agent.sh phase1-contract-test` → pass, `bash ./run_cad_agent.sh validate-docs` → pass, `git diff --check` → pass; reviewer verdict `pass`; deviation-check verdict `pass`.
 
+## Phase 7: LLM agents and schema-retry routes
+
+- [x] Skeleton implementation and contract coverage complete; production LLM endpoints, production model infrastructure, and raw-code execution remain deferred/forbidden.
+- [x] Bounded local/mock agent route modules added under `src/cad_agent/agents/` for requirement extraction, specification composition, and mechanism planning.
+- [x] Deterministic schema retry policy added for invalid JSON/schema outputs with structured failure reason codes.
+- [x] Model routing policy enforces commercial/on-prem approval boundaries for confidential, regulated, and export-controlled data.
+- [x] Agent route audit JSONL records route, model routing decision, data classification, retry/schema status, traceability, retention, and timestamps.
+- [x] CAD-P07 Task 07.1 — local agent route skeletons: created `src/cad_agent/agents/{common,requirement_extractor,spec_composer,mechanism_planner}.py` and `tests/test_agents.py`; validation `uv run pytest tests/test_agents.py -q` → `4 passed`, `uv run pytest -q` → `142 passed, 2 subtests passed`, `git diff --check` clean; reviewer verdict `pass` after manual reconciliation of empty oracle output; commit `4be37d4`.
+- [x] CAD-P07 Task 07.2 — schema retry policy: added deterministic `retry_schema(...)` and route integration; validation `uv run pytest tests/test_agents.py -q` → `8 passed`, `uv run pytest -q` → `146 passed, 2 subtests passed`, `git diff --check` clean; reviewer verdict `pass` after manual reconciliation of empty oracle output; commit `414ff4d`.
+- [x] CAD-P07 Task 07.3 — model routing policy: added `ModelRouteDecision` / `route_model(...)`, integrated routing metadata, and security/agent tests; validation `uv run pytest tests/test_agents.py tests/test_security.py -q` → `18 passed`, `uv run pytest -q` → `152 passed, 2 subtests passed`, `git diff --check` clean; reviewer verdict `pass` after manual reconciliation of empty oracle output; commit `a446a99`.
+- [x] CAD-P07 Task 07.4 — audit agent route decisions: added `write_agent_route_audit(...)`, integrated `audit_path` into route modules, and JSONL audit regression; validation `uv run pytest tests/test_agents.py -q` → `10 passed`, `uv run pytest -q` → `153 passed, 2 subtests passed`, `git diff --check` clean; reviewer verdict `pass` after manual reconciliation of empty oracle output; commit `c1c9dfc`.
+- [x] CAD-P07 Task 07.5 — close phase with deviation check: forbidden production model endpoint/raw-code scope check passed (`git diff -- src/cad_agent/agents` returned no production model endpoint evidence); final validation passed with `uv run pytest -q` → `153 passed, 2 subtests passed`, `bash ./run_cad_agent.sh validate-docs` → pass, `bash ./run_cad_agent.sh phase2-pilot-run --output-dir /tmp/cadagent_agents_phase2` → pass, `git diff --check` → pass; reviewer verdict `pass`; deviation-check verdict `pass`.
+
 ## Phase 4: Production v2 data-model stubs
 
 - [x] Skeleton implementation and contract coverage complete; production database/adapters/FEA remain deferred.
