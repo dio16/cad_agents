@@ -138,9 +138,12 @@ def test_export_blocked_without_validation_pass() -> None:
 
 def test_export_blocked_without_export_approval() -> None:
     workflow = Workflow()
-    workflow.mark_validation_passed()
+    workflow.approve_specification("spec-1")
+    workflow.run_cad({"traceability_id": "tr_cad"})
+    workflow.start_validation("tr_val_1")
+    workflow.handle_validation({"passed": True, "reason_codes": []})
 
-    result = workflow.request_export()
+    result = workflow.request_export("tr_val_1")
 
     assert result.blocked is True
     assert result.reason == "EXPORT_APPROVAL_REQUIRED"
@@ -229,6 +232,15 @@ def test_validation_pass_blocked_before_cad() -> None:
         workflow.mark_validation_passed("tr_val_1")
 
     assert workflow.state == SPEC_APPROVED
+
+
+def test_mark_validation_passed_from_created_is_rejected() -> None:
+    workflow = Workflow()
+
+    with pytest.raises(ValueError, match="invalid workflow transition"):
+        workflow.mark_validation_passed("tr_val_1")
+
+    assert workflow.state == CREATED
 
 
 def test_revision_loop_can_return_to_cad_generation_and_resets_failure_count() -> None:
