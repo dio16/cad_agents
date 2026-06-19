@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+from collections.abc import Iterable
 from typing import Any
 
-from .common import AgentRouteResult, failure, success
+from .common import AgentRouteResult, failure, retry_schema, success
 
 REQUIRED_REQUIREMENT_FIELDS = {
     "traceability_id",
@@ -15,12 +16,20 @@ REQUIRED_REQUIREMENT_FIELDS = {
 }
 
 
-def extract_requirement(input_text: str | dict[str, Any] | None = None, **metadata: Any) -> AgentRouteResult:
+def extract_requirement(
+    input_text: str | dict[str, Any] | None = None,
+    attempts: Iterable[str | dict[str, Any]] | None = None,
+    max_retries: int = 2,
+    **metadata: Any,
+) -> AgentRouteResult:
     """Extract a deterministic Phase 1 Requirement JSON fixture.
 
     This is a bounded local/mock LLM-agent route. It does not call external model
     endpoints and does not execute user-provided code.
     """
+    if attempts is not None:
+        return retry_schema(attempts, max_retries=max_retries, validator=_has_required_requirement_fields, **metadata)
+
     if isinstance(input_text, dict):
         missing = sorted(REQUIRED_REQUIREMENT_FIELDS - set(input_text))
         if missing:
@@ -31,6 +40,10 @@ def extract_requirement(input_text: str | dict[str, Any] | None = None, **metada
         return failure("INVALID_AGENT_INPUT", "requirement_extractor", "requirement input must be non-empty text or structured JSON", **metadata)
 
     return success(requirement_fixture(), "requirement_extractor", input_kind="human_text", **metadata)
+
+
+def _has_required_requirement_fields(document: dict[str, Any]) -> bool:
+    return REQUIRED_REQUIREMENT_FIELDS.issubset(document)
 
 
 def requirement_fixture() -> dict[str, Any]:

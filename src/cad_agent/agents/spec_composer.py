@@ -1,12 +1,32 @@
 from __future__ import annotations
 
+from collections.abc import Iterable
 from typing import Any
 
-from .common import AgentRouteResult, failure, success
+from .common import AgentRouteResult, failure, retry_schema, success
+
+REQUIRED_SPECIFICATION_FIELDS = {
+    "traceability_id",
+    "requirement_id",
+    "parameter_table",
+    "constraints",
+    "material_candidates",
+    "manufacturing_profile",
+    "validation_plan",
+    "unresolved_risks",
+}
 
 
-def compose_specification(requirement: dict[str, Any] | str | None = None, **metadata: Any) -> AgentRouteResult:
+def compose_specification(
+    requirement: dict[str, Any] | str | None = None,
+    attempts: Iterable[str | dict[str, Any]] | None = None,
+    max_retries: int = 2,
+    **metadata: Any,
+) -> AgentRouteResult:
     """Compose a deterministic Phase 1 Specification JSON fixture."""
+    if attempts is not None:
+        return retry_schema(attempts, max_retries=max_retries, validator=_has_required_specification_fields, **metadata)
+
     if requirement is not None and not isinstance(requirement, (dict, str)):
         return failure("INVALID_AGENT_INPUT", "spec_composer", "requirement must be text or structured JSON", **metadata)
 
@@ -25,6 +45,10 @@ def specification_fixture(requirement_id: str = "tr_req_agent_fixture") -> dict[
         "validation_plan": ["dimensions_check", "topology_check", "unit_consistency", "manufacturing_profile_rules"],
         "unresolved_risks": ["service temperature unknown"],
     }
+
+
+def _has_required_specification_fields(document: dict[str, Any]) -> bool:
+    return REQUIRED_SPECIFICATION_FIELDS.issubset(document)
 
 
 def _requirement_id(requirement: dict[str, Any] | str | None) -> str:
