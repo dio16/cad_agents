@@ -4,7 +4,15 @@ import json
 
 import pytest
 
+from cad_agent.assembly_checks import (
+    AABB_INTERFERENCE,
+    AssemblyPart,
+    BBox,
+    assembly_report_to_validation_result,
+    check_interference,
+)
 from cad_agent.orchestrator import (
+    CAD_BUILT,
     CREATED,
     DSL_GENERATED,
     EXPORTED,
@@ -46,6 +54,29 @@ def test_validation_failure_creates_revision_request() -> None:
     assert workflow.failure_count == 1
     assert result.revision_request is not None
     assert result.revision_request.reason_codes == ["WALL_THICKNESS_BELOW_MIN"]
+
+
+def test_assembly_failure_blocks_export_through_workflow_gate() -> None:
+    workflow = Workflow()
+    workflow.approve_specification("spec-1")
+    workflow.run_cad({"traceability_id": "tr_assembly"})
+    workflow.start_validation("tr_assembly")
+    assembly_report = check_interference(
+        [
+            AssemblyPart("a", "tr_a", BBox(0, 0, 0, 10, 10, 10)),
+            AssemblyPart("b", "tr_b", BBox(5, 5, 5, 15, 15, 15)),
+        ]
+    )
+
+    result = workflow.handle_assembly_validation(assembly_report_to_validation_result(assembly_report), traceability_id="tr_assembly")
+    export_result = workflow.request_export("tr_assembly")
+
+    assert workflow.state == "revision_requested"
+    assert result.blocked is True
+    assert result.revision_request is not None
+    assert result.revision_request.reason_codes == [AABB_INTERFERENCE]
+    assert export_result.blocked is True
+    assert export_result.reason == "VALIDATION_NOT_PASSED"
 
 
 def test_validation_failure_from_created_is_rejected() -> None:

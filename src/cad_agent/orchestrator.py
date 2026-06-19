@@ -158,6 +158,20 @@ class Workflow:
 
         return WorkflowDecision(blocked=True, reason="VALIDATION_FAILED", revision_request=revision_request)
 
+    def handle_assembly_validation(self, assembly_validation_result: dict[str, Any], traceability_id: str | None = None, **payload: object) -> WorkflowDecision:
+        normalized = _json_ready(assembly_validation_result)
+        return self.handle_validation(
+            {
+                "passed": bool(normalized.get("passed", False)),
+                "reason_codes": normalized.get("reason_codes", []),
+                "failure_locations": normalized.get("failure_locations", []),
+                "analysis_scope": normalized.get("analysis_scope", "assembly_validation"),
+                "report": normalized.get("report"),
+            },
+            traceability_id=traceability_id,
+            **payload,
+        )
+
     def request_revision(self, reason_codes: list[str], failure_locations: list[str] | None = None, traceability_id: str | None = None, **payload: object) -> RevisionRequest:
         request = {
             "reason_codes": list(reason_codes),
