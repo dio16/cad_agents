@@ -107,7 +107,7 @@ class Workflow:
         return WorkflowDecision(approved=True, approval_id=event["traceability_id"], payload=event["payload"])
 
     def run_cad(self, dsl: dict[str, Any], traceability_id: str | None = None, **payload: object) -> WorkflowDecision:
-        if self._state not in {SPEC_APPROVED, DSL_GENERATED}:
+        if self._state != SPEC_APPROVED:
             return WorkflowDecision(blocked=True, reason="SPEC_APPROVAL_REQUIRED", payload={"dsl": _json_ready(dsl), **_json_ready(payload)})
         self._transition(CAD_BUILT)
         event = self._record_event("cad_built", traceability_id=traceability_id or dsl.get("traceability_id"), dsl=_json_ready(dsl), **payload)

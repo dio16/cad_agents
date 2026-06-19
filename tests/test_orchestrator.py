@@ -6,6 +6,7 @@ import pytest
 
 from cad_agent.orchestrator import (
     CREATED,
+    DSL_GENERATED,
     EXPORTED,
     SPEC_APPROVED,
     SPEC_PENDING_APPROVAL,
@@ -38,7 +39,6 @@ def test_audit_event_shape_is_json_serializable() -> None:
 def test_validation_failure_creates_revision_request_with_reason_codes() -> None:
     workflow = Workflow()
     workflow.approve_specification("spec-1")
-    workflow.generate_dsl("tr_dsl")
     workflow.run_cad({"traceability_id": "tr_cad"})
     workflow.start_validation("tr_val_1")
 
@@ -62,14 +62,14 @@ def test_validation_failure_creates_revision_request_with_reason_codes() -> None
 def test_three_validation_failures_escalate_to_human() -> None:
     workflow = Workflow()
     workflow.approve_specification("spec-1")
-    workflow.generate_dsl("tr_dsl")
     workflow.run_cad({"traceability_id": "tr_cad"})
     workflow.start_validation("tr_val_1")
 
     for index in range(3):
         result = workflow.handle_validation({"passed": False, "reason_codes": ["RETRY_FAILURE"]})
         if index < 2:
-            workflow.generate_dsl(f"tr_dsl_retry_{index}")
+            workflow._transition(SPEC_PENDING_APPROVAL)
+            workflow.approve_specification(f"spec_retry_{index}")
             workflow.run_cad({"traceability_id": f"tr_cad_retry_{index}"})
             workflow.start_validation(f"tr_val_retry_{index}")
 
@@ -83,7 +83,6 @@ def test_three_validation_failures_escalate_to_human() -> None:
 def test_export_approval_moves_workflow_to_exported() -> None:
     workflow = Workflow()
     workflow.approve_specification("spec-1")
-    workflow.generate_dsl("tr_dsl")
     workflow.run_cad({"traceability_id": "tr_cad"})
     workflow.start_validation("tr_val_1")
     workflow.handle_validation({"passed": True, "reason_codes": []})
@@ -99,14 +98,37 @@ def test_export_approval_moves_workflow_to_exported() -> None:
     assert workflow.approval_decisions[-1]["approval_type"] == "export"
 
 
-def test_cad_blocked_before_spec_approval() -> None:
+def test_cad_generation_blocked_without_spec_approval() -> None:
     workflow = Workflow()
 
-    result = workflow.run_cad({"traceability_id": "tr_cad"})
+    result = workflow.run_cad({"dsl": "golden"})
 
     assert result.blocked is True
     assert result.reason == "SPEC_APPROVAL_REQUIRED"
     assert workflow.state == CREATED
+
+
+def test_cad_generation_allowed_after_spec_approval() -> None:
+    workflow = Workflow()
+    workflow.approve_specification("spec-1")
+
+    result = workflow.run_cad({"dsl": "golden"})
+
+    assert not result.blocked
+    assert workflow.state == "cad_built"
+
+
+def test_cad_generation_blocked_after_dsl_generation_without_current_spec_approval() -> None:
+    workflow = Workflow()
+    workflow.approve_specification("spec-1")
+    workflow.generate_dsl("tr_dsl")
+
+    result = workflow.run_cad({"dsl": "golden"})
+
+    assert result.blocked is True
+    assert result.reason == "SPEC_APPROVAL_REQUIRED"
+    assert workflow.state == DSL_GENERATED
+    assert workflow.events[-1]["type"] == "dsl_generated"
 
 
 def test_export_request_blocked_before_validation_passed() -> None:
@@ -122,7 +144,6 @@ def test_export_request_blocked_before_validation_passed() -> None:
 def test_export_approval_blocked_without_prior_export_request() -> None:
     workflow = Workflow()
     workflow.approve_specification("spec-1")
-    workflow.generate_dsl("tr_dsl")
     workflow.run_cad({"traceability_id": "tr_cad"})
     workflow.start_validation("tr_val_1")
     workflow.handle_validation({"passed": True, "reason_codes": []})
@@ -147,12 +168,12 @@ def test_validation_pass_blocked_before_cad() -> None:
 def test_revision_loop_can_return_to_cad_generation_and_resets_failure_count() -> None:
     workflow = Workflow()
     workflow.approve_specification("spec-1")
-    workflow.generate_dsl("tr_dsl_1")
     workflow.run_cad({"traceability_id": "tr_cad_1"})
     workflow.start_validation("tr_val_1")
     workflow.handle_validation({"passed": False, "reason_codes": ["RETRY_FAILURE"]})
 
-    workflow.generate_dsl("tr_dsl_2")
+    workflow._transition(SPEC_PENDING_APPROVAL)
+    workflow.approve_specification("spec-2")
     workflow.run_cad({"traceability_id": "tr_cad_2"})
     workflow.start_validation("tr_val_2")
     result = workflow.handle_validation({"passed": True, "reason_codes": []})
