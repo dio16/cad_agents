@@ -27,8 +27,8 @@
 
 ## Status summary
 
-- Phase 2 Pilot, Phase 3 Production v1 readiness skeleton, and Phase 4 Production v2 data-model stubs are implemented and validated.
-- These completed phases remain skeleton/Pilot maturity only; production deployment, real worker pools, real LLM endpoints, production-grade material DB/adapters, FEA, and motion validation remain deferred.
+- [x] Phase 2 Pilot, Phase 3 Production v1 readiness skeleton, Phase 4 Production v2 data-model stubs, Phase 5 assembly AABB validation, Phase 6 mechanism DSL compiler, Phase 7 local/mock LLM-agent routes, and Phase 8 bounded motion validation are implemented and validated.
+- These completed phases remain skeleton/Pilot maturity only where noted; production deployment, real worker pools, real LLM endpoints, production-grade material DB/adapters, FEA, production dynamic simulation, and production artifact storage remain deferred.
 - Current implementation work is status/documentation reconciliation only unless a new approval gate explicitly authorizes code work.
 
 ## CADAGENT phase implementation plans
@@ -155,6 +155,17 @@
 - [x] CAD-P07 Task 07.3 — model routing policy: added `ModelRouteDecision` / `route_model(...)`, integrated routing metadata, and security/agent tests; validation `uv run pytest tests/test_agents.py tests/test_security.py -q` → `18 passed`, `uv run pytest -q` → `152 passed, 2 subtests passed`, `git diff --check` clean; reviewer verdict `pass` after manual reconciliation of empty oracle output; commit `a446a99`.
 - [x] CAD-P07 Task 07.4 — audit agent route decisions: added `write_agent_route_audit(...)`, integrated `audit_path` into route modules, and JSONL audit regression; validation `uv run pytest tests/test_agents.py -q` → `10 passed`, `uv run pytest -q` → `153 passed, 2 subtests passed`, `git diff --check` clean; reviewer verdict `pass` after manual reconciliation of empty oracle output; commit `c1c9dfc`.
 - [x] CAD-P07 Task 07.5 — close phase with deviation check: forbidden production model endpoint/raw-code scope check passed (`git diff -- src/cad_agent/agents` returned no production model endpoint evidence); final validation passed with `uv run pytest -q` → `153 passed, 2 subtests passed`, `bash ./run_cad_agent.sh validate-docs` → pass, `bash ./run_cad_agent.sh phase2-pilot-run --output-dir /tmp/cadagent_agents_phase2` → pass, `git diff --check` → pass; reviewer verdict `pass`; deviation-check verdict `pass`.
+
+## Phase 8: Motion validation
+
+- [x] Bounded motion-state input schema and deterministic validation report contract implemented.
+- [x] Deterministic clearance rule added when `clearance_mm` / `min_clearance_mm` are provided; no FEA, production dynamic simulation, or sweep collision was added.
+- [x] Motion validation failure is connected to the CAD-P03 workflow/export gate; motion pass does not approve export by itself.
+- [x] CAD-P08 Task 08.1 — define motion validation input schema: created `docs/MOTION_VALIDATION_CONTRACT.md`, `src/cad_agent/motion_validation.py`, and `tests/test_motion_validation.py`; validation `uv run pytest tests/test_motion_validation.py -q` → `7 passed`, `git diff --check` clean; reviewer verdict `pass`; commit `d610987`.
+- [x] CAD-P08 Task 08.2 — implement clearance check: added `INSUFFICIENT_CLEARANCE` and coupled clearance-field reason codes with tests and contract updates; validation `uv run pytest tests/test_motion_validation.py -q` → `14 passed`, `git diff --check` clean; reviewer verdict `pass`; commit `b514978`.
+- [x] CAD-P08 Task 08.3 — produce motion validation report: added report-shape helper/tests and documented required report fields; validation `uv run pytest tests/test_motion_validation.py -q` → `15 passed`, `git diff --check` clean; reviewer verdict `pass`; commit `ee829c8`.
+- [x] CAD-P08 Task 08.4 — connect motion failure to export gate: added `Workflow.handle_motion_validation(...)`, motion failure blocks export, motion pass does not replace CAD-P03 export approval; validation `uv run pytest tests/test_motion_validation.py tests/test_orchestrator.py -q` → `41 passed`, `git diff --check` clean; reviewer verdict `pass` after manual reconciliation of empty oracle output; commit `3336b10`.
+- [x] CAD-P08 Task 08.5 — close phase with deviation check: forbidden FEA/production dynamic simulation/sweep scope check passed (`git diff -- src/cad_agent/motion_validation.py` returned only bounded deterministic schema/clearance/report logic); final validation passed with `uv run pytest -q` → `171 passed, 2 subtests passed`, `bash ./run_cad_agent.sh validate-docs` → pass, `bash ./run_cad_agent.sh phase1-golden-pipeline --output-dir /tmp/cadagent_motion_phase1` → pass, `git diff --check` → pass; reviewer verdict `pass`; deviation-check verdict `pass`.
 
 ## Phase 4: Production v2 data-model stubs
 
