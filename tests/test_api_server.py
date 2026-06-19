@@ -209,12 +209,73 @@ class APIServerTest(unittest.TestCase):
         self.assertEqual(content_type, "application/json; charset=utf-8")
         self.assertEqual(body["status"], "not_implemented")
 
-    def test_revisions_not_implemented(self) -> None:
-        status_code, body, content_type = self._route("POST", "/v1/revisions", AUTH_HEADERS)
+    def test_revision_endpoint_records_reason_codes(self) -> None:
+        status_code, body, content_type = self._route(
+            "POST",
+            "/v1/revisions",
+            AUTH_HEADERS,
+            {"traceability_id": "tr-test", "reason_codes": ["RETRY_FAILURE"]},
+        )
 
-        self.assertEqual(status_code, 501)
+        self.assertEqual(status_code, 200)
         self.assertEqual(content_type, "application/json; charset=utf-8")
-        self.assertEqual(body["status"], "not_implemented")
+        self.assertEqual(body["state"], "revision_requested")
+        self.assertEqual(body["reason_codes"], ["RETRY_FAILURE"])
+        self.assertEqual(body["revision_count"], 0)
+        self.assertEqual(body["revision_request"]["reason_codes"], ["RETRY_FAILURE"])
+        self.assertEqual(body["revision_request"]["revision_count"], 0)
+        self.assertNotIn("job_id", body)
+        self.assertNotIn("artifacts", body)
+        self.assertNotIn("result", body)
+        self.assertEqual(default_job_queue().list(), [])
+
+    def test_revision_endpoint_rejects_missing_reason_codes(self) -> None:
+        status_code, body, content_type = self._route(
+            "POST",
+            "/v1/revisions",
+            AUTH_HEADERS,
+            {"traceability_id": "tr-test"},
+        )
+
+        self.assertEqual(status_code, 400)
+        self.assertEqual(content_type, "application/json; charset=utf-8")
+        self.assertIn("reason_codes", body["message"])
+
+    def test_revision_endpoint_rejects_empty_reason_codes(self) -> None:
+        status_code, body, content_type = self._route(
+            "POST",
+            "/v1/revisions",
+            AUTH_HEADERS,
+            {"traceability_id": "tr-test", "reason_codes": []},
+        )
+
+        self.assertEqual(status_code, 400)
+        self.assertEqual(content_type, "application/json; charset=utf-8")
+        self.assertIn("reason_codes", body["message"])
+
+    def test_revision_endpoint_rejects_non_string_reason_code(self) -> None:
+        status_code, body, content_type = self._route(
+            "POST",
+            "/v1/revisions",
+            AUTH_HEADERS,
+            {"traceability_id": "tr-test", "reason_codes": [123]},
+        )
+
+        self.assertEqual(status_code, 400)
+        self.assertEqual(content_type, "application/json; charset=utf-8")
+        self.assertIn("reason_codes", body["message"])
+
+    def test_revision_endpoint_rejects_invalid_traceability_id(self) -> None:
+        status_code, body, content_type = self._route(
+            "POST",
+            "/v1/revisions",
+            AUTH_HEADERS,
+            {"traceability_id": 123, "reason_codes": ["RETRY_FAILURE"]},
+        )
+
+        self.assertEqual(status_code, 400)
+        self.assertEqual(content_type, "application/json; charset=utf-8")
+        self.assertIn("traceability_id", body["message"])
 
     def test_exports_not_implemented(self) -> None:
         status_code, body, content_type = self._route("POST", "/v1/exports", AUTH_HEADERS)

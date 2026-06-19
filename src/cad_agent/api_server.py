@@ -10,7 +10,7 @@ from urllib.parse import urlparse
 
 from cad_agent.job_queue import JobQueue
 from cad_agent.observability import increment_api_request, record_job_enqueued, record_job_result, render_metrics
-from cad_agent.orchestrator import CREATED, Workflow, WorkflowDecision
+from cad_agent.orchestrator import CREATED, SPEC_APPROVED, Workflow, WorkflowDecision
 from cad_agent.platform_poc import golden_requirement, golden_specification
 from cad_agent.project_service import create_project
 from cad_agent.security_policy import check_api_key, is_allowed_raw_code
@@ -151,6 +151,36 @@ def _local_workflow_dsl(payload: dict[str, Any]) -> dict[str, Any]:
 
 def _workflow_decision_response(workflow: Workflow, decision: WorkflowDecision) -> dict[str, Any]:
     return {"state": workflow.state, **asdict(decision)}
+
+
+def _revision_request_response(payload: dict[str, Any]) -> tuple[int, dict[str, Any], str]:
+    traceability_id = payload.get("traceability_id")
+    reason_codes = payload.get("reason_codes")
+    failure_locations = payload.get("failure_locations")
+
+    if traceability_id is not None and not isinstance(traceability_id, str):
+        return 400, _error_body("traceability_id must be a string"), JSON_CONTENT_TYPE
+    if not isinstance(reason_codes, list) or not reason_codes or not all(isinstance(reason_code, str) for reason_code in reason_codes):
+        return 400, _error_body("reason_codes must be a non-empty list of strings"), JSON_CONTENT_TYPE
+    if failure_locations is not None and (
+        not isinstance(failure_locations, list) or not all(isinstance(location, str) for location in failure_locations)
+    ):
+        return 400, _error_body("failure_locations must be a list of strings"), JSON_CONTENT_TYPE
+
+    workflow = Workflow(SPEC_APPROVED)
+    revision_request = workflow.request_revision(
+        reason_codes=reason_codes,
+        failure_locations=failure_locations,
+        traceability_id=traceability_id,
+    )
+    response = {
+        "state": workflow.state,
+        "traceability_id": traceability_id,
+        "reason_codes": list(reason_codes),
+        "revision_count": revision_request.revision_count,
+        "revision_request": asdict(revision_request),
+    }
+    return 200, response, JSON_CONTENT_TYPE
 
 
 def _run_local_workflow(payload: dict[str, Any]) -> tuple[int, dict[str, Any], str]:
@@ -329,7 +359,10 @@ def _route_request(
         if path_only == "/v1/cad/jobs":
             return _create_cad_job(payload)
 
-        if path_only in {"/v1/validation/jobs", "/v1/revisions", "/v1/exports"}:
+        if path_only == "/v1/revisions":
+            return _revision_request_response(payload)
+
+        if path_only in {"/v1/validation/jobs", "/v1/exports"}:
             return 501, NOT_IMPLEMENTED_BODY, JSON_CONTENT_TYPE
 
     return 404, _error_body("endpoint not found"), JSON_CONTENT_TYPE
