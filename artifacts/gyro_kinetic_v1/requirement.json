@@ -1,0 +1,27 @@
+{
+  "traceability_id": "tr_req_gyro_kinetic_v1",
+  "product_type": "single_part",
+  "functional_requirements": [
+    "provide a deterministic kinetic gyro demonstration core with two axial through holes",
+    "fit desktop FDM prototype manufacturing without additional CAD features"
+  ],
+  "dimensions": {
+    "length_mm": 48.0,
+    "width_mm": 24.0,
+    "height_mm": 8.0,
+    "hole_diameter_mm": 4.0,
+    "hole_pitch_mm": 24.0
+  },
+  "manufacturing": {
+    "primary_process": "FDM",
+    "printer_class": "desktop"
+  },
+  "unknowns": [
+    "rotor bearing fit tolerance",
+    "service spin speed"
+  ],
+  "assumptions": [
+    "non-safety-critical deterministic PoC",
+    "holes are axial z-axis mounting holes"
+  ]
+}

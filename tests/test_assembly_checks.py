@@ -2,7 +2,15 @@ from __future__ import annotations
 
 import unittest
 
-from cad_agent.assembly_checks import AssemblyPart, AssemblyValidationError, BBox, check_interference
+from cad_agent.assembly_checks import (
+    AABB_INTERFERENCE,
+    AssemblyPart,
+    AssemblyValidationError,
+    BBox,
+    assembly_report_to_validation_result,
+    check_adjacency,
+    check_interference,
+)
 
 
 class AssemblyChecksTest(unittest.TestCase):
@@ -50,6 +58,33 @@ class AssemblyChecksTest(unittest.TestCase):
         self.assertEqual(report.adjacent_within_tolerance[0].gap_axis, "x")
         self.assertAlmostEqual(report.adjacent_within_tolerance[0].gap_mm, 0.5)
 
+    def test_check_adjacency_uses_tolerance(self) -> None:
+        report = check_adjacency(
+            [
+                AssemblyPart("a", "tr_a", BBox(0, 0, 0, 10, 10, 10)),
+                AssemblyPart("b", "tr_b", BBox(10.5, 5, 0, 20.5, 15, 10)),
+            ],
+            tolerance_mm=1.0,
+        )
+
+        self.assertEqual(len(report.adjacent_within_tolerance), 1)
+        self.assertAlmostEqual(report.adjacent_within_tolerance[0].gap_mm, 0.5)
+
+    def test_assembly_report_to_validation_result_blocks_interference(self) -> None:
+        report = check_interference(
+            [
+                AssemblyPart("a", "tr_a", BBox(0, 0, 0, 10, 10, 10)),
+                AssemblyPart("b", "tr_b", BBox(5, 5, 5, 15, 15, 15)),
+            ]
+        )
+
+        result = assembly_report_to_validation_result(report)
+
+        self.assertFalse(result["passed"])
+        self.assertEqual(result["reason_codes"], [AABB_INTERFERENCE])
+        self.assertEqual(result["failure_locations"], ["a:b"])
+        self.assertEqual(result["analysis_scope"], "axis_aligned_bounding_box_only")
+
     def test_adjacent_outside_tolerance_is_separation(self) -> None:
         report = check_interference(
             [
@@ -89,6 +124,19 @@ class AssemblyChecksTest(unittest.TestCase):
         self.assertIsInstance(first, dict)
         assert isinstance(first, dict)
         self.assertEqual(first["gap_axis"], "x")
+
+    def test_report_dict_contains_reason_codes_and_failure_locations(self) -> None:
+        report = check_interference(
+            [
+                AssemblyPart("a", "tr_a", BBox(0, 0, 0, 10, 10, 10)),
+                AssemblyPart("b", "tr_b", BBox(5, 5, 5, 15, 15, 15)),
+            ]
+        )
+
+        rendered = report.as_dict()
+
+        self.assertEqual(rendered["reason_codes"], [AABB_INTERFERENCE])
+        self.assertEqual(rendered["failure_locations"], ["a:b"])
 
 
 if __name__ == "__main__":

@@ -24,6 +24,26 @@ Required phase fields:
 - **Gate**: review/approval required before moving to the next phase.
 - **Deferred production boundaries**: production-grade work that remains out of scope.
 
+## 3. Agent routing and execution rules
+
+Use lane-specific agents instead of assigning all implementation work to one general agent.
+
+- `fixer`: bounded implementation tasks with clear files, tests, and acceptance criteria.
+- `oracle`: phase brief review, high-risk safety-gate review, task review for risky changes, and final whole-branch review.
+- `designer`: UI/UX or review-interface polish only when user-facing layout, interaction, or visual hierarchy is in scope.
+- `council`: only when independent high-risk architectural opinions are needed and disagreement is useful.
+- `general`: reconnaissance, reconciliation, or non-specialist support; do not use as the default implementation lane for bounded code tasks.
+
+Execution guardrails:
+
+- Use one task brief per implementation task and keep the brief as the single source of requirements.
+- Use TDD for new behavior: write the failing test first, verify the expected failure, then implement the minimal passing code.
+- Do not dispatch overlapping implementation agents against the same files or shared state.
+- Review each task with a diff package before marking it complete.
+- Record completed task commits and validation evidence in `.superpowers/sdd/progress.md` or the active deepwork/progress record.
+- Treat `CAD-P03`, `CAD-P07`, and `CAD-P09` as high-risk phases requiring explicit safety/reviewer attention because they affect workflow gates, LLM routing, or target-object export decisions.
+- Never let implementation convenience expand scope into production API/auth/worker/storage, real LLM endpoints, FEA, motion validation, PLM/ERP/MES adapters, or unapproved print/export.
+
 ## 3. Current repository maturity
 
 | Area | Current state | Implementation implication |

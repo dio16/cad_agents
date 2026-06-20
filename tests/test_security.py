@@ -11,10 +11,50 @@ from cad_agent.observability import reset_metrics
 from cad_agent.platform_poc import golden_requirement
 from cad_agent.project_service import reset_projects
 from cad_agent.schema_gate import validate_against_schema
-from cad_agent.security_policy import CAD_AGENT_API_KEY, is_allowed_raw_code
+from cad_agent.security_policy import CAD_AGENT_API_KEY, is_allowed_raw_code, route_model
 
 
 AUTH_HEADERS = {"X-API-Key": CAD_AGENT_API_KEY}
+
+
+def test_confidential_route_requires_onprem_approval() -> None:
+    decision = route_model("confidential", "commercial")
+
+    assert decision.allowed is False
+    assert decision.requires_approval is True
+    assert decision.reason_code == "ROUTE_APPROVAL_REQUIRED"
+
+
+def test_public_commercial_route_is_allowed() -> None:
+    decision = route_model("public", "commercial")
+
+    assert decision.allowed is True
+    assert decision.requires_approval is False
+    assert decision.reason_code is None
+
+
+def test_internal_commercial_route_is_blocked_without_approval_requirement() -> None:
+    decision = route_model("internal", "commercial")
+
+    assert decision.allowed is False
+    assert decision.requires_approval is False
+    assert decision.reason_code == "ROUTE_NOT_ALLOWED"
+
+
+def test_regulated_onprem_route_requires_approval() -> None:
+    decision = route_model("regulated", "onprem")
+
+    assert decision.allowed is False
+    assert decision.requires_approval is True
+    assert decision.reason_code == "ROUTE_APPROVAL_REQUIRED"
+
+
+def test_export_controlled_onprem_route_requires_approval() -> None:
+    decision = route_model("export-controlled", "onprem")
+
+    assert decision.allowed is False
+    assert decision.requires_approval is True
+    assert decision.reason_code == "ROUTE_APPROVAL_REQUIRED"
 
 
 class SecurityPolicyTest(unittest.TestCase):

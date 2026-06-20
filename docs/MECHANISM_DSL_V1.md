@@ -17,23 +17,24 @@ Define the allowlist-first Mechanism DSL contract for the first CADAGENT impleme
 - Units fixed to `mm`.
 - Parameter references must resolve to the approved parameter table.
 - Feature order must be executable: base geometry before cuts/holes and before derivative outputs.
-- Allowed v1 operations: `box`, `cylinder`, `through_hole`.
+- Allowed v1 operations: `box`, `cylinder`, `through_hole`; Task 06.2 adds bounded `shaft` approval.
 - Deterministic surrogate behavior is recorded when native CadQuery is absent.
 - Derivative outputs are declared as metadata only and do not grant raw code execution.
 
 ## Out of scope / deferred
-- Deferred v2/future operations include `fillet`, `chamfer`, `loft`, `sweep`, patterns, assembly placement, mates, joints, gear generators, bearing seats, shafts, gimbal rings, and motion sweep checks.
+- Deferred v2/future operations include `fillet`, `chamfer`, `loft`, `sweep`, patterns, assembly placement, mates, joints, gear generators, bearing seats, gimbal rings, and motion sweep checks.
+- Task 06.2 approves the minimal `shaft` mechanism operation set documented in `MECHANISM_DSL_OPERATIONS.md`; all other mechanism-specific operations remain future contract work.
 - Forbidden without separate approval: unsupported DSL operations, raw Python/CadQuery code, shell commands, arbitrary imports, arbitrary file access, network access, and production artifact export from surrogate CAD.
 - API endpoint schemas, native worker pool code, and example artifacts are not part of this contract pass.
 
 ## Contract summary
-Mechanism DSL v1 is an allowlist-first, schema-validated operation graph. LLMs may generate only Parametric DSL that references approved parameters and operations. The PoC allowlist is exactly `box`, `cylinder`, and `through_hole`. Unsupported operations produce `UNSUPPORTED_DSL_OP` or an equivalent contract failure path and must not be implemented by raw code. This v1 DSL is intentionally insufficient to generate the full `gyro_kinetic_v1` mechanism; mechanism-specific operations remain future contract work.
+Mechanism DSL v1 is an allowlist-first, schema-validated operation graph. LLMs may generate only Parametric DSL that references approved parameters and operations. The PoC allowlist is exactly `box`, `cylinder`, and `through_hole`. Unsupported operations produce `UNSUPPORTED_DSL_OP` or an equivalent contract failure path and must not be implemented by raw code. Task 06.2 adds a bounded deterministic `shaft` mechanism operation documented in `MECHANISM_DSL_OPERATIONS.md`; other mechanism-specific operations remain future contract work.
 
 ## Acceptance criteria
 - `units` is `mm` for every accepted Parametric DSL.
 - Every parameter reference resolves to the Specification JSON parameter table.
 - Feature order is statically executable.
-- Only `box`, `cylinder`, and `through_hole` are allowed in v1.
+- Only `box`, `cylinder`, `through_hole`, and the approved `shaft` operation are allowed for this branch.
 - `derivative_outputs` are declared without changing canonical artifact ownership.
 - New operations require human/reviewer approval and a contract update before use.
 

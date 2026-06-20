@@ -7,7 +7,7 @@ from tempfile import TemporaryDirectory
 from typing import Any
 from unittest import mock
 
-from cad_agent.api_server import ARTIFACT_INDEX_PATHS, route_request
+from cad_agent.api_server import ARTIFACT_INDEX_PATHS, reset_export_decisions, route_request
 from cad_agent.job_queue import default_job_queue, reset_job_queue
 from cad_agent.observability import render_metrics, reset_metrics
 from cad_agent.platform_poc import golden_requirement, golden_specification
@@ -23,6 +23,7 @@ class APIServerTest(unittest.TestCase):
         reset_metrics()
         reset_projects()
         reset_job_queue()
+        reset_export_decisions()
 
     def _route(self, method: str, path: str, headers: dict[str, Any] | None = None, body: bytes | dict[str, Any] | None = None):
         return route_request(method, path, headers or {}, body)
@@ -123,6 +124,14 @@ class APIServerTest(unittest.TestCase):
         self.assertEqual(body["status"], "error")
         self.assertIn("allow_raw_code", body["message"])
 
+    def test_workflow_run_requires_spec_approval(self) -> None:
+        status_code, body, content_type = self._route("POST", "/v1/workflows/run", AUTH_HEADERS, {"traceability_id": "tr-test"})
+
+        self.assertEqual(status_code, 400)
+        self.assertEqual(content_type, "application/json; charset=utf-8")
+        self.assertEqual(body["reason"], "SPEC_APPROVAL_REQUIRED")
+        self.assertTrue(body["blocked"])
+
     def test_specifications_generate_stub(self) -> None:
         status_code, body, content_type = self._route("POST", "/v1/specifications/generate", AUTH_HEADERS)
 
@@ -201,19 +210,111 @@ class APIServerTest(unittest.TestCase):
         self.assertEqual(content_type, "application/json; charset=utf-8")
         self.assertEqual(body["status"], "not_implemented")
 
-    def test_revisions_not_implemented(self) -> None:
-        status_code, body, content_type = self._route("POST", "/v1/revisions", AUTH_HEADERS)
+    def test_revision_endpoint_records_reason_codes(self) -> None:
+        status_code, body, content_type = self._route(
+            "POST",
+            "/v1/revisions",
+            AUTH_HEADERS,
+            {"traceability_id": "tr-test", "reason_codes": ["RETRY_FAILURE"]},
+        )
 
-        self.assertEqual(status_code, 501)
+        self.assertEqual(status_code, 200)
         self.assertEqual(content_type, "application/json; charset=utf-8")
-        self.assertEqual(body["status"], "not_implemented")
+        self.assertEqual(body["state"], "revision_requested")
+        self.assertEqual(body["reason_codes"], ["RETRY_FAILURE"])
+        self.assertEqual(body["revision_count"], 0)
+        self.assertEqual(body["revision_request"]["reason_codes"], ["RETRY_FAILURE"])
+        self.assertEqual(body["revision_request"]["revision_count"], 0)
+        self.assertNotIn("job_id", body)
+        self.assertNotIn("artifacts", body)
+        self.assertNotIn("result", body)
+        self.assertEqual(default_job_queue().list(), [])
 
-    def test_exports_not_implemented(self) -> None:
-        status_code, body, content_type = self._route("POST", "/v1/exports", AUTH_HEADERS)
+    def test_revision_endpoint_rejects_missing_reason_codes(self) -> None:
+        status_code, body, content_type = self._route(
+            "POST",
+            "/v1/revisions",
+            AUTH_HEADERS,
+            {"traceability_id": "tr-test"},
+        )
 
-        self.assertEqual(status_code, 501)
+        self.assertEqual(status_code, 400)
         self.assertEqual(content_type, "application/json; charset=utf-8")
-        self.assertEqual(body["status"], "not_implemented")
+        self.assertIn("reason_codes", body["message"])
+
+    def test_revision_endpoint_rejects_empty_reason_codes(self) -> None:
+        status_code, body, content_type = self._route(
+            "POST",
+            "/v1/revisions",
+            AUTH_HEADERS,
+            {"traceability_id": "tr-test", "reason_codes": []},
+        )
+
+        self.assertEqual(status_code, 400)
+        self.assertEqual(content_type, "application/json; charset=utf-8")
+        self.assertIn("reason_codes", body["message"])
+
+    def test_revision_endpoint_rejects_non_string_reason_code(self) -> None:
+        status_code, body, content_type = self._route(
+            "POST",
+            "/v1/revisions",
+            AUTH_HEADERS,
+            {"traceability_id": "tr-test", "reason_codes": [123]},
+        )
+
+        self.assertEqual(status_code, 400)
+        self.assertEqual(content_type, "application/json; charset=utf-8")
+        self.assertIn("reason_codes", body["message"])
+
+    def test_revision_endpoint_rejects_invalid_traceability_id(self) -> None:
+        status_code, body, content_type = self._route(
+            "POST",
+            "/v1/revisions",
+            AUTH_HEADERS,
+            {"traceability_id": 123, "reason_codes": ["RETRY_FAILURE"]},
+        )
+
+        self.assertEqual(status_code, 400)
+        self.assertEqual(content_type, "application/json; charset=utf-8")
+        self.assertIn("traceability_id", body["message"])
+
+    def test_export_endpoint_blocks_without_approval(self) -> None:
+        status_code, body, content_type = self._route("POST", "/v1/exports", AUTH_HEADERS, {"traceability_id": "tr-test"})
+
+        self.assertEqual(status_code, 400)
+        self.assertEqual(content_type, "application/json; charset=utf-8")
+        self.assertTrue(body["blocked"])
+        self.assertEqual(body["reason"], "EXPORT_APPROVAL_REQUIRED")
+        self.assertEqual(default_job_queue().list(), [])
+
+    def test_export_endpoint_allows_approved_export(self) -> None:
+        status_code, body, content_type = self._route("POST", "/v1/approvals/export", AUTH_HEADERS, {"traceability_id": "tr-test"})
+
+        self.assertEqual(status_code, 200)
+        self.assertEqual(content_type, "application/json; charset=utf-8")
+        self.assertEqual(body["state"], "exported")
+        self.assertTrue(body["approved"])
+
+        status_code, body, content_type = self._route("POST", "/v1/exports", AUTH_HEADERS, {"traceability_id": "tr-test"})
+
+        self.assertEqual(status_code, 200)
+        self.assertEqual(content_type, "application/json; charset=utf-8")
+        self.assertEqual(body["state"], "exported")
+        self.assertEqual(default_job_queue().list(), [])
+
+    def test_export_endpoint_rejects_invalid_traceability_id(self) -> None:
+        status_code, body, content_type = self._route("POST", "/v1/exports", AUTH_HEADERS, {"traceability_id": 123})
+
+        self.assertEqual(status_code, 400)
+        self.assertEqual(content_type, "application/json; charset=utf-8")
+        self.assertIn("traceability_id", body["message"])
+
+    def test_export_approval_rejects_invalid_traceability_id(self) -> None:
+        status_code, body, content_type = self._route("POST", "/v1/approvals/export", AUTH_HEADERS, {"traceability_id": 123})
+
+        self.assertEqual(status_code, 400)
+        self.assertEqual(content_type, "application/json; charset=utf-8")
+        self.assertIn("traceability_id", body["message"])
 
     def test_invalid_json_body(self) -> None:
         status_code, body, content_type = self._route("POST", "/v1/projects", AUTH_HEADERS, b"not-json")
@@ -231,6 +332,19 @@ class APIServerTest(unittest.TestCase):
         self.assertEqual(content_type, "text/plain; charset=utf-8")
         self.assertIn("# TYPE cad_api_requests_total counter", body)
         self.assertIn('cad_api_requests_total{method="GET",status="200"} 1', body)
+
+    def test_health_and_metrics_still_work(self) -> None:
+        status_code, body, content_type = self._route("GET", "/health", AUTH_HEADERS)
+
+        self.assertEqual(status_code, 200)
+        self.assertEqual(body, {"status": "ok"})
+        self.assertEqual(content_type, "application/json; charset=utf-8")
+
+        status_code, body, content_type = self._route("GET", "/metrics", AUTH_HEADERS)
+
+        self.assertEqual(status_code, 200)
+        self.assertEqual(content_type, "text/plain; charset=utf-8")
+        self.assertIn("# TYPE cad_api_requests_total counter", body)
 
     @staticmethod
     def _existing_artifact_id() -> str | None:

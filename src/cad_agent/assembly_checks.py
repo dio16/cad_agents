@@ -95,9 +95,20 @@ class AssemblyCheckReport:
     issues: tuple[AssemblyValidationIssue, ...]
 
     def as_dict(self) -> dict[str, object]:
+        reason_codes: list[str] = []
+        failure_locations: list[str] = []
+        for interference in self.interferences:
+            reason_codes.append(AABB_INTERFERENCE)
+            failure_locations.append(f"{interference.part_a}:{interference.part_b}")
+        for issue in self.issues:
+            reason_codes.append(issue.code)
+            if issue.part_id is not None:
+                failure_locations.append(issue.part_id)
         return {
             "status": self.status,
             "analysis_scope": self.analysis_scope,
+            "reason_codes": reason_codes,
+            "failure_locations": failure_locations,
             "interferences": [item.as_dict() for item in self.interferences],
             "separations": [item.as_dict() for item in self.separations],
             "adjacent_within_tolerance": [item.as_dict() for item in self.adjacent_within_tolerance],
@@ -113,6 +124,9 @@ AXIS_SPECS = (
     ("y", "min_y", "max_y"),
     ("z", "min_z", "max_z"),
 )
+AABB_INTERFERENCE = "AABB_INTERFERENCE"
+AABB_SEPARATION = "AABB_SEPARATION"
+AABB_ADJACENT = "AABB_ADJACENT"
 
 
 def validate_parts(parts: list[AssemblyPart] | tuple[AssemblyPart, ...]) -> list[AssemblyValidationIssue]:
@@ -201,3 +215,43 @@ def check_interference(
         adjacent_within_tolerance=tuple(adjacent),
         issues=(),
     )
+
+
+def check_adjacency(
+    parts: list[AssemblyPart] | tuple[AssemblyPart, ...],
+    tolerance_mm: float = 0.0,
+) -> AssemblyCheckReport:
+    return check_interference(parts, tolerance_mm=tolerance_mm)
+
+
+def assembly_report_to_validation_result(report: AssemblyCheckReport | dict[str, object]) -> dict[str, object]:
+    if isinstance(report, dict):
+        reason_codes = report.get("reason_codes")
+        failure_locations = report.get("failure_locations")
+        return {
+            "passed": bool(report.get("passed", not reason_codes)),
+            "reason_codes": [str(code) for code in reason_codes] if isinstance(reason_codes, list) else [],
+            "failure_locations": [str(location) for location in failure_locations] if isinstance(failure_locations, list) else [],
+            "analysis_scope": report.get("analysis_scope", "assembly_validation"),
+            "report": report,
+        }
+
+    reason_codes: list[str] = []
+    failure_locations: list[str] = []
+
+    for interference in report.interferences:
+        reason_codes.append(AABB_INTERFERENCE)
+        failure_locations.append(f"{interference.part_a}:{interference.part_b}")
+
+    for issue in report.issues:
+        reason_codes.append(issue.code)
+        if issue.part_id is not None:
+            failure_locations.append(issue.part_id)
+
+    return {
+        "passed": not reason_codes,
+        "reason_codes": reason_codes,
+        "failure_locations": failure_locations,
+        "analysis_scope": report.analysis_scope,
+        "report": report.as_dict(),
+    }
