@@ -16,6 +16,7 @@
 - [x] Confirm P2 Pilot completion status: P2-1 through P2-6 are complete and Phase 2 Pilot is validated; production worker deployment remains deferred.
 - [x] `prompt.md` reads `TASKS.md` as the task inventory at the start of every run.
 - [x] `prompt.md` classifies tasks as `executable_now`, `approval_required`, `blocked`, or `closed_evidence_only`.
+- [x] `prompt.md` reads the detailed plan path recorded in `TASKS.md`; current plan entries point to `docs/cadagent_plans/<TASK_ID>/implementation-plan.md`.
 - [x] `prompt.md` continues executing approved executable tasks by default; it stops only for validation failure, ambiguity, forbidden scope, no executable task, or ungranted approval requirement.
 - [x] `prompt.md` respects `AGENTS.md` deepwork lifecycle rules before using or creating `.slim/deepwork` evidence.
 - [x] `prompt.md` updates `TASKS.md` only after validation evidence, docs/status-only sufficiency, or explicit user approval.
@@ -23,13 +24,32 @@
 - [x] `prompt.md` asks for approval when a task requires explicit permission; if the user grants permission, the task loop continues with that task.
 - [x] `prompt.md` stops when no executable task exists under the current approval boundary.
 - [ ] Execute the next approved executable task from `TASKS.md` when explicit approval makes one available.
-- [ ] Execute `CAD-P03` bounded workflow safety gate only after explicit approval.
+- [ ] Execute `CAD-FG-01` active workflow safety gate integration only after explicit approval.
+
+## Task plan reference policy
+
+- `prompt.md` must read task inventory from `TASKS.md` only.
+- Detailed plan paths are controlled by `TASKS.md`.
+- Current plan entries point to `docs/cadagent_plans/<TASK_ID>/implementation-plan.md`, but future reference changes must be made here first.
+- `prompt.md` must not infer a different detailed-plan location unless `TASKS.md` records that location.
 
 ## Status summary
 
 - [x] Phase 2 Pilot, Phase 3 Production v1 readiness skeleton, Phase 4 Production v2 data-model stubs, Phase 5 assembly AABB validation, Phase 6 mechanism DSL compiler, Phase 7 local/mock LLM-agent routes, Phase 8 bounded motion validation, and Phase 9 first target object integration are implemented and validated.
 - These completed phases remain skeleton/Pilot maturity only where noted; production deployment, real worker pools, real LLM endpoints, production-grade material DB/adapters, FEA, production dynamic simulation, and production artifact storage remain deferred.
 - Current implementation work is status/documentation reconciliation only unless a new approval gate explicitly authorizes code work.
+- Functional gap implementation plan is recorded below as `CAD-FG-*`; code phases are `approval_required` and must not start without explicit user approval.
+
+## Functional gap implementation plan
+
+Detailed plan paths are controlled by this file. Current entries point to `docs/cadagent_plans/CAD-FG-*/implementation-plan.md`; if the reference location changes, update `TASKS.md` first.
+
+- [ ] `CAD-FG-00` — Maintained-doc status drift reconciliation. Plan: `docs/cadagent_plans/CAD-FG-00/implementation-plan.md`. Classification: `executable_now`.
+- [ ] `CAD-FG-01` — Active workflow safety gate integration. Plan: `docs/cadagent_plans/CAD-FG-01/implementation-plan.md`. Classification: `approval_required`.
+- [ ] `CAD-FG-02` — Validation report and artifact metadata hardening. Plan: `docs/cadagent_plans/CAD-FG-02/implementation-plan.md`. Classification: `approval_required`.
+- [ ] `CAD-FG-03` — Model Gateway and data-classification API integration. Plan: `docs/cadagent_plans/CAD-FG-03/implementation-plan.md`. Classification: `approval_required`.
+- [ ] `CAD-FG-04` — Agent route hardening decision and implementation. Plan: `docs/cadagent_plans/CAD-FG-04/implementation-plan.md`. Classification: `approval_required`; real LLM endpoint integration requires separate explicit approval.
+- [ ] `CAD-FG-05` — Production infrastructure deferral. Plan: `docs/cadagent_plans/CAD-FG-05/implementation-plan.md`. Classification: `blocked` until production-architecture approval.
 
 ## CADAGENT phase implementation plans
 
@@ -44,8 +64,13 @@
 - [x] Create per-phase detailed implementation plan: `docs/cadagent_plans/CAD-P07/implementation-plan.md`.
 - [x] Create per-phase detailed implementation plan: `docs/cadagent_plans/CAD-P08/implementation-plan.md`.
 - [x] Create per-phase detailed implementation plan: `docs/cadagent_plans/CAD-P09/implementation-plan.md`.
+- [x] Create per-task detailed implementation plan: `docs/cadagent_plans/CAD-FG-00/implementation-plan.md`.
+- [x] Create per-task detailed implementation plan: `docs/cadagent_plans/CAD-FG-01/implementation-plan.md`.
+- [x] Create per-task detailed implementation plan: `docs/cadagent_plans/CAD-FG-02/implementation-plan.md`.
+- [x] Create per-task detailed implementation plan: `docs/cadagent_plans/CAD-FG-03/implementation-plan.md`.
+- [x] Create per-task detailed implementation plan: `docs/cadagent_plans/CAD-FG-04/implementation-plan.md`.
+- [x] Create per-task detailed implementation plan: `docs/cadagent_plans/CAD-FG-05/implementation-plan.md`.
 - [x] Add deviation-check requirement to each plan: verify against `docs/cad_agent_detailed_design.md`, `docs/cad_agent_implementation_plan.md`, phase non-goals, and deferred production boundaries before marking complete.
-- [ ] Execute `CAD-P03` bounded workflow safety gate when explicitly approved.
 - [ ] Update this file with each phase status: `not started`, `in progress`, `blocked`, or `completed`.
 - [ ] Record each completed phase's validation commands, reviewer verdict, and deviation-check verdict.
 

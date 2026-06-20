@@ -12,6 +12,13 @@
 
 This plan is the execution roadmap for implementing `docs/cad_agent_detailed_design.md`. Each phase must be approved before execution. A phase is complete only when its entry criteria, exit criteria, validation gate, and review package are satisfied.
 
+Document boundaries:
+
+- `prompt.md` defines execution instructions, workflow loops, and the meta-improvement loop.
+- `TASKS.md` records the current task inventory and completion history.
+- `docs/cadagent_plans/` contains the detailed implementation plan for each task.
+- `docs/cad_agent_implementation_plan.md` remains the high-level phase roadmap and maturity boundary.
+
 Required phase fields:
 
 - **Design coverage**: which detailed-design responsibilities are addressed.
@@ -36,7 +43,7 @@ Use lane-specific agents instead of assigning all implementation work to one gen
 
 Execution guardrails:
 
-- Use one task brief per implementation task and keep the brief as the single source of requirements.
+- Use `docs/cadagent_plans/<TASK_ID>/implementation-plan.md` as the task brief for implementation tasks.
 - Use TDD for new behavior: write the failing test first, verify the expected failure, then implement the minimal passing code.
 - Do not dispatch overlapping implementation agents against the same files or shared state.
 - Review each task with a diff package before marking it complete.
@@ -51,10 +58,10 @@ Execution guardrails:
 | CLI | Present | Use `run_cad_agent.sh` as the local validation entrypoint. |
 | Phase 1 PoC/native CadQuery path | Implemented and hardened | Use as the bounded deterministic CAD path for validation; production native worker deployment remains deferred. |
 | Phase 2 DFM/AM Pilot | Implemented and validated | Use DFM/AM profile, review diff, audit, and gateway probes as local PoC/Pilot behavior. |
-| Local API/project/job skeletons | Skeleton only | Use as local in-process workflow experiments only; not production API/service readiness. |
+| Local API/project/job skeletons | Completed skeleton only | Use as local in-process workflow experiments only; not production API/service readiness. |
 | Material/BOM/AABB stubs | Stub only | Use as reference data-model material only; production material DB, adapters, and full assembly validation remain deferred. |
-| LLM endpoints | Not integrated | Model Gateway remains policy/probe only. |
-| Approval/revision/export gates | Sample/stub only | Existing approval helpers are audit-shape samples; they do not enforce CAD/export gates. |
+| LLM endpoints | Local/mock agents only; real endpoints not integrated | Model Gateway remains policy/probe only until explicit approval. |
+| Approval/revision/export gates | Local skeleton/stub only | Existing approval helpers and workflow state machine are validated locally; active golden/API enforcement remains `CAD-FG-01`. |
 | Full design implementation | Not complete | Remaining phases below must be approved and executed one at a time. |
 
 ## 4. Phase matrix
@@ -64,15 +71,28 @@ Execution guardrails:
 | `CAD-P00` | Source/design contract finalization | Planning contracts, traceability, stop conditions | Completed docs-only | Baseline | Reviewer approval |
 | `CAD-P01` | Native CAD golden path hardening | CAD Runtime, artifact ownership, validation report | Completed/hardened PoC | Baseline | Reviewer approval |
 | `CAD-P02` | DFM/AM validation pilot | DFM/AM validation, audit, model gateway probes | Completed Pilot | Baseline | Reviewer approval |
-| `CAD-P03` | Bounded workflow safety gate | Orchestrator approval, revision loop, export gate, audit trail | Not started; recommended next | Next approved phase | Human/reviewer approval |
-| `CAD-P04` | Local API/project/job/artifact workflow v1 | API skeleton, project service, job queue, artifact lookup | Skeleton | After `CAD-P03` | Reviewer approval |
-| `CAD-P05` | Assembly DSL and AABB validation | Assembly placement, constraints, AABB checks | Stub | After `CAD-P03`/`CAD-P04` | Reviewer approval |
-| `CAD-P06` | Mechanism DSL and deterministic compiler | Mechanism plan, DSL operations, compiler service | Not started | After `CAD-P05` or split into compiler-first phase | Reviewer approval |
-| `CAD-P07` | LLM agents and schema-retry routes | Requirement Extractor, Spec Composer, Mechanism Planner, DSL Compiler proposals | Not started | After deterministic contracts/gates are stable | Human approval |
-| `CAD-P08` | Motion validation | Motion sweep, clearance, moving-part reports | Not started | After mechanism DSL and motion-state representation | Reviewer approval |
-| `CAD-P09` | First target object end-to-end integration | First kinetic object pipeline from spec to STEP/report | Not started | Final integration phase | Human approval |
+| `CAD-P03` | Bounded workflow safety gate | Orchestrator approval, revision loop, export gate, audit trail | Completed skeleton; production API/worker/schema scope deferred | After `CAD-P02` | Human/reviewer approval |
+| `CAD-P04` | Local API/project/job/artifact workflow v1 | API skeleton, project service, job queue, artifact lookup | Completed skeleton; production deployment deferred | After `CAD-P03` | Reviewer approval |
+| `CAD-P05` | Assembly DSL and AABB validation | Assembly placement, constraints, AABB checks | Completed skeleton; full B-Rep/motion/FEA/PLM deferred | After `CAD-P03`/`CAD-P04` | Reviewer approval |
+| `CAD-P06` | Mechanism DSL and deterministic compiler | Mechanism plan, DSL operations, compiler service | Completed deterministic compiler; new-operation approval gate added | After `CAD-P05` or split into compiler-first phase | Reviewer approval |
+| `CAD-P07` | LLM agents and schema-retry routes | Requirement Extractor, Spec Composer, Mechanism Planner, DSL Compiler proposals | Completed local/mock skeleton; production LLM endpoints deferred | After deterministic contracts/gates are stable | Human approval |
+| `CAD-P08` | Motion validation | Motion sweep, clearance, moving-part reports | Completed bounded clearance skeleton; FEA/dynamic/sweep deferred | After mechanism DSL and motion-state representation | Reviewer approval |
+| `CAD-P09` | First target object end-to-end integration | First kinetic object pipeline from spec to STEP/report | Completed target-object integration; export approval remains required | Final integration phase | Human approval |
 
 Cross-cutting deferral: FEA is intentionally not assigned to any current phase. FEA requires a separate approved safety-analysis phase with solver selection, material model assumptions, mesh-quality criteria, legal/safety framing, and validation evidence.
+
+## 4.1 Functional gap task index
+
+Detailed task plans live under `docs/cadagent_plans/CAD-FG-*/implementation-plan.md`. `TASKS.md` records their current inventory, classification, and completion history.
+
+| Task ID | Task name | Plan | Classification |
+|---|---|---|---|
+| `CAD-FG-00` | Maintained-doc status drift reconciliation | `docs/cadagent_plans/CAD-FG-00/implementation-plan.md` | `executable_now` |
+| `CAD-FG-01` | Active workflow safety gate integration | `docs/cadagent_plans/CAD-FG-01/implementation-plan.md` | `approval_required` |
+| `CAD-FG-02` | Validation report and artifact metadata hardening | `docs/cadagent_plans/CAD-FG-02/implementation-plan.md` | `approval_required` |
+| `CAD-FG-03` | Model Gateway and data-classification API integration | `docs/cadagent_plans/CAD-FG-03/implementation-plan.md` | `approval_required` |
+| `CAD-FG-04` | Agent route hardening decision and implementation | `docs/cadagent_plans/CAD-FG-04/implementation-plan.md` | `approval_required` |
+| `CAD-FG-05` | Production infrastructure deferral | `docs/cadagent_plans/CAD-FG-05/implementation-plan.md` | `blocked` |
 
 ## 5. Detailed implementation phases
 
@@ -285,7 +305,7 @@ git diff --check
 
 **Current status**
 
-- Not started. Recommended next implementation phase.
+- Completed skeleton; production API/worker/schema scope remains deferred.
 
 **Implementation goal**
 
@@ -361,7 +381,7 @@ git diff --check
 
 **Current status**
 
-- Skeleton.
+- Completed local skeleton; production API/auth/worker/storage deployment remains deferred.
 
 **Implementation goal**
 
@@ -430,7 +450,7 @@ git diff --check
 
 **Current status**
 
-- Stub.
+- Completed bounded skeleton; full B-Rep/motion/FEA/PLM remains deferred.
 
 **Implementation goal**
 
@@ -496,7 +516,7 @@ git diff --check
 
 **Current status**
 
-- Not started.
+- Completed deterministic compiler skeleton; new-operation approval gate implemented.
 
 **Implementation goal**
 
@@ -566,7 +586,7 @@ git diff --check
 
 **Current status**
 
-- Not started.
+- Completed local/mock skeleton; real LLM endpoints and production model infrastructure remain deferred.
 
 **Implementation goal**
 
@@ -637,7 +657,7 @@ git diff --check
 
 **Current status**
 
-- Not started.
+- Completed bounded clearance skeleton; FEA, production dynamic simulation, and full sweep collision remain deferred.
 
 **Implementation goal**
 
@@ -702,7 +722,7 @@ git diff --check
 
 **Current status**
 
-- Not started.
+- Completed target-object integration; production artifact storage and export approval bypass remain deferred.
 
 **Implementation goal**
 

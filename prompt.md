@@ -2,18 +2,17 @@
 
 ## 目的
 
-このプロンプトは、`docs/Origen/cad_agent_design_spec_and_implementation_plan.md` の原案をもとに、CADAGENTの詳細設計書・実装計画書を作成し、prompt-driven workflow framework の詳細計画を立て、各フェーズを安全に実行するための運用指示です。
+このプロンプトは、CADAGENT の実行指示・仕事の進め方・Task loop・Meta-improvement loop を定義するものです。
 
-このpassの目的はCADAGENT実装そのものではなく、詳細設計書・実装計画書・Gate・Validation・Review evidence の作成です。
+- `prompt.md`: 実行指示、仕事の流れ、許可/禁止、メタ改善ループ。
+- `TASKS.md`: 現在のタスク一覧と完了履歴。
+- `docs/cadagent_plans/`: 各タスクの詳細実装計画。
+- `docs/cad_agent_detailed_design.md`: CADAGENT の詳細設計。
+- `docs/cad_agent_implementation_plan.md`: 高位の実装計画と成熟度境界。
+- `docs/prompt_execution_plan.md`: prompt workflow の実行制御計画。
 
-## 重要方針
+各フェーズは小さく分割し、検証とレビューを挟んでから次へ進みます。
 
-- 最初に行うべきことは、CAD機能・APIサービス・Production v1をいきなり実装することではありません。
-- まず行うべきことは、prompt-driven workflow framework を構築することです。
-- `docs/prompt_execution_plan.md` はprompt workflowの実行制御計画です。CADAGENTの詳細設計は `docs/cad_agent_detailed_design.md`、実装計画は `docs/cad_agent_implementation_plan.md` に置きます。
-- 各フェーズは小さく分割し、検証とレビューを挟んでから次へ進みます。
-- このpassはdocs-only workflowです。`validate-docs`を維持するためのvalidation-harness更新のみ許可します。
-- 詳細な禁止事項は「禁止事項」セクションに従います。
 
 ## 最初に読むべきファイル
 
@@ -25,23 +24,29 @@
 ### 参照
 4. `docs/cad_agent_detailed_design.md`
 5. `docs/cad_agent_implementation_plan.md`
-6. `docs/Origen/Design_document_for_a_machine_design_platform.md`
-7. `docs/Origen/cad_agent_design_spec_and_implementation_plan.md`
-8. `GOAL.md`
-9. `SPEC.md`
-10. `TASKS.md`
-11. `AGENTS.md`
-12. `docs/architecture_ja.md`
-13. `docs/api_contracts_ja.md`
-14. `docs/validation_security_ja.md`
-15. `docs/operations_ja.md`
+6. `docs/cadagent_plans/`
+7. `docs/Origen/Design_document_for_a_machine_design_platform.md`
+8. `docs/Origen/cad_agent_design_spec_and_implementation_plan.md`
+9. `GOAL.md`
+10. `SPEC.md`
+11. `TASKS.md`
+12. `AGENTS.md`
+13. `docs/architecture_ja.md`
+14. `docs/api_contracts_ja.md`
+15. `docs/validation_security_ja.md`
+16. `docs/operations_ja.md`
 
 ## Current executable boundary
 
 - P2 Pilot is completed and validated, but production worker deployment remains deferred.
-- Current executable work is limited to approved docs/status reconciliation, workflow prompt improvements, and validation evidence updates unless a new approval gate explicitly authorizes code work.
-- `TASKS.md` is the task inventory. `AGENTS.md`, `prompt.md`, current user approval, validation results, and stop conditions are authority files. If they conflict, stop and ask for clarification.
-- The next implementation candidate is `CAD-P03` bounded workflow safety gate, but it is not executable until explicit approval is granted.
+- `prompt.md` defines execution instructions, workflow loops, and the meta-improvement loop. It is not the detailed task plan.
+- `TASKS.md` is the current task inventory, completion history, and the control point for detailed-plan references.
+- `docs/cadagent_plans/` is the current default location for detailed implementation plans, but `prompt.md` must not hard-code it as the only future source.
+- Before executing a selected task, read the detailed plan path recorded in `TASKS.md`; if `TASKS.md` later changes that reference, follow `TASKS.md` instead of inferring a path.
+- Default executable work is limited to approved docs/status reconciliation, workflow prompt improvements, validation evidence updates, and tasks classified as `executable_now` in `TASKS.md`, unless a new approval gate explicitly authorizes code work.
+- `AGENTS.md`, `prompt.md`, current user approval, validation results, and stop conditions are authority files. If they conflict, stop and ask for clarification.
+- `CAD-FG-01` active workflow safety gate integration and later `CAD-FG-*` code phases are `approval_required` and not executable until explicit approval is granted.
+- Real LLM endpoints, production API/service deployment, production worker pools, production artifact storage, and production auth remain deferred unless explicitly approved.
 
 ## Task Queue Mode
 
@@ -78,20 +83,21 @@ For each approved executable task:
    - forbidden files
    - validation commands
    - approval boundary
-3. Check `.slim/deepwork` lifecycle rules before using or creating deepwork evidence:
+3. Read the detailed plan path recorded in `TASKS.md` for the selected task, if present; do not infer or replace that path unless `TASKS.md` says to do so.
+4. Check `.slim/deepwork` lifecycle rules before using or creating deepwork evidence:
    - classify existing plan files as `active`, `closed`, or `archived`
    - do not resume closed plans unless explicitly requested
    - if no active plan exists and work is required, create or request a new active plan
-4. Use the most relevant available skill before implementation work.
-5. Make the smallest safe change that satisfies the task.
-6. Do not expand scope.
-7. Validate using the task’s validation commands or the current phase’s allowed validation commands.
-8. Record evidence in the active deepwork file or review package.
-9. Update `TASKS.md` only if:
+5. Use the most relevant available skill before implementation work.
+6. Make the smallest safe change that satisfies the task.
+7. Do not expand scope.
+8. Validate using the task’s validation commands or the current phase’s allowed validation commands.
+9. Record evidence in the active deepwork file or review package.
+10. Update `TASKS.md` only if:
    - validation passed, or
    - the task is explicitly docs/status-only and the evidence is sufficient, or
    - the user explicitly approves the update.
-10. Continue to the next executable task by default. Stop after one task only when the task is risky, ambiguous, approval-required and not yet approved, validation failed, or the user explicitly requests single-task mode.
+11. Continue to the next executable task by default. Stop after one task only when the task is risky, ambiguous, approval-required and not yet approved, validation failed, or the user explicitly requests single-task mode.
 
 Stop immediately if any of the following occurs:
 
@@ -152,7 +158,10 @@ Do not use meta-improvement to expand executable scope, change CAD/API/schema/LL
   - Review package template
   - Traceability rules
 - `TASKS.md` の拡張
-  - 既存フェーズを壊さず、prompt-driven workflow section を追加する。
+  - 現在のタスク一覧と完了履歴として更新する。
+  - 詳細実装計画の参照先も `TASKS.md` が制御し、`prompt.md` はその参照先に従う。
+- `docs/cadagent_plans/` の拡張
+  - 各実装タスクの詳細計画を置く現在の既定場所。将来の参照先変更は `TASKS.md` 側で制御する。
 - Phase 0 design-contract finalization docs（明示承認済みの場合）
   - `docs/MVP_SCOPE.md`
   - `docs/MECHANISM_DSL_V1.md`
@@ -178,6 +187,7 @@ Do not use meta-improvement to expand executable scope, change CAD/API/schema/LL
 
 ### Phase 2 — Task / operations integration
 - `TASKS.md` に prompt-driven workflow section を追加する。
+- 詳細実装計画は `docs/cadagent_plans/` に追加し、`TASKS.md` をタスク一覧/完了履歴に留める。
 - `docs/operations_ja.md` に必要最小限の運用説明を追加する。
 - 既存フェーズを大幅に書き換えない。
 
@@ -188,7 +198,9 @@ Do not use meta-improvement to expand executable scope, change CAD/API/schema/LL
   - `bash ./run_cad_agent.sh phase1-contract-test`
   - `bash ./run_cad_agent.sh phase1-golden-pipeline`
   - `bash ./run_cad_agent.sh phase2-pilot-run`
+  - `bash ./run_cad_agent.sh serve --dry-run`
   - `uv run pytest -q`
+  - `git diff --check`
 - 変更ファイル、検証結果、未解決事項、次のフェーズ案をレビュー用にまとめる。
 
 ### Phase 4 — Review feedback fix
@@ -263,9 +275,11 @@ Do not use meta-improvement to expand executable scope, change CAD/API/schema/LL
 ## 禁止事項
 
 - CAD feature、API service、production architecture を、明示的に許可されたPhase以外で実装しない。
+- `CAD-FG-01` 以降の実装フェーズは、`TASKS.md` の分類が `approval_required` の場合、明示的なユーザー承認なしに開始しない。
 - Phase 0 design-contract docs（`docs/MVP_SCOPE.md`、`MECHANISM_DSL_V1.md`、`CAD_RUNTIME_CONTRACT.md`、`VALIDATION_CONTRACT.md`、`ORCHESTRATOR_WORKFLOW.md`）は、明示承認済みのPhase 0 design-contract finalization passでのみ作成する。
 - このpassでは `schemas/v1/*`、`cad_runtime/`、`dsl/`、`validation/`、`examples/gyro_kinetic_v1/*` を追加しない。
 - `TASKS.md` を丸ごと書き換えない。
+- `prompt.md` に詳細実装計画を書き込まない。詳細計画は `docs/cadagent_plans/` に置く。
 - 既存のdeepwork progress fileを削除しない。
 - Validation fail を pass 扱いにしない。
 - 仕様変更を無断で行わない。

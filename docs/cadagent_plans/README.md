@@ -1,6 +1,6 @@
-# CADAGENT Phase Implementation Plans
+# CADAGENT Task/Phase Implementation Plans
 
-This folder contains the per-phase detailed implementation plans derived from:
+This folder contains the per-task detailed implementation plans derived from:
 
 - `docs/cad_agent_detailed_design.md`
 - `docs/cad_agent_implementation_plan.md`
@@ -8,21 +8,21 @@ This folder contains the per-phase detailed implementation plans derived from:
 
 ## Progress tracking rule
 
-Each phase folder contains one implementation plan. Phase progress must be tracked in `TASKS.md` using the phase ID as the heading anchor.
+Each task folder contains one implementation plan. Task progress must be tracked in `TASKS.md` using the task ID as the heading anchor. `prompt.md` must not become the detailed task plan; it defines execution instructions, workflow loops, and meta-improvement loops only.
 
 ## Completion deviation check rule
 
-Before a phase is marked complete, the executor must verify that the phase did not deviate from:
+Before a task or phase is marked complete, the executor must verify that the task or phase did not deviate from:
 
 - `docs/cad_agent_detailed_design.md`
 - `docs/cad_agent_implementation_plan.md`
-- the phase's own non-goals and deferred production boundaries
+- the task/phase's own non-goals and deferred production boundaries
 
 Record the deviation check result in `TASKS.md` with validation commands and the final verdict.
 
-## Phase index
+## Task index
 
-| Phase | Plan |
+| Phase/Task | Plan |
 |---|---|
 | `CAD-P00` | `CAD-P00/implementation-plan.md` |
 | `CAD-P01` | `CAD-P01/implementation-plan.md` |
@@ -34,3 +34,9 @@ Record the deviation check result in `TASKS.md` with validation commands and the
 | `CAD-P07` | `CAD-P07/implementation-plan.md` |
 | `CAD-P08` | `CAD-P08/implementation-plan.md` |
 | `CAD-P09` | `CAD-P09/implementation-plan.md` |
+| `CAD-FG-00` | `CAD-FG-00/implementation-plan.md` |
+| `CAD-FG-01` | `CAD-FG-01/implementation-plan.md` |
+| `CAD-FG-02` | `CAD-FG-02/implementation-plan.md` |
+| `CAD-FG-03` | `CAD-FG-03/implementation-plan.md` |
+| `CAD-FG-04` | `CAD-FG-04/implementation-plan.md` |
+| `CAD-FG-05` | `CAD-FG-05/implementation-plan.md` |
