@@ -162,6 +162,22 @@ append-style JSONLログ記録（将来の不変ストレージを目標）
 | Compliance Gate | 法規/機密/輸出タグ確定 | 不可 |
 | Human Approval Gate | 人手レビュー実施記録 | regulated/export-controlled案件は必須 |
 
+### 7.3 実装前ステータス照合ゲート
+
+実装・再実装・修正ループに入る前に、Orchestratorは以下の状態を照合する。
+
+- `TASKS.md` の `active` / `closed` / `pending` 状態
+- `docs/cad_agent_implementation_plan.md` の phase matrix と各 phase の詳細状態
+- 関連する `docs/ORCHESTRATOR_WORKFLOW.md`、`operations_ja.md`、plan/checkpoint の最終検証結果
+- 既存の git status / git log で、直近の完了・検証済み作業を確認
+
+照合結果の扱い:
+
+- 完了済み項目が `Not started` / `Skeleton` / `Stub` などとして残っている場合、それを新規実装対象ではなく status drift として報告する
+- `status: closed` または最終検証 `pass` / `conditional pass` の計画は、ユーザーが明示的に「再開」「継続」「再実装」と指示しない限り再検証・再実装しない
+- 状態が矛盾・不明な場合は、実装前にユーザーへ確認する
+- 照合結果は要約で残し、必要に応じて「新規実装」か「最終状態の reconcile/summary」かを分岐する
+
 ## 8. 使用コマンドとインターフェース
 
 ### 8.1 基本操作
@@ -208,6 +224,8 @@ append-style JSONLログ記録（将来の不変ストレージを目標）
 1. **仕様を変えたくなったら、エージェントは変更案を出すだけで実行しない**
 2. **検証が不合格になったら、必ず理由を明記してから修正する**
 3. **機密/regulated/export-controlled案件はオンプレルートへ**
+4. **実装前にステータス照合ゲートを通す。完了済み項目の再実装は明示指示がない限り禁止**
+5. **ユーザー向け返答は日本語。内部推論・調査メモ・専門用語は英語可。コンテキスト圧縮後もこの返答言語を維持する**
 
 ## 11. `.slim/deepwork/` 計画ファイルの lifecycle
 
@@ -218,3 +236,11 @@ append-style JSONLログ記録（将来の不変ストレージを目標）
 - 新規 Deepwork は、進行中の `status: active` の計画を優先する。該当する active 計画がない場合は、新しい plan file を作成し、冒頭に `status: active` を明記する。
 - 計画を閉じる際は、同じ deepwork file に `status: closed`、`closed_at`、最終検証コマンド、最終レビュー verdict、未解決/延期 items を記録する。
 - `closed` 計画を再開する場合は、再開理由と再開後の scope を deepwork file に追記し、再開前の最終検証結果を無効化しない。
+
+## 12. 対話言語ルール
+
+- ユーザーへの最終返答は日本語とする。
+- 内部推論、調査メモ、検索クエリ、専門用語、コードレビュー注釈は英語で処理してよい。
+- 推論や内部メモをユーザーに見せる場合は、ユーザー向けには日本語で要約する。
+- ユーザーが明示的に別の言語を求めた場合は、その指示に従う。
+- このルールはコンテキスト圧縮後も維持し、会話履歴が短くなってもユーザー向け返答を日本語にする。
