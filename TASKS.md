@@ -27,7 +27,7 @@
 
 ## Status summary
 
-- [x] Phase 2 Pilot, Phase 3 Production v1 readiness skeleton, Phase 4 Production v2 data-model stubs, Phase 5 assembly AABB validation, Phase 6 mechanism DSL compiler, Phase 7 local/mock LLM-agent routes, and Phase 8 bounded motion validation are implemented and validated.
+- [x] Phase 2 Pilot, Phase 3 Production v1 readiness skeleton, Phase 4 Production v2 data-model stubs, Phase 5 assembly AABB validation, Phase 6 mechanism DSL compiler, Phase 7 local/mock LLM-agent routes, Phase 8 bounded motion validation, and Phase 9 first target object integration are implemented and validated.
 - These completed phases remain skeleton/Pilot maturity only where noted; production deployment, real worker pools, real LLM endpoints, production-grade material DB/adapters, FEA, production dynamic simulation, and production artifact storage remain deferred.
 - Current implementation work is status/documentation reconciliation only unless a new approval gate explicitly authorizes code work.
 
@@ -166,6 +166,18 @@
 - [x] CAD-P08 Task 08.3 — produce motion validation report: added report-shape helper/tests and documented required report fields; validation `uv run pytest tests/test_motion_validation.py -q` → `15 passed`, `git diff --check` clean; reviewer verdict `pass`; commit `ee829c8`.
 - [x] CAD-P08 Task 08.4 — connect motion failure to export gate: added `Workflow.handle_motion_validation(...)`, motion failure blocks export, motion pass does not replace CAD-P03 export approval; validation `uv run pytest tests/test_motion_validation.py tests/test_orchestrator.py -q` → `41 passed`, `git diff --check` clean; reviewer verdict `pass` after manual reconciliation of empty oracle output; commit `3336b10`.
 - [x] CAD-P08 Task 08.5 — close phase with deviation check: forbidden FEA/production dynamic simulation/sweep scope check passed (`git diff -- src/cad_agent/motion_validation.py` returned only bounded deterministic schema/clearance/report logic); final validation passed with `uv run pytest -q` → `171 passed, 2 subtests passed`, `bash ./run_cad_agent.sh validate-docs` → pass, `bash ./run_cad_agent.sh phase1-golden-pipeline --output-dir /tmp/cadagent_motion_phase1` → pass, `git diff --check` → pass; reviewer verdict `pass`; deviation-check verdict `pass`.
+
+## Phase 9: First target object end-to-end integration
+
+- [x] User explicitly approved `artifacts/gyro_kinetic_v1/target_spec.json を承認`; approved target spec includes `tr_target_gyro_kinetic_v1`, approval metadata, embedded requirement/specification/DSL, and validation plan.
+- [x] Deterministic target artifacts added under `artifacts/gyro_kinetic_v1/`: `target_spec.json`, `requirement.json`, `specification.json`, and `dsl.json`.
+- [x] Target requirement/specification are Phase 1 schema-valid; target DSL is Phase 1 schema/AST-valid using only `box` and z-axis `through_hole`.
+- [x] Target CAD runtime generates metadata and validation report; export still requires CAD-P03 export approval after validation pass.
+- [x] CAD-P09 Task 09.1 — approve target object spec: created `artifacts/gyro_kinetic_v1/target_spec.json` with deterministic approval metadata; validation `uv run pytest tests/test_target_object.py tests/test_orchestrator.py -q` → `34 passed`; reviewer verdict `pass`; commit `332400c`.
+- [x] CAD-P09 Task 09.2 — generate requirement and specification artifacts: created schema-valid `requirement.json` and `specification.json`; validation `uv run pytest tests/test_target_object.py -q` → pass; reviewer verdict `pass`; commit `332400c`.
+- [x] CAD-P09 Task 09.3 — compile target DSL and run CAD: created Phase 1-compatible `dsl.json`; target CAD run generates metadata; validation `bash ./run_cad_agent.sh phase1-golden-pipeline --output-dir /tmp/cadagent_target_phase1` → pass; reviewer verdict `pass`; commit `332400c`.
+- [x] CAD-P09 Task 09.4 — run validation and approval gate: added target-object tests proving validation pass and export approval gate; validation `uv run pytest tests/test_target_object.py tests/test_orchestrator.py -q` → `34 passed`; reviewer verdict `pass`; commit `332400c`.
+- [x] CAD-P09 Task 09.5 — produce review package and close phase: added deterministic test review-package fixture with traceability; final validation passed with `bash ./run_cad_agent.sh status` → pass, `bash ./run_cad_agent.sh validate-docs` → pass, `bash ./run_cad_agent.sh phase1-contract-test` → pass, `bash ./run_cad_agent.sh phase1-golden-pipeline --output-dir /tmp/cadagent_target_phase1` → pass, `bash ./run_cad_agent.sh phase2-pilot-run --output-dir /tmp/cadagent_target_phase2` → pass, `bash ./run_cad_agent.sh serve --dry-run` → OK, `uv run pytest -q` → `179 passed, 2 subtests passed`, `git diff --check` → pass; reviewer verdict `pass` after oracle review `PASS_WITH_NOTES`; deviation-check verdict `pass`.
 
 ## Phase 4: Production v2 data-model stubs
 
