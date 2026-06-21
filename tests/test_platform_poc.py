@@ -104,6 +104,44 @@ class PlatformPocTest(unittest.TestCase):
 
         self.assertEqual(contract_status(checks), "fail")
 
+    def test_failed_validation_report_contains_revision_feedback(self) -> None:
+        validation = validate_artifacts(
+            golden_specification(),
+            golden_dsl(),
+            {"status": "fail", "reason_code": "CAD_RUNTIME_FAILED", "artifacts": []},
+        )
+
+        self.assertFalse(validation["pass"])
+        self.assertIsInstance(validation["revision_feedback"], list)
+        self.assertTrue(validation["revision_feedback"])
+        self.assertTrue(
+            all(
+                {"reason_code", "failed_checks", "suggested_revision_action", "traceability_link"} <= set(feedback)
+                for feedback in validation["revision_feedback"]
+            )
+        )
+        self.assertTrue(any(feedback["reason_code"] == "CAD_RUNTIME_FAILED" for feedback in validation["revision_feedback"]))
+
+    def test_passing_validation_report_has_empty_revision_feedback(self) -> None:
+        with TemporaryDirectory() as temp_dir:
+            validation = validate_artifacts(golden_specification(), golden_dsl(), run_cad_runtime(golden_dsl(), Path(temp_dir) / "unused"))
+
+        self.assertTrue(validation["pass"])
+        self.assertEqual(validation["revision_feedback"], [])
+
+    def test_validation_report_schema_rejects_failed_report_without_revision_feedback(self) -> None:
+        validation = validate_artifacts(
+            golden_specification(),
+            golden_dsl(),
+            {"status": "fail", "reason_code": "CAD_RUNTIME_FAILED", "artifacts": []},
+        )
+        validation.pop("revision_feedback")
+
+        checks = validate_validation_report_schema(validation)
+
+        self.assertEqual(contract_status(checks), "fail")
+        self.assertIn("revision_feedback", checks[0].detail)
+
     def test_schema_gate_rejects_unknown_schema_name(self) -> None:
         checks = validate_against_schema(golden_requirement(), "unknown_schema")
 
@@ -283,12 +321,60 @@ class PlatformPocTest(unittest.TestCase):
             validation = validate_artifacts(spec, dsl, runtime)
             store = store_artifacts(runtime, validation, tmp_path / "store")
 
+            metadata_artifacts = [artifact for artifact in runtime["artifacts"] if artifact["format"] == "metadata"]
+            self.assertEqual(len(metadata_artifacts), 1)
+            metadata_path = Path(metadata_artifacts[0]["path"])
+            metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+            self.assertIn("cad_kernel", metadata)
+            self.assertEqual(metadata_artifacts[0]["artifact_hash"], platform_poc.stable_hash_file(metadata_path))
+
             self.assertEqual(runtime["status"], "pass")
             self.assertTrue(validation["pass"])
+            self.assertEqual(validation["revision_feedback"], [])
+            self.assertEqual(validation["artifact_provenance_check"]["status"], "pass")
             self.assertEqual(store["status"], "pass")
             self.assertEqual({record["format"] for record in store["records"]}, {"step_ap242", "stl", "metadata", "validation_report"})
             self.assertTrue(all(record["traceability_id"] == dsl["traceability_id"] for record in store["records"]))
             self.assertTrue(all(record["artifact_hash"].startswith("sha256:") for record in store["records"]))
+
+    def test_validation_report_requires_metadata_artifact(self) -> None:
+        with TemporaryDirectory() as temp_dir:
+            runtime = run_cad_runtime(golden_dsl(), Path(temp_dir) / "runtime")
+            runtime["artifacts"] = [artifact for artifact in runtime["artifacts"] if artifact["format"] != "metadata"]
+            validation = validate_artifacts(golden_specification(), golden_dsl(), runtime)
+
+        self.assertFalse(validation["pass"])
+        self.assertEqual(validation["artifact_provenance_check"]["status"], "fail")
+        self.assertTrue(any(failure["reason_code"] == "MISSING_METADATA_ARTIFACT" for failure in validation["failures"]))
+        self.assertTrue(any(feedback["reason_code"] == "MISSING_METADATA_ARTIFACT" for feedback in validation["revision_feedback"]))
+
+    def test_validation_report_requires_metadata_cad_kernel(self) -> None:
+        with TemporaryDirectory() as temp_dir:
+            runtime = run_cad_runtime(golden_dsl(), Path(temp_dir) / "runtime")
+            metadata_artifact = next(artifact for artifact in runtime["artifacts"] if artifact["format"] == "metadata")
+            metadata_path = Path(metadata_artifact["path"])
+            metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+            del metadata["cad_kernel"]
+            metadata_path.write_text(json.dumps(metadata, ensure_ascii=False, indent=2, sort_keys=True), encoding="utf-8")
+
+            validation = validate_artifacts(golden_specification(), golden_dsl(), runtime)
+
+        self.assertFalse(validation["pass"])
+        self.assertEqual(validation["artifact_provenance_check"]["status"], "fail")
+        self.assertTrue(any(failure["reason_code"] == "METADATA_MISSING_CAD_KERNEL" for failure in validation["failures"]))
+        self.assertTrue(any(feedback["reason_code"] == "METADATA_MISSING_CAD_KERNEL" for feedback in validation["revision_feedback"]))
+
+    def test_validation_report_rejects_invalid_artifact_hash(self) -> None:
+        with TemporaryDirectory() as temp_dir:
+            runtime = run_cad_runtime(golden_dsl(), Path(temp_dir) / "runtime")
+            runtime["artifacts"][0]["artifact_hash"] = "sha256:invalid"
+
+            validation = validate_artifacts(golden_specification(), golden_dsl(), runtime)
+
+        self.assertFalse(validation["pass"])
+        self.assertEqual(validation["artifact_provenance_check"]["status"], "fail")
+        self.assertTrue(any(failure["reason_code"] == "ARTIFACT_HASH_MISMATCH" for failure in validation["failures"]))
+        self.assertTrue(any(feedback["reason_code"] == "ARTIFACT_HASH_MISMATCH" for feedback in validation["revision_feedback"]))
 
     def test_human_approval_gate_records_override_decision(self) -> None:
         with TemporaryDirectory() as temp_dir:

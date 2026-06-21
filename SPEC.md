@@ -56,7 +56,7 @@
 
 ### Validation Report JSON
 
-必須キー: `traceability_id`, `specification_id`, `artifact_ids`, `dimensions_check`, `topology_check`, `unit_consistency`, `manufacturing_profile_rules`, `pass`, `failures`。
+必須キー: `traceability_id`, `specification_id`, `artifact_ids`, `dimensions_check`, `topology_check`, `unit_consistency`, `manufacturing_profile_rules`, `artifact_provenance_check`, `pass`, `failures`, `revision_feedback`。失敗時は `revision_feedback` に機械可読な修正指示を含める。
 
 ### DFM/AM build-volume envelope
 
