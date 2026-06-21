@@ -7,7 +7,7 @@ from tempfile import TemporaryDirectory
 from typing import Any
 from unittest import mock
 
-from cad_agent.api_server import ARTIFACT_INDEX_PATHS, reset_export_decisions, route_request
+from cad_agent.api_server import ARTIFACT_INDEX_PATHS, get_audit_events, reset_audit_events, reset_export_decisions, route_request
 from cad_agent.job_queue import default_job_queue, reset_job_queue
 from cad_agent.observability import render_metrics, reset_metrics
 from cad_agent.platform_poc import golden_requirement, golden_specification
@@ -24,6 +24,7 @@ class APIServerTest(unittest.TestCase):
         reset_projects()
         reset_job_queue()
         reset_export_decisions()
+        reset_audit_events()
 
     def _route(self, method: str, path: str, headers: dict[str, Any] | None = None, body: bytes | dict[str, Any] | None = None):
         return route_request(method, path, headers or {}, body)
@@ -51,6 +52,103 @@ class APIServerTest(unittest.TestCase):
         self.assertTrue(body["project_id"].startswith("proj_"))
         self.assertTrue(body["created_at"].endswith("+00:00"))
         self.assertTrue(body["updated_at"].endswith("+00:00"))
+
+    def test_create_project_rejects_unknown_data_classification(self) -> None:
+        status_code, body, content_type = self._route(
+            "POST",
+            "/v1/projects",
+            AUTH_HEADERS,
+            {"name": "unknown class fixture", "description": "local test project", "data_classification": "top-secret"},
+        )
+
+        self.assertEqual(status_code, 400)
+        self.assertEqual(content_type, "application/json; charset=utf-8")
+        self.assertEqual(body["status"], "error")
+        self.assertEqual(body["reason_code"], "UNKNOWN_DATA_CLASSIFICATION")
+
+    def test_create_project_enforces_model_route_policy(self) -> None:
+        status_code, body, content_type = self._route(
+            "POST",
+            "/v1/projects",
+            AUTH_HEADERS,
+            {"name": "public commercial fixture", "description": "local test project", "data_classification": "public", "model_route": "commercial"},
+        )
+
+        self.assertEqual(status_code, 201)
+        self.assertEqual(content_type, "application/json; charset=utf-8")
+        self.assertEqual(body["model_routing"]["allowed"], True)
+        self.assertEqual(body["model_routing"]["selected_route"], "commercial")
+
+        status_code, body, content_type = self._route(
+            "POST",
+            "/v1/projects",
+            AUTH_HEADERS,
+            {"name": "confidential commercial fixture", "description": "local test project", "data_classification": "confidential", "model_route": "commercial"},
+        )
+
+        self.assertEqual(status_code, 400)
+        self.assertEqual(content_type, "application/json; charset=utf-8")
+        self.assertEqual(body["status"], "error")
+        self.assertEqual(body["reason_code"], "ROUTE_APPROVAL_REQUIRED")
+        self.assertEqual(body["data_classification"], "confidential")
+        self.assertEqual(body["requested_route"], "commercial")
+
+        for classification in ("regulated", "export-controlled"):
+            status_code, body, content_type = self._route(
+                "POST",
+                "/v1/projects",
+                AUTH_HEADERS,
+                {"name": f"{classification} commercial fixture", "description": "local test project", "data_classification": classification, "model_route": "commercial"},
+            )
+
+            self.assertEqual(status_code, 400)
+            self.assertEqual(content_type, "application/json; charset=utf-8")
+            self.assertEqual(body["status"], "error")
+            self.assertEqual(body["reason_code"], "ROUTE_APPROVAL_REQUIRED")
+            self.assertEqual(body["data_classification"], classification)
+            self.assertEqual(body["requested_route"], "commercial")
+
+    def test_update_project_rejects_unknown_data_classification(self) -> None:
+        status_code, project, content_type = self._route(
+            "POST",
+            "/v1/projects",
+            AUTH_HEADERS,
+            {"name": "update fixture", "description": "local test project"},
+        )
+        self.assertEqual(status_code, 201)
+
+        status_code, body, content_type = self._route(
+            "PATCH",
+            f"/v1/projects/{project['project_id']}",
+            AUTH_HEADERS,
+            {"data_classification": "top-secret"},
+        )
+
+        self.assertEqual(status_code, 400)
+        self.assertEqual(content_type, "application/json; charset=utf-8")
+        self.assertEqual(body["status"], "error")
+        self.assertEqual(body["reason_code"], "UNKNOWN_DATA_CLASSIFICATION")
+
+    def test_project_route_audit_records_data_classification_and_model_routing(self) -> None:
+        status_code, body, content_type = self._route(
+            "POST",
+            "/v1/projects",
+            AUTH_HEADERS,
+            {"name": "route audit fixture", "description": "local test project", "data_classification": "confidential", "model_route": "commercial"},
+        )
+
+        self.assertEqual(status_code, 400)
+        self.assertEqual(content_type, "application/json; charset=utf-8")
+
+        events = get_audit_events()
+        self.assertEqual(len(events), 1)
+        event = events[0]
+        self.assertEqual(event["event_type"], "project_created")
+        self.assertEqual(event["data_classification"], "confidential")
+        self.assertEqual(event["model_route"], "commercial")
+        self.assertEqual(event["model_routing"]["allowed"], False)
+        self.assertEqual(event["model_routing"]["requires_approval"], True)
+        self.assertEqual(event["model_routing"]["reason_code"], "ROUTE_APPROVAL_REQUIRED")
 
     def test_create_project_unauthorized(self) -> None:
         status_code, body, content_type = self._route(
@@ -110,6 +208,54 @@ class APIServerTest(unittest.TestCase):
         self.assertEqual(status_code, 200)
         self.assertEqual(content_type, "application/json; charset=utf-8")
         self.assertEqual(body, expected)
+
+    def test_requirements_extract_enforces_model_route_policy(self) -> None:
+        status_code, body, content_type = self._route(
+            "POST",
+            "/v1/requirements/extract",
+            AUTH_HEADERS,
+            {"data_classification": "public", "model_route": "commercial"},
+        )
+
+        self.assertEqual(status_code, 200)
+        self.assertEqual(content_type, "application/json; charset=utf-8")
+        self.assertEqual(body["model_routing"]["allowed"], True)
+        self.assertEqual(body["model_routing"]["selected_route"], "commercial")
+
+        status_code, body, content_type = self._route(
+            "POST",
+            "/v1/requirements/extract",
+            AUTH_HEADERS,
+            {"data_classification": "confidential", "model_route": "commercial"},
+        )
+
+        self.assertEqual(status_code, 400)
+        self.assertEqual(content_type, "application/json; charset=utf-8")
+        self.assertEqual(body["reason_code"], "ROUTE_APPROVAL_REQUIRED")
+
+    def test_specifications_generate_enforces_model_route_policy(self) -> None:
+        status_code, body, content_type = self._route(
+            "POST",
+            "/v1/specifications/generate",
+            AUTH_HEADERS,
+            {"data_classification": "public", "model_route": "commercial"},
+        )
+
+        self.assertEqual(status_code, 200)
+        self.assertEqual(content_type, "application/json; charset=utf-8")
+        self.assertEqual(body["model_routing"]["allowed"], True)
+        self.assertEqual(body["model_routing"]["selected_route"], "commercial")
+
+        status_code, body, content_type = self._route(
+            "POST",
+            "/v1/specifications/generate",
+            AUTH_HEADERS,
+            {"data_classification": "regulated", "model_route": "commercial"},
+        )
+
+        self.assertEqual(status_code, 400)
+        self.assertEqual(content_type, "application/json; charset=utf-8")
+        self.assertEqual(body["reason_code"], "ROUTE_APPROVAL_REQUIRED")
 
     def test_allow_raw_code_rejected(self) -> None:
         status_code, body, content_type = self._route(

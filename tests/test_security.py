@@ -49,12 +49,34 @@ def test_regulated_onprem_route_requires_approval() -> None:
     assert decision.reason_code == "ROUTE_APPROVAL_REQUIRED"
 
 
+def test_export_controlled_commercial_route_is_rejected() -> None:
+    decision = route_model("export-controlled", "commercial")
+
+    assert decision.allowed is False
+    assert decision.requires_approval is True
+    assert decision.reason_code == "ROUTE_APPROVAL_REQUIRED"
+
+
 def test_export_controlled_onprem_route_requires_approval() -> None:
     decision = route_model("export-controlled", "onprem")
 
     assert decision.allowed is False
     assert decision.requires_approval is True
     assert decision.reason_code == "ROUTE_APPROVAL_REQUIRED"
+
+
+def test_unknown_data_classification_is_rejected() -> None:
+    decision = route_model("top-secret", "commercial")
+
+    assert decision.allowed is False
+    assert decision.requires_approval is False
+    assert decision.reason_code == "UNKNOWN_DATA_CLASSIFICATION"
+
+
+def test_allowed_data_classifications_match_model_gateway_rules() -> None:
+    from cad_agent.security_policy import ALLOWED_DATA_CLASSIFICATIONS, MODEL_GATEWAY_RULES
+
+    assert ALLOWED_DATA_CLASSIFICATIONS == frozenset(MODEL_GATEWAY_RULES)
 
 
 class SecurityPolicyTest(unittest.TestCase):
