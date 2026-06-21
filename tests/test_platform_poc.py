@@ -376,6 +376,42 @@ class PlatformPocTest(unittest.TestCase):
         self.assertTrue(any(failure["reason_code"] == "ARTIFACT_HASH_MISMATCH" for failure in validation["failures"]))
         self.assertTrue(any(feedback["reason_code"] == "ARTIFACT_HASH_MISMATCH" for feedback in validation["revision_feedback"]))
 
+    def test_validation_report_handles_non_dict_artifact_entry(self) -> None:
+        with TemporaryDirectory() as temp_dir:
+            runtime = run_cad_runtime(golden_dsl(), Path(temp_dir) / "runtime")
+            runtime["artifacts"].append("not-an-artifact")
+
+            validation = validate_artifacts(golden_specification(), golden_dsl(), runtime)
+
+        self.assertFalse(validation["pass"])
+        self.assertEqual(validation["artifact_provenance_check"]["status"], "fail")
+        self.assertTrue(any(failure["reason_code"] == "ARTIFACT_ENTRY_INVALID" for failure in validation["failures"]))
+        self.assertTrue(any(feedback["reason_code"] == "ARTIFACT_ENTRY_INVALID" for feedback in validation["revision_feedback"]))
+
+    def test_validation_report_reports_artifact_id_missing(self) -> None:
+        with TemporaryDirectory() as temp_dir:
+            runtime = run_cad_runtime(golden_dsl(), Path(temp_dir) / "runtime")
+            runtime["artifacts"].append({"path": str(Path(temp_dir) / "missing.step"), "artifact_hash": "sha256:invalid"})
+
+            validation = validate_artifacts(golden_specification(), golden_dsl(), runtime)
+
+        self.assertFalse(validation["pass"])
+        self.assertEqual(validation["artifact_provenance_check"]["status"], "fail")
+        self.assertTrue(any(failure["reason_code"] == "ARTIFACT_ID_MISSING" for failure in validation["failures"]))
+        self.assertTrue(any(feedback["reason_code"] == "ARTIFACT_ID_MISSING" for feedback in validation["revision_feedback"]))
+
+    def test_validation_report_reports_artifact_path_missing(self) -> None:
+        with TemporaryDirectory() as temp_dir:
+            runtime = run_cad_runtime(golden_dsl(), Path(temp_dir) / "runtime")
+            runtime["artifacts"].append({"artifact_id": f"art_{golden_dsl()['traceability_id']}_missing", "artifact_hash": "sha256:invalid"})
+
+            validation = validate_artifacts(golden_specification(), golden_dsl(), runtime)
+
+        self.assertFalse(validation["pass"])
+        self.assertEqual(validation["artifact_provenance_check"]["status"], "fail")
+        self.assertTrue(any(failure["reason_code"] == "ARTIFACT_PATH_MISSING" for failure in validation["failures"]))
+        self.assertTrue(any(feedback["reason_code"] == "ARTIFACT_PATH_MISSING" for feedback in validation["revision_feedback"]))
+
     def test_human_approval_gate_records_override_decision(self) -> None:
         with TemporaryDirectory() as temp_dir:
             tmp_path = Path(temp_dir)

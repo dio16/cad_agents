@@ -399,7 +399,7 @@ def _append_failure(failures: list[dict[str, Any]], reason_code: str, failure_lo
 
 
 def _suggested_revision_action(reason_code: str) -> str:
-    if reason_code in {"DSL_AST_VALIDATION_FAILED", "CAD_RUNTIME_FAILED", "CAD_BUILD_FAILED", "NO_ADDITIVE_FEATURE", "NON_POSITIVE_VOLUME", "UNSUPPORTED_DSL_OP", "INVALID_PARAMETER_REFERENCE"}:
+    if reason_code in {"DSL_AST_VALIDATION_FAILED", "CAD_RUNTIME_FAILED", "CAD_BUILD_FAILED", "NO_ADDITIVE_FEATURE", "UNSUPPORTED_DSL_OP", "INVALID_PARAMETER_REFERENCE"}:
         return "Revise Parametric DSL and rerun CAD runtime"
     if reason_code in {"BBOX_OUT_OF_RANGE", "VOLUME_NON_POSITIVE"}:
         return "Revise parameters or DSL dimensions and rerun CAD runtime"
@@ -419,6 +419,9 @@ def _suggested_revision_action(reason_code: str) -> str:
         "METADATA_INVALID_JSON",
         "METADATA_MISSING_CAD_KERNEL",
         "METADATA_TRACEABILITY_ID_MISMATCH",
+        "ARTIFACTS_NOT_LIST",
+        "ARTIFACT_ENTRY_INVALID",
+        "ARTIFACT_ID_MISSING",
         "ARTIFACT_PATH_MISSING",
         "ARTIFACT_HASH_MISSING",
         "ARTIFACT_HASH_MISMATCH",
@@ -445,13 +448,40 @@ def validate_artifacts(specification: dict[str, Any], dsl: dict[str, Any], runti
     failures: list[dict[str, Any]] = []
     traceability_id = dsl.get("traceability_id", runtime_result.get("traceability_id", "unknown"))
     report_traceability_id = f"tr_val_{traceability_id}"
-    artifact_ids = [str(item.get("artifact_id", "")) for item in runtime_result.get("artifacts", []) if isinstance(item, dict)]
+    artifact_entries = runtime_result.get("artifacts", [])
     provenance_ok = True
 
     def _append_provenance_failure(reason_code: str, failure_location: str, detail: str) -> None:
         nonlocal provenance_ok
         provenance_ok = False
         _append_failure(failures, reason_code, failure_location, detail)
+
+    if not isinstance(artifact_entries, list):
+        _append_provenance_failure(
+            "ARTIFACTS_NOT_LIST",
+            "artifact_provenance",
+            f"runtime_result['artifacts'] must be a list, got {type(artifact_entries).__name__}",
+        )
+        artifact_entries = []
+
+    artifact_ids: list[str] = []
+    for item in artifact_entries:
+        if not isinstance(item, dict):
+            _append_provenance_failure(
+                "ARTIFACT_ENTRY_INVALID",
+                "artifact_provenance",
+                f"artifact entry {item!r} must be a JSON object",
+            )
+            continue
+        artifact_id = item.get("artifact_id")
+        if not isinstance(artifact_id, str) or not artifact_id:
+            _append_provenance_failure(
+                "ARTIFACT_ID_MISSING",
+                "artifact_provenance",
+                f"artifact entry {item!r} must include non-empty artifact_id",
+            )
+            continue
+        artifact_ids.append(artifact_id)
 
     if runtime_result.get("status") != "pass":
         _append_failure(
@@ -478,7 +508,7 @@ def validate_artifacts(specification: dict[str, Any], dsl: dict[str, Any], runti
             f"artifact_ids={artifact_ids!r} must include DSL traceability_id={traceability_id!r}",
         )
 
-    metadata_artifact = next((item for item in runtime_result.get("artifacts", []) if isinstance(item, dict) and item.get("format") == "metadata"), None)
+    metadata_artifact = next((item for item in artifact_entries if isinstance(item, dict) and item.get("format") == "metadata"), None)
     metadata_path: Path | None = None
     metadata: dict[str, Any] = {}
     metadata_cad_kernel = ""
@@ -538,8 +568,17 @@ def validate_artifacts(specification: dict[str, Any], dsl: dict[str, Any], runti
                         else:
                             metadata_cad_kernel = cad_kernel
 
-    for artifact in runtime_result.get("artifacts", []):
-        artifact_id = artifact.get("artifact_id", "<unknown>")
+    for artifact in artifact_entries:
+        if not isinstance(artifact, dict):
+            continue
+        artifact_id = artifact.get("artifact_id")
+        if not isinstance(artifact_id, str) or not artifact_id:
+            _append_provenance_failure(
+                "ARTIFACT_ID_MISSING",
+                "artifact_provenance",
+                f"artifact entry {artifact!r} must include non-empty artifact_id",
+            )
+            continue
         path_value = artifact.get("path")
         if not isinstance(path_value, str) or not path_value:
             _append_provenance_failure(
@@ -600,7 +639,7 @@ def validate_artifacts(specification: dict[str, Any], dsl: dict[str, Any], runti
             f"volume_mm3={volume} must be positive",
         )
 
-    outputs = {item.get("format") for item in runtime_result.get("artifacts", [])}
+    outputs = {artifact.get("format") for artifact in artifact_entries if isinstance(artifact, dict) and isinstance(artifact.get("format"), str)}
     topology_ok = runtime_result.get("status") == "pass" and "stl" in outputs and "step_ap242" in outputs
     if not topology_ok:
         _append_failure(
@@ -686,7 +725,7 @@ def validate_artifacts(specification: dict[str, Any], dsl: dict[str, Any], runti
             "metadata and artifact hashes are valid" if provenance_ok else "artifact metadata or hash validation failed",
             cad_kernel=metadata_cad_kernel,
             metadata_path=str(metadata_path) if metadata_path is not None else "",
-            artifacts_checked=len(runtime_result.get("artifacts", [])),
+            artifacts_checked=len(artifact_entries),
         ),
         "pass": not failures,
         "failures": failures,
