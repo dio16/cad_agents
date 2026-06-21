@@ -7,7 +7,15 @@ from tempfile import TemporaryDirectory
 from typing import Any
 from unittest import mock
 
-from cad_agent.api_server import ARTIFACT_INDEX_PATHS, get_audit_events, reset_audit_events, reset_export_decisions, route_request
+from cad_agent.api_server import (
+    ARTIFACT_INDEX_PATHS,
+    get_audit_events,
+    reset_api_audit_path,
+    reset_audit_events,
+    reset_export_decisions,
+    route_request,
+    set_api_audit_path,
+)
 from cad_agent.job_queue import default_job_queue, reset_job_queue
 from cad_agent.observability import render_metrics, reset_metrics
 from cad_agent.platform_poc import golden_requirement, golden_specification
@@ -25,6 +33,10 @@ class APIServerTest(unittest.TestCase):
         reset_job_queue()
         reset_export_decisions()
         reset_audit_events()
+        reset_api_audit_path()
+
+    def tearDown(self) -> None:
+        reset_api_audit_path()
 
     def _route(self, method: str, path: str, headers: dict[str, Any] | None = None, body: bytes | dict[str, Any] | None = None):
         return route_request(method, path, headers or {}, body)
@@ -149,6 +161,113 @@ class APIServerTest(unittest.TestCase):
         self.assertEqual(event["model_routing"]["allowed"], False)
         self.assertEqual(event["model_routing"]["requires_approval"], True)
         self.assertEqual(event["model_routing"]["reason_code"], "ROUTE_APPROVAL_REQUIRED")
+
+    def test_route_audit_writes_jsonl_when_path_is_configured(self) -> None:
+        with TemporaryDirectory() as temp_dir:
+            audit_path = Path(temp_dir) / "route_audit.jsonl"
+            set_api_audit_path(audit_path)
+
+            status_code, body, content_type = self._route(
+                "POST",
+                "/v1/projects",
+                AUTH_HEADERS,
+                {"name": "jsonl audit fixture", "description": "local test project", "data_classification": "public"},
+            )
+
+            self.assertEqual(status_code, 201)
+            self.assertEqual(content_type, "application/json; charset=utf-8")
+            events = get_audit_events()
+            self.assertEqual(len(events), 1)
+            self.assertEqual(events[0]["event_type"], "project_created")
+            self.assertEqual(events[0]["model_route"], "commercial")
+            self.assertEqual(events[0]["model_routing"]["requested_route"], None)
+            self.assertEqual(events[0]["model_routing"]["selected_route"], "commercial")
+
+            lines = audit_path.read_text(encoding="utf-8").splitlines()
+            self.assertEqual(len(lines), 1)
+            record = json.loads(lines[0])
+            self.assertEqual(record["event_type"], "project_created")
+            self.assertEqual(record["data_classification"], "public")
+            self.assertEqual(record["model_route"], "commercial")
+            self.assertEqual(record["model_routing"]["selected_route"], "commercial")
+
+    def test_update_project_enforces_model_route_policy(self) -> None:
+        status_code, project, content_type = self._route(
+            "POST",
+            "/v1/projects",
+            AUTH_HEADERS,
+            {"name": "update route fixture", "description": "local test project"},
+        )
+        self.assertEqual(status_code, 201)
+
+        status_code, body, content_type = self._route(
+            "PATCH",
+            f"/v1/projects/{project['project_id']}",
+            AUTH_HEADERS,
+            {"data_classification": "public", "model_route": "commercial"},
+        )
+        self.assertEqual(status_code, 200)
+        self.assertEqual(content_type, "application/json; charset=utf-8")
+        self.assertEqual(body["model_routing"]["allowed"], True)
+        self.assertEqual(body["model_routing"]["selected_route"], "commercial")
+
+        status_code, body, content_type = self._route(
+            "PATCH",
+            f"/v1/projects/{project['project_id']}",
+            AUTH_HEADERS,
+            {"data_classification": "confidential", "model_route": "commercial"},
+        )
+        self.assertEqual(status_code, 400)
+        self.assertEqual(content_type, "application/json; charset=utf-8")
+        self.assertEqual(body["status"], "error")
+        self.assertEqual(body["reason_code"], "ROUTE_APPROVAL_REQUIRED")
+        self.assertEqual(body["data_classification"], "confidential")
+        self.assertEqual(body["requested_route"], "commercial")
+
+    def test_workflow_run_enforces_model_route_policy(self) -> None:
+        status_code, body, content_type = self._route(
+            "POST",
+            "/v1/workflows/run",
+            AUTH_HEADERS,
+            {"data_classification": "confidential", "model_route": "commercial", "traceability_id": "tr-route-policy"},
+        )
+
+        self.assertEqual(status_code, 400)
+        self.assertEqual(content_type, "application/json; charset=utf-8")
+        self.assertEqual(body["status"], "error")
+        self.assertEqual(body["reason_code"], "ROUTE_APPROVAL_REQUIRED")
+        self.assertEqual(body["data_classification"], "confidential")
+        self.assertEqual(default_job_queue().list(), [])
+
+        events = get_audit_events()
+        self.assertEqual(len(events), 1)
+        self.assertEqual(events[0]["event_type"], "workflow_run")
+        self.assertEqual(events[0]["data_classification"], "confidential")
+        self.assertEqual(events[0]["model_route"], "commercial")
+        self.assertEqual(events[0]["model_routing"]["allowed"], False)
+
+    def test_create_cad_job_enforces_model_route_policy(self) -> None:
+        status_code, body, content_type = self._route(
+            "POST",
+            "/v1/cad/jobs",
+            AUTH_HEADERS,
+            {"job_type": "cad_golden", "data_classification": "confidential", "model_route": "commercial"},
+        )
+
+        self.assertEqual(status_code, 400)
+        self.assertEqual(content_type, "application/json; charset=utf-8")
+        self.assertEqual(body["status"], "error")
+        self.assertEqual(body["reason_code"], "ROUTE_APPROVAL_REQUIRED")
+        self.assertEqual(body["data_classification"], "confidential")
+        self.assertEqual(body["requested_route"], "commercial")
+        self.assertEqual(default_job_queue().list(), [])
+
+        events = get_audit_events()
+        self.assertEqual(len(events), 1)
+        self.assertEqual(events[0]["event_type"], "cad_job_created")
+        self.assertEqual(events[0]["data_classification"], "confidential")
+        self.assertEqual(events[0]["model_route"], "commercial")
+        self.assertEqual(events[0]["model_routing"]["allowed"], False)
 
     def test_create_project_unauthorized(self) -> None:
         status_code, body, content_type = self._route(

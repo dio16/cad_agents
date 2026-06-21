@@ -32,6 +32,7 @@ SUPPORTED_JOB_TYPES = {"cad_golden", "phase2_pilot", "validation"}
 DEFAULT_JOB_QUEUE = JobQueue()
 _EXPORT_APPROVALS: dict[str, bool] = {}
 _AUDIT_EVENTS: list[dict[str, Any]] = []
+_AUDIT_PATH: Path | None = None
 _PARSE_ERROR = object()
 
 
@@ -47,6 +48,16 @@ def reset_export_decisions() -> None:
 
 def reset_audit_events() -> None:
     _AUDIT_EVENTS.clear()
+
+
+def set_api_audit_path(path: str | Path | None) -> None:
+    global _AUDIT_PATH
+    _AUDIT_PATH = Path(path) if path is not None else None
+
+
+def reset_api_audit_path() -> None:
+    global _AUDIT_PATH
+    _AUDIT_PATH = None
 
 
 def get_audit_events() -> list[dict[str, Any]]:
@@ -194,18 +205,21 @@ def _validate_route_policy_payload(
 
 
 def _record_route_audit_event(event_type: str, data_classification: str, decision: Any, traceability_id: str | None = None) -> None:
-    _AUDIT_EVENTS.append(
-        {
-            "event_id": f"evt_{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S%f')}",
-            "recorded_at": _utc_now(),
-            "event_type": event_type,
-            "data_classification": data_classification,
-            "model_route": decision.requested_route,
-            "model_routing": decision.as_dict(),
-            "traceability_id": traceability_id,
-            "retention_days": 365,
-        }
-    )
+    event = {
+        "event_id": f"evt_{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S%f')}",
+        "recorded_at": _utc_now(),
+        "event_type": event_type,
+        "data_classification": data_classification,
+        "model_route": decision.requested_route if decision.requested_route is not None else decision.selected_route,
+        "model_routing": decision.as_dict(),
+        "traceability_id": traceability_id,
+        "retention_days": 365,
+    }
+    _AUDIT_EVENTS.append(dict(event))
+    if _AUDIT_PATH is not None:
+        _AUDIT_PATH.parent.mkdir(parents=True, exist_ok=True)
+        with _AUDIT_PATH.open("a", encoding="utf-8") as handle:
+            handle.write(json.dumps(event, ensure_ascii=False, sort_keys=True) + "\n")
 
 
 def _local_workflow_dsl(payload: dict[str, Any]) -> dict[str, Any]:
@@ -534,7 +548,11 @@ def _route_request(
                 assert decision is not None
                 _record_route_audit_event("workflow_run", decision.data_classification, decision)
                 return error_response
-            return _run_local_workflow(payload)
+            status_code, response_body, content_type = _run_local_workflow(payload)
+            if decision is not None and isinstance(response_body, dict):
+                response_body["model_routing"] = decision.as_dict()
+                _record_route_audit_event("workflow_run", decision.data_classification, decision, response_body.get("traceability_id"))
+            return status_code, response_body, content_type
 
         if path_only == "/v1/cad/jobs":
             decision, error_response = _validate_route_policy_payload(payload)
@@ -542,7 +560,11 @@ def _route_request(
                 assert decision is not None
                 _record_route_audit_event("cad_job_created", decision.data_classification, decision)
                 return error_response
-            return _create_cad_job(payload)
+            status_code, response_body, content_type = _create_cad_job(payload)
+            if decision is not None and isinstance(response_body, dict):
+                response_body["model_routing"] = decision.as_dict()
+                _record_route_audit_event("cad_job_created", decision.data_classification, decision, response_body.get("traceability_id"))
+            return status_code, response_body, content_type
 
         if path_only == "/v1/revisions":
             return _revision_request_response(payload)
