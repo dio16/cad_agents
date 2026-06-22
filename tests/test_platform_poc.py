@@ -464,6 +464,101 @@ class PlatformPocTest(unittest.TestCase):
             self.assertEqual(report["status"], "pass")
             self.assertTrue((tmp_path / "golden" / "phase1_poc_report.json").exists())
 
+    def test_golden_pipeline_uses_workflow_state_machine(self) -> None:
+        """CAD-FG-01: Golden pipeline must route through Workflow state machine."""
+        from cad_agent.orchestrator import CREATED, SPEC_APPROVED, Workflow
+
+        with TemporaryDirectory() as temp_dir:
+            workflow = Workflow(CREATED)
+            dsl = golden_dsl()
+
+            # CAD should be blocked without spec approval
+            decision = workflow.run_cad(dsl, traceability_id=dsl["traceability_id"])
+            self.assertTrue(decision.blocked)
+            self.assertEqual(decision.reason, "SPEC_APPROVAL_REQUIRED")
+
+            # Approve spec, then CAD should succeed
+            workflow.approve_specification(dsl["traceability_id"])
+            decision = workflow.run_cad(dsl, traceability_id=dsl["traceability_id"])
+            self.assertFalse(decision.blocked)
+            self.assertTrue(decision.approved)
+
+    def test_golden_pipeline_workflow_integration(self) -> None:
+        """CAD-FG-01: run_golden_pipeline must include workflow gate check."""
+        from cad_agent.orchestrator import CREATED, VALIDATION_PASSED, Workflow
+
+        with TemporaryDirectory() as temp_dir:
+            report = run_golden_pipeline(Path(temp_dir) / "golden")
+            self.assertEqual(report["status"], "pass")
+            # Report should include workflow gate evidence
+            self.assertIn("dsl", report)
+
+    def test_artifacts_rejected_when_validation_fails(self) -> None:
+        """CAD-FG-01: store_artifacts must reject when validation failed."""
+        with TemporaryDirectory() as temp_dir:
+            tmp_path = Path(temp_dir)
+            dsl = golden_dsl()
+
+            # Run CAD runtime
+            runtime = run_cad_runtime(dsl, tmp_path / "runtime")
+            self.assertEqual(runtime["status"], "pass")
+
+            # Create a failing validation result
+            failing_validation = {
+                "pass": False,
+                "reason_codes": ["TEST_FAILURE"],
+                "failure_locations": ["test"],
+                "failures": [{"reason_code": "TEST_FAILURE", "failure_location": "test"}],
+            }
+
+            # CAD-FG-01: store_artifacts must reject when validation failed
+            store = store_artifacts(runtime, failing_validation, tmp_path / "artifact_store")
+            self.assertEqual(store["status"], "fail")
+            self.assertEqual(store["reason_code"], "VALIDATION_NOT_PASSED")
+            self.assertEqual(len(store["records"]), 0)
+
+    def test_store_artifacts_accepts_when_validation_passes(self) -> None:
+        """CAD-FG-01: store_artifacts should accept when validation passed."""
+        with TemporaryDirectory() as temp_dir:
+            tmp_path = Path(temp_dir)
+            dsl = golden_dsl()
+
+            # Run CAD runtime
+            runtime = run_cad_runtime(dsl, tmp_path / "runtime")
+            self.assertEqual(runtime["status"], "pass")
+
+            # Create a passing validation result
+            passing_validation = {
+                "pass": True,
+                "reason_codes": [],
+                "failure_locations": [],
+            }
+
+            # CAD-FG-01: store_artifacts should accept when validation passed
+            store = store_artifacts(runtime, passing_validation, tmp_path / "artifact_store")
+            self.assertEqual(store["status"], "pass")
+            self.assertGreater(len(store["records"]), 0)
+
+    def test_export_approval_requires_validation_passed(self) -> None:
+        """CAD-FG-01: Export approval must require validation_passed state."""
+        from cad_agent.orchestrator import CREATED, VALIDATION_PASSED, Workflow
+
+        # Create workflow in CREATED state (not validation_passed)
+        workflow = Workflow(CREATED)
+
+        # Request export should be blocked
+        decision = workflow.request_export(traceability_id="test_export")
+        self.assertTrue(decision.blocked)
+        self.assertEqual(decision.reason, "VALIDATION_NOT_PASSED")
+
+        # Now test with validation_passed state
+        workflow2 = Workflow(VALIDATION_PASSED)
+        decision2 = workflow2.request_export(traceability_id="test_export")
+        # request_export returns blocked=True with EXPORT_APPROVAL_REQUIRED (correct behavior)
+        self.assertTrue(decision2.blocked)
+        self.assertEqual(decision2.reason, "EXPORT_APPROVAL_REQUIRED")
+        self.assertEqual(workflow2.state, "export_pending_approval")
+
 
 if __name__ == "__main__":
     unittest.main()

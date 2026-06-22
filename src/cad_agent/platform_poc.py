@@ -736,6 +736,20 @@ def validate_artifacts(specification: dict[str, Any], dsl: dict[str, Any], runti
 
 
 def store_artifacts(runtime_result: dict[str, Any], validation_report: dict[str, Any], store_dir: Path = DEFAULT_OUTPUT_DIR / "artifact_store") -> dict[str, Any]:
+    """Store artifacts only if validation passed.
+
+    CAD-FG-01: Enforce validation pass before artifact persistence.
+    """
+    validation_passed = bool(validation_report.get("pass", validation_report.get("passed", False)))
+    if not validation_passed:
+        return {
+            "status": "fail",
+            "reason_code": "VALIDATION_NOT_PASSED",
+            "store_dir": str(store_dir),
+            "records": [],
+            "index_path": str(store_dir / "artifact_index.jsonl"),
+        }
+
     store_dir.mkdir(parents=True, exist_ok=True)
     records = []
     for artifact in runtime_result.get("artifacts", []):

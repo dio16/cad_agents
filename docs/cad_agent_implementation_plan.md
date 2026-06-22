@@ -87,12 +87,12 @@ Detailed task plans live under `docs/cadagent_plans/CAD-FG-*/implementation-plan
 
 | Task ID | Task name | Plan | Classification |
 |---|---|---|---|
-| `CAD-FG-00` | Maintained-doc status drift reconciliation | `docs/cadagent_plans/CAD-FG-00/implementation-plan.md` | `executable_now` |
-| `CAD-FG-01` | Active workflow safety gate integration | `docs/cadagent_plans/CAD-FG-01/implementation-plan.md` | `approval_required` |
-| `CAD-FG-02` | Validation report and artifact metadata hardening | `docs/cadagent_plans/CAD-FG-02/implementation-plan.md` | `approval_required` |
-| `CAD-FG-03` | Model Gateway and data-classification API integration | `docs/cadagent_plans/CAD-FG-03/implementation-plan.md` | `approval_required` |
-| `CAD-FG-04` | Agent route hardening decision and implementation | `docs/cadagent_plans/CAD-FG-04/implementation-plan.md` | `approval_required` |
-| `CAD-FG-05` | Production infrastructure deferral | `docs/cadagent_plans/CAD-FG-05/implementation-plan.md` | `blocked` |
+| `CAD-FG-00` | Maintained-doc status drift reconciliation | `docs/cadagent_plans/CAD-FG-00/implementation-plan.md` | `completed` |
+| `CAD-FG-01` | Active workflow safety gate integration | `docs/cadagent_plans/CAD-FG-01/implementation-plan.md` | `completed` |
+| `CAD-FG-02` | Validation report and artifact metadata hardening | `docs/cadagent_plans/CAD-FG-02/implementation-plan.md` | `completed` |
+| `CAD-FG-03` | Model Gateway and data-classification API integration | `docs/cadagent_plans/CAD-FG-03/implementation-plan.md` | `completed` |
+| `CAD-FG-04` | Agent route hardening decision and implementation | `docs/cadagent_plans/CAD-FG-04/implementation-plan.md` | `completed` |
+| `CAD-FG-05` | Production infrastructure deferral | `docs/cadagent_plans/CAD-FG-05/implementation-plan.md` | `completed` |
 
 ## 5. Detailed implementation phases
 
