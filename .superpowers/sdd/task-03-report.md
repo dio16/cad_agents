@@ -14,8 +14,11 @@ DONE
 ### Tests run
 
 - `uv run pytest tests/test_api_server.py tests/test_security.py tests/test_phase2_pilot.py -q`: pass (`56 passed, 2 subtests passed`).
+- `uv run pytest tests/test_security.py tests/test_api_server.py -q`: pass (`48 passed`).
+- `uv run pytest -q`: pass (`201 passed, 2 subtests passed`).
 - `bash ./run_cad_agent.sh serve --dry-run`: pass (`API server dry-run OK: configured for 127.0.0.1:8000`).
 - `git diff --check`: pass.
+- Forbidden scope check `git status --short -- schemas/v1 .github k8s docker-compose.yml Dockerfile`: pass (no changes).
 
 ### Concerns
 
@@ -38,8 +41,8 @@ Pass. Fix Round 1 stayed within the CAD-FG-03 reviewer findings: no CAD-FG-02 fi
 
 ## Tests run
 
-- `uv run pytest tests/test_security.py tests/test_api_server.py -q`: pass (`44 passed`).
-- `uv run pytest -q`: pass (`197 passed, 2 subtests passed`).
+- `uv run pytest tests/test_security.py tests/test_api_server.py -q`: pass (`48 passed`).
+- `uv run pytest -q`: pass (`201 passed, 2 subtests passed`).
 - `bash ./run_cad_agent.sh serve --dry-run`: pass (`API server dry-run OK: configured for 127.0.0.1:8000`).
 - `git diff --check`: pass.
 - Forbidden scope check `git status --short -- schemas/v1 .github k8s docker-compose.yml Dockerfile`: pass (no changes).
