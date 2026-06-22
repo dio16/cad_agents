@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import Any
 
 from cad_agent.platform_poc import run_golden_pipeline, stable_hash_file, write_json
+from cad_agent.security_policy import ROUTE_APPROVAL_REQUIRED, route_model as route_model_decision
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -36,14 +37,6 @@ DFM_AM_PROFILE_CATALOG: dict[str, dict[str, Any]] = {
         "supported_materials": ["6061-T6", "POM"],
         "rule_ids": ["dfm.wall.min", "dfm.tool_access.3axis", "dfm.stock.max"],
     },
-}
-
-MODEL_GATEWAY_RULES: dict[str, dict[str, Any]] = {
-    "public": {"default_route": "commercial", "allowed_routes": ["commercial", "hybrid", "onprem"]},
-    "internal": {"default_route": "hybrid", "allowed_routes": ["hybrid", "onprem"]},
-    "confidential": {"default_route": "onprem", "allowed_routes": ["onprem"]},
-    "regulated": {"default_route": "onprem", "allowed_routes": ["onprem"], "human_approval_required": True},
-    "export-controlled": {"default_route": "onprem", "allowed_routes": ["onprem"], "human_approval_required": True},
 }
 
 
@@ -231,22 +224,26 @@ def compare_phase_reports(left: dict[str, Any], right: dict[str, Any]) -> dict[s
 
 
 def route_model(data_classification: str, requested_route: str | None = None) -> dict[str, Any]:
-    if data_classification not in MODEL_GATEWAY_RULES:
-        raise ValueError(f"unknown data classification: {data_classification}")
-    rule = MODEL_GATEWAY_RULES[data_classification]
-    selected = requested_route or str(rule["default_route"])
-    route_allowed = selected in rule["allowed_routes"]
-    approval_required = bool(rule.get("human_approval_required", False))
+    decision = route_model_decision(data_classification, requested_route)
+    allowed_routes = decision.allowed_routes
+    route_requested = decision.requested_route if decision.requested_route is not None else decision.selected_route
+    route_status = "pass" if route_requested in allowed_routes else "fail"
+    approval_required = bool(decision.requires_approval)
+    approval_satisfied = not approval_required or bool(decision.approval_granted)
+    status = "pass" if decision.allowed else "pending_approval" if route_status == "pass" and approval_required else "fail"
     return {
-        "status": "pass" if route_allowed and not approval_required else "fail" if not route_allowed else "pending_approval",
-        "route_status": "pass" if route_allowed else "fail",
+        "status": status,
+        "route_status": route_status,
         "approval_status": "pass" if not approval_required else "pending",
-        "approval_satisfied": not approval_required,
-        "data_classification": data_classification,
-        "requested_route": requested_route,
-        "selected_route": selected if route_allowed else str(rule["default_route"]),
-        "allowed_routes": rule["allowed_routes"],
+        "approval_satisfied": approval_satisfied,
+        "data_classification": decision.data_classification,
+        "requested_route": decision.requested_route,
+        "selected_route": decision.selected_route,
+        "allowed_routes": list(allowed_routes),
         "human_approval_required": approval_required,
+        "reason_code": decision.reason_code,
+        "allowed": decision.allowed,
+        "requires_approval": approval_required,
     }
 
 
@@ -261,6 +258,8 @@ def append_audit_event(audit_path: Path, event: dict[str, Any]) -> dict[str, Any
         "recorded_at": utc_now(),
         "retention_days": int(event.get("retention_days", 365)),
         "data_classification": event.get("data_classification", "internal"),
+        "model_route": event.get("model_route"),
+        "model_routing": event.get("model_routing"),
         **event,
     }
     with audit_path.open("a", encoding="utf-8") as handle:
@@ -292,6 +291,7 @@ def run_phase2_pilot(output_dir: Path = DEFAULT_PHASE2_OUTPUT_DIR) -> dict[str, 
             "event_type": "phase2_pilot_run",
             "data_classification": "internal",
             "model_route": gateway_public["selected_route"],
+            "model_routing": gateway_public,
             "retention_days": 365,
         },
     )

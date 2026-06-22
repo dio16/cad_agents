@@ -1,7 +1,8 @@
 # Orchestrator Workflow
 
 ## Status
-Phase 0 contract only. No implementation.
+
+Local/in-process workflow safety gate is implemented and validated as a bounded PoC/Pilot skeleton. Production API service, native worker pool, production auth, production artifact storage, and durable audit deployment remain future scope.
 
 ## Purpose
 Define the workflow state machine, revision loop, escalation rules, human approval events, and audit obligations for the first CADAGENT implementation pass.

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import asdict
+from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
 from time import perf_counter
@@ -12,8 +13,8 @@ from cad_agent.job_queue import JobQueue
 from cad_agent.observability import increment_api_request, record_job_enqueued, record_job_result, render_metrics
 from cad_agent.orchestrator import CREATED, EXPORT_PENDING_APPROVAL, SPEC_APPROVED, VALIDATION_PASSED, Workflow, WorkflowDecision
 from cad_agent.platform_poc import golden_requirement, golden_specification
-from cad_agent.project_service import create_project
-from cad_agent.security_policy import check_api_key, is_allowed_raw_code
+from cad_agent.project_service import create_project, get_project, update_project
+from cad_agent.security_policy import ROUTE_APPROVAL_REQUIRED, check_api_key, get_data_classification, is_allowed_raw_code, route_model
 
 ROOT = Path(__file__).resolve().parents[2]
 ARTIFACT_INDEX_PATHS = (
@@ -30,6 +31,8 @@ NOT_IMPLEMENTED_BODY = {
 SUPPORTED_JOB_TYPES = {"cad_golden", "phase2_pilot", "validation"}
 DEFAULT_JOB_QUEUE = JobQueue()
 _EXPORT_APPROVALS: dict[str, bool] = {}
+_AUDIT_EVENTS: list[dict[str, Any]] = []
+_AUDIT_PATH: Path | None = None
 _PARSE_ERROR = object()
 
 
@@ -41,6 +44,24 @@ def _utc_now() -> str:
 
 def reset_export_decisions() -> None:
     _EXPORT_APPROVALS.clear()
+
+
+def reset_audit_events() -> None:
+    _AUDIT_EVENTS.clear()
+
+
+def set_api_audit_path(path: str | Path | None) -> None:
+    global _AUDIT_PATH
+    _AUDIT_PATH = Path(path) if path is not None else None
+
+
+def reset_api_audit_path() -> None:
+    global _AUDIT_PATH
+    _AUDIT_PATH = None
+
+
+def get_audit_events() -> list[dict[str, Any]]:
+    return [dict(event) for event in _AUDIT_EVENTS]
 
 
 def _json_bytes(data: Any) -> bytes:
@@ -141,6 +162,64 @@ def _stub_specification() -> dict[str, Any]:
 
 def _error_body(message: str) -> dict[str, str]:
     return {"status": "error", "message": message}
+
+
+def _route_policy_error(decision: Any) -> tuple[int, dict[str, Any], str]:
+    return (
+        400,
+        {
+            "status": "error",
+            "message": "model route policy rejected",
+            "reason_code": decision.reason_code or ROUTE_APPROVAL_REQUIRED,
+            "data_classification": decision.data_classification,
+            "requested_route": decision.requested_route,
+            "selected_route": decision.selected_route,
+            "allowed_routes": list(decision.allowed_routes),
+            "requires_approval": decision.requires_approval,
+        },
+        JSON_CONTENT_TYPE,
+    )
+
+
+def _validate_route_policy_payload(
+    payload: dict[str, Any],
+    existing_project: dict[str, Any] | None = None,
+) -> tuple[Any | None, tuple[int, dict[str, Any], str] | None]:
+    requested_route = payload.get("model_route")
+    if requested_route is not None and not isinstance(requested_route, str):
+        return None, (400, _error_body("model_route must be a string"), JSON_CONTENT_TYPE)
+
+    classification = payload.get("data_classification")
+    if classification is None:
+        classification = get_data_classification(existing_project)
+    if not isinstance(classification, str):
+        return None, (400, _error_body("data_classification must be a string"), JSON_CONTENT_TYPE)
+
+    if "model_route" not in payload and "data_classification" not in payload:
+        return None, None
+
+    decision = route_model(classification, requested_route)
+    if not decision.allowed:
+        return decision, _route_policy_error(decision)
+    return decision, None
+
+
+def _record_route_audit_event(event_type: str, data_classification: str, decision: Any, traceability_id: str | None = None) -> None:
+    event = {
+        "event_id": f"evt_{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S%f')}",
+        "recorded_at": _utc_now(),
+        "event_type": event_type,
+        "data_classification": data_classification,
+        "model_route": decision.requested_route if decision.requested_route is not None else decision.selected_route,
+        "model_routing": decision.as_dict(),
+        "traceability_id": traceability_id,
+        "retention_days": 365,
+    }
+    _AUDIT_EVENTS.append(dict(event))
+    if _AUDIT_PATH is not None:
+        _AUDIT_PATH.parent.mkdir(parents=True, exist_ok=True)
+        with _AUDIT_PATH.open("a", encoding="utf-8") as handle:
+            handle.write(json.dumps(event, ensure_ascii=False, sort_keys=True) + "\n")
 
 
 def _local_workflow_dsl(payload: dict[str, Any]) -> dict[str, Any]:
@@ -371,6 +450,41 @@ def _route_request(
             return 404, _error_body("job not found"), JSON_CONTENT_TYPE
         return 200, _job_response(job), JSON_CONTENT_TYPE
 
+    if normalized_method in {"PATCH", "PUT"}:
+        payload = _parse_body(body)
+        if payload is _PARSE_ERROR:
+            return 400, _error_body("invalid JSON body"), JSON_CONTENT_TYPE
+        assert isinstance(payload, dict)
+
+        if not is_allowed_raw_code(payload):
+            return 403, _error_body("allow_raw_code=true is not allowed"), JSON_CONTENT_TYPE
+
+        if path_only.startswith("/v1/projects/"):
+            project_id = path_only.removeprefix("/v1/projects/")
+            if not project_id:
+                return 404, _error_body("project_id is required"), JSON_CONTENT_TYPE
+            existing_project = get_project(project_id)
+            if existing_project is None:
+                return 404, _error_body("project not found"), JSON_CONTENT_TYPE
+            decision, error_response = _validate_route_policy_payload(payload, existing_project=existing_project)
+            if error_response is not None:
+                assert decision is not None
+                _record_route_audit_event("project_updated", decision.data_classification, decision)
+                return error_response
+            try:
+                updated_project = update_project(project_id, **payload)
+            except ValueError:
+                decision, error_response = _validate_route_policy_payload(payload, existing_project=existing_project)
+                if error_response is not None:
+                    assert decision is not None
+                    _record_route_audit_event("project_updated", decision.data_classification, decision)
+                    return error_response
+                return 400, _error_body("data_classification must be an allowed value"), JSON_CONTENT_TYPE
+            if decision is not None:
+                updated_project["model_routing"] = decision.as_dict()
+                _record_route_audit_event("project_updated", decision.data_classification, decision)
+            return 200, updated_project, JSON_CONTENT_TYPE
+
     if normalized_method == "POST":
         payload = _parse_body(body)
         if payload is _PARSE_ERROR:
@@ -385,23 +499,72 @@ def _route_request(
             description = payload.get("description")
             if not isinstance(name, str) or not isinstance(description, str):
                 return 400, _error_body("name and description are required"), JSON_CONTENT_TYPE
-            classification = payload.get("data_classification", "internal")
-            if not isinstance(classification, str):
-                return 400, _error_body("data_classification must be a string"), JSON_CONTENT_TYPE
-            project = create_project(name=name, description=description, data_classification=classification)
+            decision, error_response = _validate_route_policy_payload(payload)
+            if error_response is not None:
+                assert decision is not None
+                _record_route_audit_event("project_created", decision.data_classification, decision)
+                return error_response
+            try:
+                project = create_project(name=name, description=description, data_classification=payload.get("data_classification", "internal"))
+            except ValueError:
+                decision, error_response = _validate_route_policy_payload(payload)
+                if error_response is not None:
+                    assert decision is not None
+                    _record_route_audit_event("project_created", decision.data_classification, decision)
+                    return error_response
+                return 400, _error_body("data_classification must be an allowed value"), JSON_CONTENT_TYPE
+            if decision is not None:
+                project["model_routing"] = decision.as_dict()
+                _record_route_audit_event("project_created", decision.data_classification, decision)
             return 201, project, JSON_CONTENT_TYPE
 
         if path_only == "/v1/requirements/extract":
-            return 200, _stub_requirement(), JSON_CONTENT_TYPE
+            decision, error_response = _validate_route_policy_payload(payload)
+            if error_response is not None:
+                assert decision is not None
+                _record_route_audit_event("requirement_extracted", decision.data_classification, decision)
+                return error_response
+            response = _stub_requirement()
+            if decision is not None:
+                response["model_routing"] = decision.as_dict()
+                _record_route_audit_event("requirement_extracted", decision.data_classification, decision)
+            return 200, response, JSON_CONTENT_TYPE
 
         if path_only == "/v1/specifications/generate":
-            return 200, _stub_specification(), JSON_CONTENT_TYPE
+            decision, error_response = _validate_route_policy_payload(payload)
+            if error_response is not None:
+                assert decision is not None
+                _record_route_audit_event("specification_generated", decision.data_classification, decision)
+                return error_response
+            response = _stub_specification()
+            if decision is not None:
+                response["model_routing"] = decision.as_dict()
+                _record_route_audit_event("specification_generated", decision.data_classification, decision)
+            return 200, response, JSON_CONTENT_TYPE
 
         if path_only == "/v1/workflows/run":
-            return _run_local_workflow(payload)
+            decision, error_response = _validate_route_policy_payload(payload)
+            if error_response is not None:
+                assert decision is not None
+                _record_route_audit_event("workflow_run", decision.data_classification, decision)
+                return error_response
+            status_code, response_body, content_type = _run_local_workflow(payload)
+            if decision is not None and isinstance(response_body, dict):
+                response_body["model_routing"] = decision.as_dict()
+                _record_route_audit_event("workflow_run", decision.data_classification, decision, response_body.get("traceability_id"))
+            return status_code, response_body, content_type
 
         if path_only == "/v1/cad/jobs":
-            return _create_cad_job(payload)
+            decision, error_response = _validate_route_policy_payload(payload)
+            if error_response is not None:
+                assert decision is not None
+                _record_route_audit_event("cad_job_created", decision.data_classification, decision)
+                return error_response
+            status_code, response_body, content_type = _create_cad_job(payload)
+            if decision is not None and isinstance(response_body, dict):
+                response_body["model_routing"] = decision.as_dict()
+                _record_route_audit_event("cad_job_created", decision.data_classification, decision, response_body.get("traceability_id"))
+            return status_code, response_body, content_type
 
         if path_only == "/v1/revisions":
             return _revision_request_response(payload)
@@ -442,6 +605,12 @@ class CADAgentAPIHandler(BaseHTTPRequestHandler):
             self._send_text(status_code, str(response_body), content_type)
         else:
             self._send_json(status_code, response_body)
+
+    def do_PATCH(self) -> None:
+        self.do_POST()
+
+    def do_PUT(self) -> None:
+        self.do_POST()
 
     def log_message(self, format: str, *args: Any) -> None:
         return None

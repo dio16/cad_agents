@@ -130,6 +130,11 @@ class Phase2PilotTest(unittest.TestCase):
             self.assertTrue(Path(report["mesh_artifact"]["path"]).exists())
             self.assertTrue(Path(report["review_ui_artifact"]["path"]).exists())
             self.assertTrue(Path(report["audit_log"]["audit_path"]).exists())
+            audit_record = report["audit_log"]["record"]
+            self.assertEqual(audit_record["data_classification"], "internal")
+            self.assertEqual(audit_record["model_route"], "commercial")
+            self.assertEqual(audit_record["model_routing"]["allowed"], True)
+            self.assertEqual(audit_record["model_routing"]["selected_route"], "commercial")
 
 
 if __name__ == "__main__":

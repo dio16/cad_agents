@@ -3,13 +3,19 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass
 from typing import Any
 
-from cad_agent.phase2_pilot import MODEL_GATEWAY_RULES
-
 CAD_AGENT_API_KEY = "local-dev-key"
 ROUTE_APPROVAL_REQUIRED = "ROUTE_APPROVAL_REQUIRED"
 ROUTE_NOT_ALLOWED = "ROUTE_NOT_ALLOWED"
 UNKNOWN_DATA_CLASSIFICATION = "UNKNOWN_DATA_CLASSIFICATION"
 SENSITIVE_CLASSIFICATIONS = frozenset({"confidential", "regulated", "export-controlled"})
+MODEL_GATEWAY_RULES: dict[str, dict[str, Any]] = {
+    "public": {"default_route": "commercial", "allowed_routes": ["commercial", "hybrid", "onprem"]},
+    "internal": {"default_route": "hybrid", "allowed_routes": ["hybrid", "onprem"]},
+    "confidential": {"default_route": "onprem", "allowed_routes": ["onprem"]},
+    "regulated": {"default_route": "onprem", "allowed_routes": ["onprem"], "human_approval_required": True},
+    "export-controlled": {"default_route": "onprem", "allowed_routes": ["onprem"], "human_approval_required": True},
+}
+ALLOWED_DATA_CLASSIFICATIONS = frozenset(MODEL_GATEWAY_RULES)
 
 
 @dataclass(frozen=True, slots=True)
@@ -123,6 +129,8 @@ def is_allowed_raw_code(payload: dict[str, Any]) -> bool:
 __all__ = [
     "CAD_AGENT_API_KEY",
     "ModelRouteDecision",
+    "ALLOWED_DATA_CLASSIFICATIONS",
+    "MODEL_GATEWAY_RULES",
     "ROUTE_APPROVAL_REQUIRED",
     "ROUTE_NOT_ALLOWED",
     "UNKNOWN_DATA_CLASSIFICATION",

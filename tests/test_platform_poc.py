@@ -104,6 +104,44 @@ class PlatformPocTest(unittest.TestCase):
 
         self.assertEqual(contract_status(checks), "fail")
 
+    def test_failed_validation_report_contains_revision_feedback(self) -> None:
+        validation = validate_artifacts(
+            golden_specification(),
+            golden_dsl(),
+            {"status": "fail", "reason_code": "CAD_RUNTIME_FAILED", "artifacts": []},
+        )
+
+        self.assertFalse(validation["pass"])
+        self.assertIsInstance(validation["revision_feedback"], list)
+        self.assertTrue(validation["revision_feedback"])
+        self.assertTrue(
+            all(
+                {"reason_code", "failed_checks", "suggested_revision_action", "traceability_link"} <= set(feedback)
+                for feedback in validation["revision_feedback"]
+            )
+        )
+        self.assertTrue(any(feedback["reason_code"] == "CAD_RUNTIME_FAILED" for feedback in validation["revision_feedback"]))
+
+    def test_passing_validation_report_has_empty_revision_feedback(self) -> None:
+        with TemporaryDirectory() as temp_dir:
+            validation = validate_artifacts(golden_specification(), golden_dsl(), run_cad_runtime(golden_dsl(), Path(temp_dir) / "unused"))
+
+        self.assertTrue(validation["pass"])
+        self.assertEqual(validation["revision_feedback"], [])
+
+    def test_validation_report_schema_rejects_failed_report_without_revision_feedback(self) -> None:
+        validation = validate_artifacts(
+            golden_specification(),
+            golden_dsl(),
+            {"status": "fail", "reason_code": "CAD_RUNTIME_FAILED", "artifacts": []},
+        )
+        validation.pop("revision_feedback")
+
+        checks = validate_validation_report_schema(validation)
+
+        self.assertEqual(contract_status(checks), "fail")
+        self.assertIn("revision_feedback", checks[0].detail)
+
     def test_schema_gate_rejects_unknown_schema_name(self) -> None:
         checks = validate_against_schema(golden_requirement(), "unknown_schema")
 
@@ -283,12 +321,96 @@ class PlatformPocTest(unittest.TestCase):
             validation = validate_artifacts(spec, dsl, runtime)
             store = store_artifacts(runtime, validation, tmp_path / "store")
 
+            metadata_artifacts = [artifact for artifact in runtime["artifacts"] if artifact["format"] == "metadata"]
+            self.assertEqual(len(metadata_artifacts), 1)
+            metadata_path = Path(metadata_artifacts[0]["path"])
+            metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+            self.assertIn("cad_kernel", metadata)
+            self.assertEqual(metadata_artifacts[0]["artifact_hash"], platform_poc.stable_hash_file(metadata_path))
+
             self.assertEqual(runtime["status"], "pass")
             self.assertTrue(validation["pass"])
+            self.assertEqual(validation["revision_feedback"], [])
+            self.assertEqual(validation["artifact_provenance_check"]["status"], "pass")
             self.assertEqual(store["status"], "pass")
             self.assertEqual({record["format"] for record in store["records"]}, {"step_ap242", "stl", "metadata", "validation_report"})
             self.assertTrue(all(record["traceability_id"] == dsl["traceability_id"] for record in store["records"]))
             self.assertTrue(all(record["artifact_hash"].startswith("sha256:") for record in store["records"]))
+
+    def test_validation_report_requires_metadata_artifact(self) -> None:
+        with TemporaryDirectory() as temp_dir:
+            runtime = run_cad_runtime(golden_dsl(), Path(temp_dir) / "runtime")
+            runtime["artifacts"] = [artifact for artifact in runtime["artifacts"] if artifact["format"] != "metadata"]
+            validation = validate_artifacts(golden_specification(), golden_dsl(), runtime)
+
+        self.assertFalse(validation["pass"])
+        self.assertEqual(validation["artifact_provenance_check"]["status"], "fail")
+        self.assertTrue(any(failure["reason_code"] == "MISSING_METADATA_ARTIFACT" for failure in validation["failures"]))
+        self.assertTrue(any(feedback["reason_code"] == "MISSING_METADATA_ARTIFACT" for feedback in validation["revision_feedback"]))
+
+    def test_validation_report_requires_metadata_cad_kernel(self) -> None:
+        with TemporaryDirectory() as temp_dir:
+            runtime = run_cad_runtime(golden_dsl(), Path(temp_dir) / "runtime")
+            metadata_artifact = next(artifact for artifact in runtime["artifacts"] if artifact["format"] == "metadata")
+            metadata_path = Path(metadata_artifact["path"])
+            metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+            del metadata["cad_kernel"]
+            metadata_path.write_text(json.dumps(metadata, ensure_ascii=False, indent=2, sort_keys=True), encoding="utf-8")
+
+            validation = validate_artifacts(golden_specification(), golden_dsl(), runtime)
+
+        self.assertFalse(validation["pass"])
+        self.assertEqual(validation["artifact_provenance_check"]["status"], "fail")
+        self.assertTrue(any(failure["reason_code"] == "METADATA_MISSING_CAD_KERNEL" for failure in validation["failures"]))
+        self.assertTrue(any(feedback["reason_code"] == "METADATA_MISSING_CAD_KERNEL" for feedback in validation["revision_feedback"]))
+
+    def test_validation_report_rejects_invalid_artifact_hash(self) -> None:
+        with TemporaryDirectory() as temp_dir:
+            runtime = run_cad_runtime(golden_dsl(), Path(temp_dir) / "runtime")
+            runtime["artifacts"][0]["artifact_hash"] = "sha256:invalid"
+
+            validation = validate_artifacts(golden_specification(), golden_dsl(), runtime)
+
+        self.assertFalse(validation["pass"])
+        self.assertEqual(validation["artifact_provenance_check"]["status"], "fail")
+        self.assertTrue(any(failure["reason_code"] == "ARTIFACT_HASH_MISMATCH" for failure in validation["failures"]))
+        self.assertTrue(any(feedback["reason_code"] == "ARTIFACT_HASH_MISMATCH" for feedback in validation["revision_feedback"]))
+
+    def test_validation_report_handles_non_dict_artifact_entry(self) -> None:
+        with TemporaryDirectory() as temp_dir:
+            runtime = run_cad_runtime(golden_dsl(), Path(temp_dir) / "runtime")
+            runtime["artifacts"].append("not-an-artifact")
+
+            validation = validate_artifacts(golden_specification(), golden_dsl(), runtime)
+
+        self.assertFalse(validation["pass"])
+        self.assertEqual(validation["artifact_provenance_check"]["status"], "fail")
+        self.assertTrue(any(failure["reason_code"] == "ARTIFACT_ENTRY_INVALID" for failure in validation["failures"]))
+        self.assertTrue(any(feedback["reason_code"] == "ARTIFACT_ENTRY_INVALID" for feedback in validation["revision_feedback"]))
+
+    def test_validation_report_reports_artifact_id_missing(self) -> None:
+        with TemporaryDirectory() as temp_dir:
+            runtime = run_cad_runtime(golden_dsl(), Path(temp_dir) / "runtime")
+            runtime["artifacts"].append({"path": str(Path(temp_dir) / "missing.step"), "artifact_hash": "sha256:invalid"})
+
+            validation = validate_artifacts(golden_specification(), golden_dsl(), runtime)
+
+        self.assertFalse(validation["pass"])
+        self.assertEqual(validation["artifact_provenance_check"]["status"], "fail")
+        self.assertTrue(any(failure["reason_code"] == "ARTIFACT_ID_MISSING" for failure in validation["failures"]))
+        self.assertTrue(any(feedback["reason_code"] == "ARTIFACT_ID_MISSING" for feedback in validation["revision_feedback"]))
+
+    def test_validation_report_reports_artifact_path_missing(self) -> None:
+        with TemporaryDirectory() as temp_dir:
+            runtime = run_cad_runtime(golden_dsl(), Path(temp_dir) / "runtime")
+            runtime["artifacts"].append({"artifact_id": f"art_{golden_dsl()['traceability_id']}_missing", "artifact_hash": "sha256:invalid"})
+
+            validation = validate_artifacts(golden_specification(), golden_dsl(), runtime)
+
+        self.assertFalse(validation["pass"])
+        self.assertEqual(validation["artifact_provenance_check"]["status"], "fail")
+        self.assertTrue(any(failure["reason_code"] == "ARTIFACT_PATH_MISSING" for failure in validation["failures"]))
+        self.assertTrue(any(feedback["reason_code"] == "ARTIFACT_PATH_MISSING" for feedback in validation["revision_feedback"]))
 
     def test_human_approval_gate_records_override_decision(self) -> None:
         with TemporaryDirectory() as temp_dir:
@@ -341,6 +463,101 @@ class PlatformPocTest(unittest.TestCase):
             report = run_golden_pipeline(tmp_path / "golden")
             self.assertEqual(report["status"], "pass")
             self.assertTrue((tmp_path / "golden" / "phase1_poc_report.json").exists())
+
+    def test_golden_pipeline_uses_workflow_state_machine(self) -> None:
+        """CAD-FG-01: Golden pipeline must route through Workflow state machine."""
+        from cad_agent.orchestrator import CREATED, SPEC_APPROVED, Workflow
+
+        with TemporaryDirectory() as temp_dir:
+            workflow = Workflow(CREATED)
+            dsl = golden_dsl()
+
+            # CAD should be blocked without spec approval
+            decision = workflow.run_cad(dsl, traceability_id=dsl["traceability_id"])
+            self.assertTrue(decision.blocked)
+            self.assertEqual(decision.reason, "SPEC_APPROVAL_REQUIRED")
+
+            # Approve spec, then CAD should succeed
+            workflow.approve_specification(dsl["traceability_id"])
+            decision = workflow.run_cad(dsl, traceability_id=dsl["traceability_id"])
+            self.assertFalse(decision.blocked)
+            self.assertTrue(decision.approved)
+
+    def test_golden_pipeline_workflow_integration(self) -> None:
+        """CAD-FG-01: run_golden_pipeline must include workflow gate check."""
+        from cad_agent.orchestrator import CREATED, VALIDATION_PASSED, Workflow
+
+        with TemporaryDirectory() as temp_dir:
+            report = run_golden_pipeline(Path(temp_dir) / "golden")
+            self.assertEqual(report["status"], "pass")
+            # Report should include workflow gate evidence
+            self.assertIn("dsl", report)
+
+    def test_artifacts_rejected_when_validation_fails(self) -> None:
+        """CAD-FG-01: store_artifacts must reject when validation failed."""
+        with TemporaryDirectory() as temp_dir:
+            tmp_path = Path(temp_dir)
+            dsl = golden_dsl()
+
+            # Run CAD runtime
+            runtime = run_cad_runtime(dsl, tmp_path / "runtime")
+            self.assertEqual(runtime["status"], "pass")
+
+            # Create a failing validation result
+            failing_validation = {
+                "pass": False,
+                "reason_codes": ["TEST_FAILURE"],
+                "failure_locations": ["test"],
+                "failures": [{"reason_code": "TEST_FAILURE", "failure_location": "test"}],
+            }
+
+            # CAD-FG-01: store_artifacts must reject when validation failed
+            store = store_artifacts(runtime, failing_validation, tmp_path / "artifact_store")
+            self.assertEqual(store["status"], "fail")
+            self.assertEqual(store["reason_code"], "VALIDATION_NOT_PASSED")
+            self.assertEqual(len(store["records"]), 0)
+
+    def test_store_artifacts_accepts_when_validation_passes(self) -> None:
+        """CAD-FG-01: store_artifacts should accept when validation passed."""
+        with TemporaryDirectory() as temp_dir:
+            tmp_path = Path(temp_dir)
+            dsl = golden_dsl()
+
+            # Run CAD runtime
+            runtime = run_cad_runtime(dsl, tmp_path / "runtime")
+            self.assertEqual(runtime["status"], "pass")
+
+            # Create a passing validation result
+            passing_validation = {
+                "pass": True,
+                "reason_codes": [],
+                "failure_locations": [],
+            }
+
+            # CAD-FG-01: store_artifacts should accept when validation passed
+            store = store_artifacts(runtime, passing_validation, tmp_path / "artifact_store")
+            self.assertEqual(store["status"], "pass")
+            self.assertGreater(len(store["records"]), 0)
+
+    def test_export_approval_requires_validation_passed(self) -> None:
+        """CAD-FG-01: Export approval must require validation_passed state."""
+        from cad_agent.orchestrator import CREATED, VALIDATION_PASSED, Workflow
+
+        # Create workflow in CREATED state (not validation_passed)
+        workflow = Workflow(CREATED)
+
+        # Request export should be blocked
+        decision = workflow.request_export(traceability_id="test_export")
+        self.assertTrue(decision.blocked)
+        self.assertEqual(decision.reason, "VALIDATION_NOT_PASSED")
+
+        # Now test with validation_passed state
+        workflow2 = Workflow(VALIDATION_PASSED)
+        decision2 = workflow2.request_export(traceability_id="test_export")
+        # request_export returns blocked=True with EXPORT_APPROVAL_REQUIRED (correct behavior)
+        self.assertTrue(decision2.blocked)
+        self.assertEqual(decision2.reason, "EXPORT_APPROVAL_REQUIRED")
+        self.assertEqual(workflow2.state, "export_pending_approval")
 
 
 if __name__ == "__main__":

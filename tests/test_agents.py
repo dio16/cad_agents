@@ -116,3 +116,82 @@ def test_mechanism_planner_returns_deterministic_plan() -> None:
     assert result.metadata["deterministic"] is True
     assert result.json["traceability_id"] == "tr_mech_agent_fixture"
     assert result.json["operations"] == [{"op": "shaft", "diameter_mm": 10, "length_mm": 50}]
+
+
+# CAD-FG-04: Agent route hardening tests
+
+
+def test_agent_routes_are_local_mock_fixtures() -> None:
+    """CAD-FG-04: All agent routes must be local/mock fixtures, not real LLM endpoints."""
+    result = extract_requirement("Design a test object.")
+    assert result.metadata["deterministic"] is True
+    assert result.metadata["model"] == "local_fixture"
+
+    result2 = compose_specification()
+    assert result2.metadata["deterministic"] is True
+    assert result2.metadata["model"] == "local_fixture"
+
+    result3 = plan_mechanism()
+    assert result3.metadata["deterministic"] is True
+    assert result3.metadata["model"] == "local_fixture"
+
+
+def test_schema_retry_provides_structured_failure_evidence() -> None:
+    """CAD-FG-04: Schema retry must provide structured failure reason codes."""
+    result = retry_schema(["not-json", "{also-invalid}"], max_retries=2)
+
+    assert result.valid is False
+    assert result.reason_code == "SCHEMA_RETRY_EXHAUSTED"
+    assert "errors" in result.metadata
+    assert len(result.metadata["errors"]) == 2
+    assert result.metadata["attempt_count"] == 2
+    assert result.metadata["max_retries"] == 2
+
+
+def test_agent_route_audit_includes_all_required_fields(tmp_path) -> None:
+    """CAD-FG-04: Agent route audit must include route, model routing, data classification, retry/schema status, traceability, retention, timestamps."""
+    audit_path = tmp_path / "audit.jsonl"
+
+    result = extract_requirement(
+        "Design a test object.",
+        audit_path=audit_path,
+        data_classification="internal",
+        model_route="commercial",
+    )
+
+    event = json.loads(audit_path.read_text().splitlines()[0])
+
+    # Required fields per CAD-FG-04
+    assert "event_id" in event
+    assert "recorded_at" in event
+    assert "event_type" in event
+    assert "route" in event
+    assert "data_classification" in event
+    assert "model_route" in event
+    assert "model_routing" in event
+    assert "retry_count" in event
+    assert "schema_status" in event
+    assert "traceability_id" in event
+    assert "retention_days" in event
+
+
+def test_model_routing_enforces_classification_policy() -> None:
+    """CAD-FG-04: Model routing must enforce data classification policy."""
+    # Confidential data should not use commercial route without approval
+    result = extract_requirement(
+        "Design a confidential object.",
+        data_classification="confidential",
+        model_route="commercial",
+    )
+
+    assert result.metadata["model_routing"]["allowed"] is False
+    assert result.metadata["model_routing"]["requires_approval"] is True
+
+    # Public data should be allowed on commercial route
+    result2 = extract_requirement(
+        "Design a public object.",
+        data_classification="public",
+        model_route="commercial",
+    )
+
+    assert result2.metadata["model_routing"]["allowed"] is True
