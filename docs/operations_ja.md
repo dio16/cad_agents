@@ -59,6 +59,25 @@ flowchart TD
 - CI は GitHub Actions smoke workflow。
 - SBOM/provenance は決定論的 local stub。
 - Production 実運用: Kubernetes、KServe/vLLM、Argo CD、Cosign/Trivy、sandbox worker pool は将来拡張。
+## API Key Configuration
+
+デフォルトの API key は `local-dev-key` です。環境変数 `CAD_AGENT_API_KEY` で上書きできます:
+
+```bash
+export CAD_AGENT_API_KEY="your-custom-key"
+```
+
+開発環境以外では、必ず API key を変更してください。
+
+## CORS Configuration
+
+API server はデフォルトで CORS を有効にしています:
+- `Access-Control-Allow-Origin: *`
+- `Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS`
+- `Access-Control-Allow-Headers: Content-Type, X-API-Key`
+
+本番環境では `Access-Control-Allow-Origin` を適切なドメインに制限してください。
+
 
 ## SLO候補
 
