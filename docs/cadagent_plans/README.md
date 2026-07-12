@@ -40,3 +40,12 @@ Record the deviation check result in `TASKS.md` with validation commands and the
 | `CAD-FG-03` | `CAD-FG-03/implementation-plan.md` |
 | `CAD-FG-04` | `CAD-FG-04/implementation-plan.md` |
 | `CAD-FG-05` | `CAD-FG-05/implementation-plan.md` |
+| `CAD-REVIEW-01` | `CAD-REVIEW-01/implementation-plan.md` |
+| `CAD-FG-06` | `CAD-FG-06/implementation-plan.md` |
+| `CAD-FG-07` | `CAD-FG-07/implementation-plan.md` |
+| `CAD-FG-08` | `CAD-FG-08/implementation-plan.md` |
+| `CAD-FG-09` | `CAD-FG-09/implementation-plan.md` |
+| `CAD-FG-10` | `CAD-FG-10/implementation-plan.md` |
+| `CAD-FG-11` | `CAD-FG-11/implementation-plan.md` |
+| `CAD-FG-12` | `CAD-FG-12/implementation-plan.md` |
+| `CAD-FG-13` | `CAD-FG-13/implementation-plan.md` |

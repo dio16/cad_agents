@@ -212,3 +212,22 @@ Detailed plan paths are controlled by this file. Current entries point to `docs/
 - [x] Decoupled BOM aggregation stub with validation errors, weight stub, and cost stub.
 - [x] Axis-aligned bbox assembly interference/separation/adjacency stub; contact, motion, and FEA remain future work.
 - Deferred: real material database, parts library, PLM/ERP/MES adapters, tenant isolation, regulatory workflow, and production-grade assembly/FEA validation.
+
+## Code Review改善 batch (CAD-REVIEW-01)
+
+Detailed plan paths are controlled by this file. Current entries point to `docs/cadagent_plans/<TASK_ID>/implementation-plan.md`; if the reference location changes, update `TASKS.md` first.
+
+Master plan: `docs/cadagent_plans/CAD-REVIEW-01/implementation-plan.md`
+
+**Execution workflow:** `superpowers:subagent-driven-development` skill に従い、各タスクに fresh subagent を dispatch。`superpowers:test-driven-development` で TDD cycle を適用。Phase A (FG-06,07,08,09) と Phase B (FG-10,11) は並列 dispatch 可能。
+
+**Workspace policy:** ワークツリーは使用しない。全作業はメインブランチで直接実行する。
+
+- [ ] `CAD-FG-06` — Orchestrator state machine 整合: Fix TRANSITIONS/method contradiction (CREATED→VALIDATION_FAILED), deduplicate audit timestamp. Plan: `docs/cadagent_plans/CAD-FG-06/implementation-plan.md`. Classification: `executable_now`. Dependencies: None. Model: standard.
+- [ ] `CAD-FG-07` — validate_artifacts() 分解: Split 290-line function into _validate_provenance, _validate_dimensions, _validate_topology, _validate_units, _validate_manufacturing. Plan: `docs/cadagent_plans/CAD-FG-07/implementation-plan.md`. Classification: `executable_now`. Dependencies: None. Model: standard.
+- [ ] `CAD-FG-08` — DSL compiler cleanup: Remove dead parameter_name from _resolve_dimension(). Plan: `docs/cadagent_plans/CAD-FG-08/implementation-plan.md`. Classification: `executable_now`. Dependencies: None. Model: cheap.
+- [ ] `CAD-FG-09` — Security hardening: API key from environment variable, CORS support. Plan: `docs/cadagent_plans/CAD-FG-09/implementation-plan.md`. Classification: `executable_now`. Dependencies: None. Model: standard.
+- [ ] `CAD-FG-10` — Surrogate quality: Fix STL normals (zero vectors), document surrogate limitations. Plan: `docs/cadagent_plans/CAD-FG-10/implementation-plan.md`. Classification: `executable_now`. Dependencies: None. Model: cheap.
+- [ ] `CAD-FG-11` — Error handling expansion: Add BOOLEAN_FAILED, KERNEL_TIMEOUT error codes, broaden CAD build exception handling. Plan: `docs/cadagent_plans/CAD-FG-11/implementation-plan.md`. Classification: `executable_now`. Dependencies: None. Model: cheap.
+- [ ] `CAD-FG-12` — Test quality improvement: Fix private _transition() API usage, add combined assembly+motion test. Plan: `docs/cadagent_plans/CAD-FG-12/implementation-plan.md`. Classification: `executable_now`. Dependencies: CAD-FG-06, CAD-FG-07. Model: standard.
+- [ ] `CAD-FG-13` — Documentation alignment: Update architecture diagram, document API key/CORS config. Plan: `docs/cadagent_plans/CAD-FG-13/implementation-plan.md`. Classification: `executable_now`. Dependencies: CAD-FG-06 through CAD-FG-12. Model: cheap.
