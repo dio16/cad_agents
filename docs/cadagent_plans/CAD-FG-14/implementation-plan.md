@@ -10,7 +10,7 @@
 ## Deliverables
 1. `src/cad_agent/viewer.py` — `write_assembly_viewer()`: 自己完結型 HTML（外部 CDN / ネットワーク非依存）の Canvas2D 3D ボックスレンダラ。
 2. `src/cad_agent/platform_poc.py` — `run_assembly_pipeline()`: ギアごとに surrogate CAD を実行し AABB で組立、標準で HTML ビューアーを出力。
-3. `examples/gear_train_v1/run_test.py` — パイプライン利用に書き換え、`gear_train_viewer.html` を出力。
+3. `examples/gear_train_v1/run_test.py` — パイプライン利用に書き換え、`assembly_viewer.html` を artifacts（成果物と同じ場所）へ出力。
 4. ドキュメント: `ORCHESTRATOR_WORKFLOW.md` (7-stage flow), `cad_agent_detailed_design.md` (§16), `operations_ja.md` (HTML ビューアー節)。
 5. `tests/test_viewer.py` — viewer + pipeline のテスト。
 

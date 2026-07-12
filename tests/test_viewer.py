@@ -63,17 +63,18 @@ class ViewerTest(TestCase):
             )
 
         with TemporaryDirectory() as tmp:
-            viewer_path = Path(tmp) / "gear_train_viewer.html"
+            out_dir = Path(tmp) / "artifacts"
             result = run_assembly_pipeline(
                 gears,
                 specification=specification,
                 requirement=requirement,
-                output_dir=Path(tmp) / "artifacts",
-                viewer_path=viewer_path,
+                output_dir=out_dir,
             )
             self.assertEqual(result["status"], "pass")
             self.assertEqual(result["assembly"]["status"], "pass")
             self.assertEqual(result["ratio_check"]["computed_total_ratio"], 10.0)
             self.assertIsNotNone(result["viewer"])
-            self.assertTrue(viewer_path.exists())
+            expected = out_dir / "assembly_viewer.html"
+            self.assertTrue(expected.exists())
+            self.assertEqual(result["viewer"]["path"], str(expected))
             self.assertIn("art_", result["viewer"]["artifact_id"])

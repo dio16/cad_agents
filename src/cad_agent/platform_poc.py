@@ -973,8 +973,8 @@ def run_assembly_pipeline(
     output_dir: Path = DEFAULT_OUTPUT_DIR,
     viewer_path: Path | None = None,
 ) -> dict[str, Any]:
-    """Run the surrogate CAD runtime per gear, assemble via AABB checks, and (optionally)
-    emit the standard HTML viewer for human review.
+    """Run the surrogate CAD runtime per gear, assemble via AABB checks, and emit the
+    standard HTML viewer for human review into the artifact directory (overridable via ``viewer_path``).
 
     Each entry in ``gears`` must be a dict with keys:
         part_id, traceability_id, dsl, cx, cy, r, zmin, zmax
@@ -1016,16 +1016,16 @@ def run_assembly_pipeline(
     if {"gear1_teeth", "pinion1_teeth", "gear2_teeth", "pinion2_teeth"} <= set(pt):
         computed = (pt["gear1_teeth"] / pt["pinion1_teeth"]) * (pt["gear2_teeth"] / pt["pinion2_teeth"])
 
-    viewer = None
-    if viewer_path is not None:
-        viewer = write_assembly_viewer(
-            Path(viewer_path),
-            parts=parts,
-            report=report,
-            spec=specification,
-            requirement=requirement,
-            ratio=computed if computed is not None else ratio,
-        )
+    if viewer_path is None:
+        viewer_path = output_dir / "assembly_viewer.html"
+    viewer = write_assembly_viewer(
+        Path(viewer_path),
+        parts=parts,
+        report=report,
+        spec=specification,
+        requirement=requirement,
+        ratio=computed if computed is not None else ratio,
+    )
 
     return {
         "status": (

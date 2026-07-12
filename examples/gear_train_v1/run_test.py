@@ -6,7 +6,7 @@ Design: 1:10 parallel-axis compound gear train.
   Total = 2 * 5 = 10:1, all three shaft axes parallel (z).
 
 This exercises the deterministic surrogate CAD path and emits the STANDARD HTML
-assembly viewer (``gear_train_viewer.html``) so a human can visually confirm the
+assembly viewer (``assembly_viewer.html`` in the artifact directory) so a human can visually confirm the
 assembled result. The Mechanism DSL allowlist is box / cylinder / through_hole + shaft;
 `gear` is NOT an approved operation, so each gear blank is modeled as a `cylinder`.
 True gear CAD requires a new approved DSL operation.
@@ -57,7 +57,6 @@ def main() -> int:
         specification=specification,
         requirement=requirement,
         output_dir=ARTIFACT_DIR,
-        viewer_path=EXAMPLE_DIR / "gear_train_viewer.html",
     )
 
     rc = pipeline["ratio_check"]
