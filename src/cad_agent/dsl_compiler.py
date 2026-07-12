@@ -129,10 +129,10 @@ def _compile_shaft(
     radius_name = f"radius{suffix}"
     length_name = f"length{suffix}"
 
-    diameter = _resolve_dimension(operation, "diameter_mm", plan_parameters, generated_parameters, radius_name, allow_direct_number=True)
+    diameter = _resolve_dimension(operation, "diameter_mm", plan_parameters, generated_parameters, allow_direct_number=True)
     if not diameter.valid:
         return diameter
-    length = _resolve_dimension(operation, "length_mm", plan_parameters, generated_parameters, length_name, allow_direct_number=True)
+    length = _resolve_dimension(operation, "length_mm", plan_parameters, generated_parameters, allow_direct_number=True)
     if not length.valid:
         return length
 
@@ -190,7 +190,7 @@ def _validate_phase1_feature(feature: Any, parameters: dict[str, Any], index: in
 
     dimension_keys = sorted(required & {"length_mm", "width_mm", "height_mm", "radius_mm", "diameter_mm", "depth_mm"})
     for key in dimension_keys:
-        check = _resolve_dimension(feature, key, parameters, {}, f"feature_{index}_{key}")
+        check = _resolve_dimension(feature, key, parameters, {})
         if not check.valid:
             return check
 
@@ -202,10 +202,8 @@ def _resolve_dimension(
     key: str,
     plan_parameters: dict[str, Any],
     generated_parameters: dict[str, float],
-    parameter_name: str,
     allow_direct_number: bool = False,
 ) -> CompileResult:
-    del parameter_name
     value = operation.get(key)
     if isinstance(value, bool) or value is None:
         return CompileResult(valid=False, reason_code=INVALID_PARAMETER_REFERENCE)
