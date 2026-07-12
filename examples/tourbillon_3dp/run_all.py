@@ -20,7 +20,7 @@ import cadquery as cq
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
-from cad_agent.assembly_checks import AssemblyPart, BBox, GearSpec, check_gear_mesh, check_tourbillon_constraints
+from cad_agent.assembly_checks import AssemblyPart, BBox, GearSpec, check_gear_mesh, check_tourbillon_constraints, check_tourbillon_mechanics
 from cad_agent.platform_poc import (
     run_assembly_pipeline,
     run_cad_runtime,
@@ -60,13 +60,14 @@ PARTS: list[tuple[str, dict, dict, float, float, float]] = [
      {"m": 3.0, "z": 20, "t": 8.0, "b": 10.0},
      0.0, 0.0, 12.0),                                             # hz=8  → [12, 28]
 
-    # ── intermediate wheel (meshes with fixed_wheel, m=3, z=12, pitch-r=18) ──
-    # centre distance = m·(z1+z2)/2 = 3·(20+12)/2 = 48 mm → placed at x=48
-    ("intermediate_wheel",
+    # ── escape pinion (meshes with fixed_wheel, m=3, z=6, cd=39 mm) ──
+    # The pinion is at the same z-level as fixed_wheel so the teeth interlock.
+    # In a real tourbillon this pinion is carried by the cage and drives its rotation.
+    ("escape_pinion",
      {"op": "gear", "module_mm": "$m", "teeth": "$z", "thickness_mm": "$t",
       "bore_diameter_mm": "$b", "axis": "z", "positions_mm": [[0.0, 0.0]]},
-     {"m": 3.0, "z": 12, "t": 6.0, "b": 6.0},
-     48.0, 0.0, 12.0),                                            # hz=6  → [12, 24]
+     {"m": 3.0, "z": 6, "t": 6.0, "b": 5.0},
+     39.0, 0.0, 12.0),                                            # hz=6  → [12, 24]
 
     # ── rotating cage (coaxial with fixed_wheel) ──
     ("cage",
@@ -269,30 +270,36 @@ def main() -> int:
             print(f"    [{i.code}] {i.message}")
 
 
-    # ── Phase 5: gear mesh validation ────────────────────────────
-    # The fixed fourth wheel (z=20) and intermediate wheel (z=12) share
-    # module m=3.  Required centre distance = 3·(20+12)/2 = 48 mm.
-    # The intermediate wheel is placed at cx=48 → actual cd = 48 mm.
+    # ── Phase 5: tourbillon mechanical validation ─────────────────
+    # Composite check: shaft clearance + cage containment + gear mesh.
     gear_specs = {
         "fixed_wheel": GearSpec(module_mm=3.0, teeth=20),
-        "intermediate_wheel": GearSpec(module_mm=3.0, teeth=12),
+        "escape_pinion": GearSpec(module_mm=3.0, teeth=6),
     }
-    meshing_pairs = [("fixed_wheel", "intermediate_wheel")]
-    gear_report = check_gear_mesh(asm_parts, gear_specs, meshing_pairs)
-    print(f"\n  Gear mesh: {gear_report.status}")
-    if gear_report.status != "pass":
-        for i in gear_report.issues:
+    meshing_pairs = [("fixed_wheel", "escape_pinion")]
+    # Central pivot shaft = fixed_wheel bore = 10 mm
+    mechanics = check_tourbillon_mechanics(
+        asm_parts,
+        fixed_wheel_id="fixed_wheel",
+        cage_id="cage",
+        cage_bore_mm=14.0,
+        shaft_diameter_mm=10.0,
+        meshing_pairs=meshing_pairs,
+        gear_specs=gear_specs,
+    )
+    print(f"\n  Tourbillon mechanics: {mechanics.status}")
+    if mechanics.status != "pass":
+        for i in mechanics.issues:
             print(f"    [{i.code}] {i.message}")
     else:
-        cd = 3.0 * (20 + 12) / 2.0
-        print(f"    fixed_wheel (z=20) ↔ intermediate_wheel (z=12): centre distance = {cd:.1f} mm ✓")
+        cd = 3.0 * (20 + 6) / 2.0
+        print(f"    shaft clearance: cage bore ⌀14 mm > central pivot ⌀10 mm ✓")
+        print(f"    gear mesh: fixed_wheel (z=20) ↔ escape_pinion (z=6): cd={cd:.1f} mm ✓")
+        print(f"    cage containment: escape_wheel & balance_wheel within cage radius ✓")
 
     # ── Mechanical honesty summary ────────────────────────────────
-    mechanical = (
-        tourbillon.status == "pass"
-        and gear_report.status == "pass"
-    )
-    print(f"\n  Mechanical validation (gear mesh + tourbillon containment): {'pass' if mechanical else 'FAIL'}")
+    mechanical = mechanics.status == "pass"
+    print(f"\n  Mechanical validation (shaft clearance + gear mesh + cage containment): {'pass' if mechanical else 'FAIL'}")
     # ── Summary ──────────────────────────────────────────────────
     print(f"\n{'='*60}")
     print(f"  All artifacts in: {ARTIFACT_DIR}")

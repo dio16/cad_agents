@@ -345,6 +345,118 @@ def check_gear_mesh(
     )
 
 
+
+
+SHAFT_BORE_VIOLATION = "SHAFT_BORE_VIOLATION"
+SHAFT_BORE_MISALIGNED = "SHAFT_BORE_MISALIGNED"
+
+
+def check_shaft_clearance(
+    bearing_part: AssemblyPart,
+    shaft_part: AssemblyPart,
+    bore_diameter_mm: float,
+    shaft_diameter_mm: float,
+    clearance_min_mm: float = 0.2,
+    coaxial_tolerance_mm: float = 1.0,
+) -> AssemblyCheckReport:
+    """Validate that a shaft fits through a bearing bore with adequate clearance.
+
+    Checks that *bearing_part* and *shaft_part* are coaxial (their bounding-box
+    centres lie within *coaxial_tolerance_mm* in the x‑y plane) and that the
+    bore diameter exceeds the shaft diameter by at least *clearance_min_mm*.
+    """
+    issues = list(validate_parts([bearing_part, shaft_part]))
+    if not issues:
+        bx = (bearing_part.bbox.min_x + bearing_part.bbox.max_x) / 2.0
+        by = (bearing_part.bbox.min_y + bearing_part.bbox.max_y) / 2.0
+        sx = (shaft_part.bbox.min_x + shaft_part.bbox.max_x) / 2.0
+        sy = (shaft_part.bbox.min_y + shaft_part.bbox.max_y) / 2.0
+        dx = abs(bx - sx)
+        dy = abs(by - sy)
+        if dx > coaxial_tolerance_mm or dy > coaxial_tolerance_mm:
+            issues.append(
+                AssemblyValidationIssue(SHAFT_BORE_MISALIGNED,
+                    f"bearing centre ({bx:.1f},{by:.1f}) vs shaft centre ({sx:.1f},{sy:.1f}) "
+                    f"— offset ({dx:.3f},{dy:.3f}) > {coaxial_tolerance_mm} mm"))
+        if bore_diameter_mm < shaft_diameter_mm + clearance_min_mm:
+            issues.append(
+                AssemblyValidationIssue(SHAFT_BORE_VIOLATION,
+                    f"bore ⌀{bore_diameter_mm:.2f} mm < shaft ⌀{shaft_diameter_mm:.2f} mm "
+                    f"+ clearance {clearance_min_mm:.2f} mm"))
+    status = "fail" if issues else "pass"
+    return AssemblyCheckReport(
+        status=status,
+        analysis_scope="shaft_clearance",
+        interferences=(),
+        separations=(),
+        adjacent_within_tolerance=(),
+        issues=tuple(issues),
+    )
+
+
+TOURBILLON_MECHANICS_VIOLATION = "TOURBILLON_MECHANICS_VIOLATION"
+
+
+def check_tourbillon_mechanics(
+    parts: list[AssemblyPart] | tuple[AssemblyPart, ...],
+    *,
+    fixed_wheel_id: str = "fixed_wheel",
+    cage_id: str = "cage",
+    cage_bore_mm: float,
+    shaft_diameter_mm: float,
+    meshing_pairs: list[tuple[str, str]] | None = None,
+    gear_specs: dict[str, GearSpec] | None = None,
+    gear_mesh_tolerance_mm: float = 0.5,
+) -> AssemblyCheckReport:
+    """Composite tourbillon mechanical validation.
+
+    Runs every mechanically meaningful check for a tourbillon assembly:
+
+    1. Cage bore accommodates the central pivot shaft (``check_shaft_clearance``).
+    2. Cage physically contains the carried escapement wheels
+       (``check_tourbillon_constraints``).
+    3. Every declared meshing pair is at the correct centre distance
+       (``check_gear_mesh``).
+
+    Returns a single report aggregating all issues.
+    """
+    all_issues: list[AssemblyValidationIssue] = []
+
+    # 1. Shaft clearance: cage bore vs central pivot shaft
+    cage = next((p for p in parts if p.part_id == cage_id), None)
+    fixed = next((p for p in parts if p.part_id == fixed_wheel_id), None)
+    if cage is not None and fixed is not None:
+        sc = check_shaft_clearance(
+            cage, fixed,
+            bore_diameter_mm=cage_bore_mm,
+            shaft_diameter_mm=shaft_diameter_mm,
+            clearance_min_mm=0.5,
+        )
+        all_issues.extend(sc.issues)
+    else:
+        missing = cage_id if cage is None else fixed_wheel_id
+        all_issues.append(AssemblyValidationIssue(TOURBILLON_MECHANICS_VIOLATION,
+            f"tourbillon mechanics: missing part '{missing}'"))
+
+    # 2. Cage containment
+    tc = check_tourbillon_constraints(parts)
+    all_issues.extend(tc.issues)
+
+    # 3. Gear mesh for declared pairs
+    if meshing_pairs and gear_specs:
+        gm = check_gear_mesh(parts, gear_specs, meshing_pairs, tolerance_mm=gear_mesh_tolerance_mm)
+        all_issues.extend(gm.issues)
+
+    status = "fail" if all_issues else "pass"
+    return AssemblyCheckReport(
+        status=status,
+        analysis_scope="tourbillon_mechanics",
+        interferences=(),
+        separations=(),
+        adjacent_within_tolerance=(),
+        issues=tuple(all_issues),
+    )
+
 def assembly_report_to_validation_result(report: AssemblyCheckReport | dict[str, object]) -> dict[str, object]:
     if isinstance(report, dict):
         reason_codes = report.get("reason_codes")

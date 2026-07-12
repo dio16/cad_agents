@@ -274,3 +274,62 @@ def test_gear_mesh_fails_on_missing_spec():
     report = check_gear_mesh([a, b], {}, [("a", "b")])
     assert report.status == "fail"
     assert any(i.code == "GEAR_MESH_MISSING_SPEC" for i in report.issues)
+
+
+from cad_agent.assembly_checks import GearSpec, check_gear_mesh, check_shaft_clearance, check_tourbillon_mechanics
+
+def test_shaft_clearance_passes():
+    bearing = AssemblyPart("cage", "tr_cage", BBox(-10.0, -10.0, 0.0, 10.0, 10.0, 1.0))
+    shaft = AssemblyPart("shaft", "tr_shaft", BBox(-10.0, -10.0, 0.0, 10.0, 10.0, 1.0))
+    report = check_shaft_clearance(bearing, shaft, bore_diameter_mm=14.0, shaft_diameter_mm=10.0)
+    assert report.status == "pass", [i.message for i in report.issues]
+
+
+def test_shaft_clearance_fails_bore_too_small():
+    bearing = AssemblyPart("cage", "tr_cage", BBox(-10.0, -10.0, 0.0, 10.0, 10.0, 1.0))
+    shaft = AssemblyPart("shaft", "tr_shaft", BBox(-10.0, -10.0, 0.0, 10.0, 10.0, 1.0))
+    report = check_shaft_clearance(bearing, shaft, bore_diameter_mm=8.0, shaft_diameter_mm=10.0)
+    assert report.status == "fail"
+    assert any(i.code == "SHAFT_BORE_VIOLATION" for i in report.issues)
+
+
+def test_shaft_clearance_fails_misaligned():
+    bearing = AssemblyPart("cage", "tr_cage", BBox(0.0, 0.0, 0.0, 10.0, 10.0, 1.0))
+    shaft = AssemblyPart("shaft", "tr_shaft", BBox(20.0, 20.0, 0.0, 30.0, 30.0, 1.0))
+    report = check_shaft_clearance(bearing, shaft, bore_diameter_mm=14.0, shaft_diameter_mm=10.0, coaxial_tolerance_mm=1.0)
+    assert report.status == "fail"
+    assert any(i.code == "SHAFT_BORE_MISALIGNED" for i in report.issues)
+
+
+def test_tourbillon_mechanics_passes():
+    """Golden tourbillon: all checks must pass."""
+    cage = AssemblyPart("cage", "tr_cage", BBox(-55.0, -55.0, 30.0, 55.0, 55.0, 45.0))
+    fixed = AssemblyPart("fixed_wheel", "tr_fw", BBox(-33.0, -33.0, 0.0, 33.0, 33.0, 20.0))
+    escape_pinion = AssemblyPart("escape_pinion", "tr_ep", BBox(27.0, -12.0, 0.0, 51.0, 12.0, 12.0))
+    escape_wheel = AssemblyPart("escape_wheel", "tr_ew", BBox(25.0, -14.0, 40.0, 53.0, 14.0, 50.0))
+    balance_wheel = AssemblyPart("balance_wheel", "tr_bw", BBox(-21.0, -7.0, 50.0, -7.0, 7.0, 60.0))
+    parts = [cage, fixed, escape_pinion, escape_wheel, balance_wheel]
+    gear_specs = {
+        "fixed_wheel": GearSpec(module_mm=3.0, teeth=20),
+        "escape_pinion": GearSpec(module_mm=3.0, teeth=6),
+    }
+    report = check_tourbillon_mechanics(
+        parts,
+        cage_bore_mm=14.0,
+        shaft_diameter_mm=10.0,
+        meshing_pairs=[("fixed_wheel", "escape_pinion")],
+        gear_specs=gear_specs,
+    )
+    assert report.status == "pass", [i.message for i in report.issues]
+
+
+def test_tourbillon_mechanics_fails_on_bore_violation():
+    cage = AssemblyPart("cage", "tr_cage", BBox(-55.0, -55.0, 30.0, 55.0, 55.0, 45.0))
+    fixed = AssemblyPart("fixed_wheel", "tr_fw", BBox(-33.0, -33.0, 0.0, 33.0, 33.0, 20.0))
+    report = check_tourbillon_mechanics(
+        [cage, fixed],
+        cage_bore_mm=6.0,       # too small for 10 mm shaft
+        shaft_diameter_mm=10.0,
+    )
+    assert report.status == "fail"
+    assert any(i.code == "SHAFT_BORE_VIOLATION" for i in report.issues)
