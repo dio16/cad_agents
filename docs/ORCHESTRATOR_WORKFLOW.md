@@ -67,3 +67,17 @@ The Orchestrator controls workflow state, gates, revision loops, and escalation.
 - Exact approval UI/API contracts are future work.
 - Long-term immutable audit storage and retention enforcement are future scope.
 - Production model routing policy is governed by Policy/Audit and Model Gateway contracts.
+
+## End-to-end design review flow (構想 → 詳細設計 → 設計案review → 案の敵対的review → 実装計画作成 → 実装 → テストケースでテスト)
+
+The human/reviewer review path maps onto the existing workflow states and gates (above):
+
+1. 構想 (Concept) — `created → requirement_extracted`: Requirement Extractor produces Requirement JSON.
+2. 詳細設計 (Detailed design) — `requirement_extracted → spec_drafted → pending_spec_approval`: Spec Composer produces Specification JSON; human/reviewer approval gate at `pending_spec_approval`.
+3. 設計案review (Design proposal review) — `spec_approved → mechanism_planned → dsl_generated → cad_built`: the assembled result is reviewed by the human/reviewer using the standard HTML assembly viewer (`run_assembly_pipeline` + `write_assembly_viewer`).
+4. 案の敵対的review (Adversarial proposal review) — a reviewer scrutinizes the same HTML viewer and Validation Report for interference, ratio, and DFM/AM violations. This is a documented stage, not a new workflow state.
+5. 実装計画作成 (Implementation plan) — detailed plan recorded under `docs/cadagent_plans/<TASK_ID>/implementation-plan.md` with traceability.
+6. 実装 (Implementation) — `cad_built → validation_running`: deterministic CAD runtime + Validation.
+7. テストケースでテスト (Test with test cases) — `validation_passed` via `examples/*` test cases and `pytest`; export still requires `pending_export_approval`.
+
+The HTML assembly viewer is the standard human-review artifact for any assembly (see `docs/operations_ja.md` "HTML ビューアー"). It is emitted by default from `run_assembly_pipeline` and is the artifact a human opens to confirm the Assy result when native geometry is not available.

@@ -367,3 +367,20 @@ Security rules:
 | `deterministic surrogate` | Current PoC/Pilot fallback when native executables are absent. |
 | `native CAD` | Approved Phase 1 PoC/native CadQuery path; production worker deployment remains future scope. |
 | `Phase 1 hardening` | Bounded hardening of the existing PoC/native CadQuery path, not production deployment. |
+
+## 16. End-to-end workflow and HTML review artifact
+
+The end-to-end design/review flow is:
+
+```text
+構想 → 詳細設計 → 設計案review → 案の敵対的review → 実装計画作成 → 実装 → テストケースでテスト
+```
+
+Mapped to the orchestrator workflow (`docs/ORCHESTRATOR_WORKFLOW.md`):
+
+- 構想 / 詳細設計 → Requirement / Specification JSON with human approval gate.
+- 設計案review / 案の敵対的review → the assembled result is reviewed by the human/reviewer using the **standard HTML assembly viewer** (`src/cad_agent/viewer.py`, `write_assembly_viewer`), driven by `run_assembly_pipeline` in `src/cad_agent/platform_poc.py`. The viewer is emitted by default so a human can visually confirm the Assy result (surrogate AABB boxes; true gear teeth require a new approved DSL operation).
+- 実装計画作成 → plan under `docs/cadagent_plans/<TASK_ID>/implementation-plan.md`.
+- 実装 / テストケースでテスト → deterministic CAD runtime, Validation, and `examples/*` test cases.
+
+This viewer is the standard human-review artifact for assemblies; it closes the gap where placeholder STEP / box STL could not be visually verified by a human.

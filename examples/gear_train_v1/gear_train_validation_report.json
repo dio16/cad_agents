@@ -1,5 +1,14 @@
 {
   "example": "gear_train_v1",
+  "schema_checks": {
+    "requirement": [
+      "pass"
+    ],
+    "specification": [
+      "pass"
+    ]
+  },
+  "status": "pass",
   "gears": [
     {
       "part_id": "pinion1",
@@ -128,17 +137,13 @@
   "ratio_check": {
     "specified_total_ratio": 10.0,
     "computed_total_ratio": 10.0,
-    "stage1_ratio": 2.0,
-    "stage2_ratio": 5.0,
     "pass": true
   },
-  "schema_checks": {
-    "requirement": [
-      "pass"
-    ],
-    "specification": [
-      "pass"
-    ]
+  "viewer": {
+    "artifact_id": "art_gear_train_viewer",
+    "format": "html",
+    "path": "/home/diobrando/codex_wsl/cad_agent_framework/examples/gear_train_v1/gear_train_viewer.html",
+    "artifact_hash": "sha256:368db03186f033e3403fb02f95f4867caa399a8fa0f922b4d22c13259081dd52"
   },
   "overall_status": "pass"
 }

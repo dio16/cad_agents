@@ -965,6 +965,96 @@ def run_golden_pipeline(output_dir: Path = DEFAULT_OUTPUT_DIR) -> dict[str, Any]
     return report
 
 
+def run_assembly_pipeline(
+    gears: list[dict[str, Any]],
+    *,
+    specification: dict[str, Any],
+    requirement: dict[str, Any],
+    output_dir: Path = DEFAULT_OUTPUT_DIR,
+    viewer_path: Path | None = None,
+) -> dict[str, Any]:
+    """Run the surrogate CAD runtime per gear, assemble via AABB checks, and (optionally)
+    emit the standard HTML viewer for human review.
+
+    Each entry in ``gears`` must be a dict with keys:
+        part_id, traceability_id, dsl, cx, cy, r, zmin, zmax
+    where (cx, cy) is the shaft-center in the x-y plane, ``r`` the pitch radius,
+    and [zmin, zmax] the axial extent. The HTML viewer is the standard human-review
+    artifact for assemblies (see ``cad_agent.viewer.write_assembly_viewer``).
+    """
+    from cad_agent.assembly_checks import AssemblyPart, BBox, check_interference
+    from cad_agent.viewer import write_assembly_viewer
+
+    output_dir = Path(output_dir)
+    parts: list[AssemblyPart] = []
+    gear_results: list[dict[str, Any]] = []
+    for gear in gears:
+        dsl = gear["dsl"]
+        ast = validate_parametric_dsl_ast(dsl)
+        runtime = run_cad_runtime(dsl, output_dir / gear["traceability_id"])
+        cx, cy, r = float(gear["cx"]), float(gear["cy"]), float(gear["r"])
+        bbox = BBox(cx - r, cy - r, float(gear["zmin"]), cx + r, cy + r, float(gear["zmax"]))
+        parts.append(
+            AssemblyPart(part_id=gear["part_id"], traceability_id=gear["traceability_id"], bbox=bbox)
+        )
+        gear_results.append(
+            {
+                "part_id": gear["part_id"],
+                "traceability_id": gear["traceability_id"],
+                "dsl_ast_status": contract_status(ast),
+                "runtime_status": runtime.get("status"),
+                "bbox_mm": runtime.get("bbox_mm"),
+                "volume_mm3": runtime.get("volume_mm3"),
+                "artifacts": [a.get("path") for a in runtime.get("artifacts", [])],
+            }
+        )
+
+    report = check_interference(parts)
+    pt = specification.get("parameter_table", {})
+    ratio = pt.get("total_ratio")
+    computed = None
+    if {"gear1_teeth", "pinion1_teeth", "gear2_teeth", "pinion2_teeth"} <= set(pt):
+        computed = (pt["gear1_teeth"] / pt["pinion1_teeth"]) * (pt["gear2_teeth"] / pt["pinion2_teeth"])
+
+    viewer = None
+    if viewer_path is not None:
+        viewer = write_assembly_viewer(
+            Path(viewer_path),
+            parts=parts,
+            report=report,
+            spec=specification,
+            requirement=requirement,
+            ratio=computed if computed is not None else ratio,
+        )
+
+    return {
+        "status": (
+            "pass"
+            if (
+                all(g["dsl_ast_status"] == "pass" and g["runtime_status"] == "pass" for g in gear_results)
+                and report.status == "pass"
+            )
+            else "fail"
+        ),
+        "gears": gear_results,
+        "assembly": {
+            "status": report.status,
+            "analysis_scope": report.analysis_scope,
+            "interferences": [
+                {"parts": (i.part_a, i.part_b), "overlap_mm": i.overlap_mm} for i in report.interferences
+            ],
+            "separations": [
+                {"parts": (s.part_a, s.part_b), "distance_mm": s.distance_mm, "gap_axis": s.gap_axis}
+                for s in report.separations
+            ],
+            "adjacent": [
+                {"parts": (a.part_a, a.part_b), "gap_axis": a.gap_axis} for a in report.adjacent_within_tolerance
+            ],
+        },
+        "ratio_check": {"specified_total_ratio": ratio, "computed_total_ratio": computed},
+        "viewer": viewer,
+    }
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Phase 1 platform PoC commands")
     parser.add_argument("command", choices=["contract-test", "golden-pipeline"])
