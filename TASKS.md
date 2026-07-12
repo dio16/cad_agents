@@ -94,12 +94,12 @@ Master plan: `docs/cadagent_plans/CAD-REVIEW-02/implementation-plan.md`
 
 Deepwork: `.slim/deepwork/cad_review_02.md` (`status: active`)
 
-- [ ] **`CAD-REVIEW-02`** — Repository review catch-up batch (active). Classification: `active` / parent of FG-18–22. Scope: validation honesty, E2E job runner, local job store, native export gate; real LLM only after approval (FG-22). Plan: `docs/cadagent_plans/CAD-REVIEW-02/implementation-plan.md`.
-- [x] `CAD-FG-18` — Validation honesty + docs reconcile: stop hardcoding topology watertight/self_intersection; record DFM as parameter_proxy; fix README/SPEC/layout drift. Plan: `docs/cadagent_plans/CAD-REVIEW-02/implementation-plan.md` (§ CAD-FG-18). Classification: `completed`. Validation: `uv run pytest -q` → 247 passed, `bash ./run_cad_agent.sh validate-docs` → pass, `bash ./run_cad_agent.sh status` → aligned, `bash ./run_cad_agent.sh phase1-golden-pipeline` → pass, `git diff --check` → clean. Changes: `platform_poc.py` (topology metadata `null`+`not_measured`, topology_check `null`+`artifact_presence_only`, manufacturing `parameter_proxy`), schema (null+method), README layout, SPEC maturity, design_gaps note, tests.
-- [x] `CAD-FG-19` — E2E job runner (`fixture_pipeline` / `structured_pipeline`): wire agents fixtures → DSL AST → CAD → validation → store under one runner + CLI/API. Plan: same (§ CAD-FG-19). Classification: `completed`. Validation: `uv run pytest -q` → 258 passed, `bash ./run_cad_agent.sh validate-docs` → pass, `bash ./run_cad_agent.sh status` → aligned, `bash ./run_cad_agent.sh phase1-golden-pipeline` → pass, `git diff --check` → clean. Changes: `job_runner.py` (new, fixture_pipeline/structured_pipeline modes), `cli.py` (run-job subcommand), tests (11 tests).
-- [x] `CAD-FG-20` — Local job store (sqlite) + job_id workflow API; durable export approvals for local maturity. Plan: same (§ CAD-FG-20). Classification: `completed`. Validation: `uv run pytest -q` → 272 passed, `bash ./run_cad_agent.sh validate-docs` → pass, `git diff --check` → clean. Changes: `job_store.py` (new, sqlite3-backed, jobs/approvals/audit tables), `job_runner.py` (optional job_store integration), tests (14 tests).
-- [x] `CAD-FG-21` — Native-required print/export gate (`EXPORT_REQUIRES_NATIVE_KERNEL` for surrogate). Plan: same (§ CAD-FG-21). Classification: `completed`. Validation: `uv run pytest -q` → 276 passed, `bash ./run_cad_agent.sh validate-docs` → pass, `git diff --check` → clean. Changes: `orchestrator.py` (request_export cad_kernel gate, NATIVE_KERNELS, _is_native_kernel), tests (4 tests).
-- [ ] `CAD-FG-22` — Real LLM agent loop via Model Gateway (schema retry, routing, audit, `llm_pipeline` mode). Plan: same (§ CAD-FG-22). Classification: **`approval_required`**. Dependencies: FG-19, FG-20. Do not start without explicit user approval.
+- [x] **`CAD-REVIEW-02`** — Repository review catch-up batch (completed). Classification: `completed`. Final validation: `uv run pytest -q` → 288 passed, `validate-docs` pass, `git diff --check` clean.
+- [x] `CAD-FG-18` — Validation honesty + docs reconcile. Plan: same (§ CAD-FG-18). Classification: `completed`.
+- [x] `CAD-FG-19` — E2E job runner (fixture/structured). Plan: same (§ CAD-FG-19). Classification: `completed`.
+- [x] `CAD-FG-20` — Local job store (sqlite) + job_id workflow. Plan: same (§ CAD-FG-20). Classification: `completed`.
+- [x] `CAD-FG-21` — Native-required print/export gate. Plan: same (§ CAD-FG-21). Classification: `completed`.
+- [x] `CAD-FG-22` — Real LLM agent loop (mock + live opt-in). Plan: same (§ CAD-FG-22). Classification: `completed`.
 
 ## CADAGENT phase implementation plans
 
