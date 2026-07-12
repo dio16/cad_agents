@@ -992,8 +992,13 @@ def run_assembly_pipeline(
         dsl = gear["dsl"]
         ast = validate_parametric_dsl_ast(dsl)
         runtime = run_cad_runtime(dsl, output_dir / gear["traceability_id"])
-        cx, cy, r = float(gear["cx"]), float(gear["cy"]), float(gear["r"])
-        bbox = BBox(cx - r, cy - r, float(gear["zmin"]), cx + r, cy + r, float(gear["zmax"]))
+        bb = runtime.get("bbox_mm") or {}
+        hx = float(bb.get("length", 0.0)) / 2.0
+        hy = float(bb.get("width", 0.0)) / 2.0
+        hz = float(bb.get("height", 0.0)) / 2.0
+        cx, cy = float(gear["cx"]), float(gear["cy"])
+        zmin = float(gear["zmin"])
+        bbox = BBox(cx - hx, cy - hy, zmin, cx + hx, cy + hy, zmin + hz)
         parts.append(
             AssemblyPart(part_id=gear["part_id"], traceability_id=gear["traceability_id"], bbox=bbox)
         )
