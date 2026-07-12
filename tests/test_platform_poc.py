@@ -658,5 +658,18 @@ class PlatformPocTest(unittest.TestCase):
         self.assertEqual(report["failures"], expected_failures)
         self.assertEqual(report["pass"], len(expected_failures) == 0)
 
+    def test_surrogate_stl_normals_are_nonzero(self) -> None:
+        """Surrogate STL mesh facets must carry valid non-zero outward normals."""
+        import re
+
+        from cad_agent.platform_poc import _mesh_for_box
+
+        stl_text = _mesh_for_box(50.0, 30.0, 20.0)
+        normals = re.findall(r"facet normal ([\d.eE+-]+) ([\d.eE+-]+) ([\d.eE+-]+)", stl_text)
+        self.assertGreater(len(normals), 0, "STL should have at least one facet")
+        for nx, ny, nz in normals:
+            length = (float(nx) ** 2 + float(ny) ** 2 + float(nz) ** 2) ** 0.5
+            self.assertGreater(length, 0.0, f"Normal ({nx},{ny},{nz}) has zero length")
+
 if __name__ == "__main__":
     unittest.main()

@@ -45,3 +45,18 @@ CAD Runtime is the deterministic executor. It never interprets free text, never 
 - Native promotion criteria for surrogate-to-production artifacts are deferred.
 - Full B-Rep validity, mesh watertightness, assembly export, and motion sweep export are future implementation concerns.
 - Production deployment architecture remains future scope.
+
+## Deterministic Surrogate Limitations
+
+The deterministic surrogate path (`deterministic_surrogate_no_libgl`) is used when
+CadQuery/OCCT is not available. Known limitations:
+
+- STEP output is a text placeholder, not canonical B-Rep geometry
+- STL mesh uses simplified box geometry with pre-computed outward normals
+- No true boolean operations (through_holes are metadata-only)
+- No fillet, chamfer, or complex surface generation
+- Volume is computed from additive feature volumes only
+- Topology metadata (watertight, self_intersection) is set to safe defaults
+
+These limitations are acceptable for validation pipeline testing and PoC demonstration.
+Production use requires the CadQuery/OCCT backend.

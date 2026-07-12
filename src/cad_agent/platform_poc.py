@@ -201,15 +201,25 @@ def _mesh_for_box(length: float, width: float, height: float) -> str:
         (-x, -y, -z), (x, -y, -z), (x, y, -z), (-x, y, -z),
         (-x, -y, z), (x, -y, z), (x, y, z), (-x, y, z),
     ]
+    # (face vertex indices, outward normal) — two triangles per box face.
     faces = [
-        (0, 2, 1), (0, 3, 2), (4, 5, 6), (4, 6, 7),
-        (0, 1, 5), (0, 5, 4), (1, 2, 6), (1, 6, 5),
-        (2, 3, 7), (2, 7, 6), (3, 0, 4), (3, 4, 7),
+        ((0, 2, 1), (0.0, 0.0, -1.0)),
+        ((0, 3, 2), (0.0, 0.0, -1.0)),
+        ((4, 5, 6), (0.0, 0.0, 1.0)),
+        ((4, 6, 7), (0.0, 0.0, 1.0)),
+        ((0, 1, 5), (0.0, -1.0, 0.0)),
+        ((0, 5, 4), (0.0, -1.0, 0.0)),
+        ((1, 2, 6), (1.0, 0.0, 0.0)),
+        ((1, 6, 5), (1.0, 0.0, 0.0)),
+        ((2, 3, 7), (0.0, 1.0, 0.0)),
+        ((2, 7, 6), (0.0, 1.0, 0.0)),
+        ((3, 0, 4), (-1.0, 0.0, 0.0)),
+        ((3, 4, 7), (-1.0, 0.0, 0.0)),
     ]
     lines = ["solid phase1_poc"]
-    for face in faces:
+    for face, normal in faces:
         p1, p2, p3 = [vertices[i] for i in face]
-        lines.append("  facet normal 0 0 0")
+        lines.append(f"  facet normal {normal[0]:.6f} {normal[1]:.6f} {normal[2]:.6f}")
         lines.append("    outer loop")
         for point in (p1, p2, p3):
             lines.append(f"      vertex {point[0]:.6f} {point[1]:.6f} {point[2]:.6f}")
