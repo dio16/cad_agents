@@ -671,5 +671,30 @@ class PlatformPocTest(unittest.TestCase):
             length = (float(nx) ** 2 + float(ny) ** 2 + float(nz) ** 2) ** 0.5
             self.assertGreater(length, 0.0, f"Normal ({nx},{ny},{nz}) has zero length")
 
+    def test_boolean_failed_error_code_defined(self) -> None:
+        """BOOLEAN_FAILED error code should be available for future boolean operations."""
+        from cad_agent.platform_poc import BOOLEAN_FAILED
+
+        self.assertEqual(BOOLEAN_FAILED, "BOOLEAN_FAILED")
+
+    def test_kernel_timeout_error_code_defined(self) -> None:
+        """KERNEL_TIMEOUT error code should be available for CAD kernel timeout."""
+        from cad_agent.platform_poc import KERNEL_TIMEOUT
+
+        self.assertEqual(KERNEL_TIMEOUT, "KERNEL_TIMEOUT")
+
+    def test_cad_build_runtime_error_captured(self) -> None:
+        """RuntimeError from CadQuery should be captured as CAD_BUILD_FAILED."""
+        from unittest.mock import patch
+
+        from cad_agent.platform_poc import run_cad_runtime
+
+        dsl = golden_dsl()
+        with patch("cad_agent.platform_poc._cadquery_available", return_value=True):
+            with patch("cad_agent.platform_poc._build_cadquery_model", side_effect=RuntimeError("kernel error")):
+                result = run_cad_runtime(dsl)
+        self.assertEqual(result["status"], "fail")
+        self.assertEqual(result["reason_code"], "CAD_BUILD_FAILED")
+
 if __name__ == "__main__":
     unittest.main()

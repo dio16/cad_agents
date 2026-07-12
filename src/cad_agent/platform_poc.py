@@ -24,6 +24,10 @@ SUBTRACTIVE_OPS = {"through_hole"}
 ALLOWED_OUTPUTS = {"step_ap242", "stl"}
 PARAMETER_REFERENCE_PATTERN = re.compile(r"^\$[A-Za-z_][A-Za-z0-9_]*$")
 
+# Error codes reserved for future CAD kernel boolean operations and timeouts.
+BOOLEAN_FAILED = "BOOLEAN_FAILED"
+KERNEL_TIMEOUT = "KERNEL_TIMEOUT"
+
 
 def utc_now() -> str:
     return datetime.now(timezone.utc).isoformat()
@@ -326,7 +330,7 @@ def run_cad_runtime(dsl: dict[str, Any], output_dir: Path = DEFAULT_OUTPUT_DIR) 
             bbox = _model_bbox_mm(model)
             volume = _model_volume_mm3(model)
             backend = "cadquery_occt"
-        except (KeyError, TypeError, ValueError) as exc:
+        except (KeyError, TypeError, ValueError, RuntimeError) as exc:
             return {"status": "fail", "traceability_id": traceability_id, "reason_code": "CAD_BUILD_FAILED", "detail": str(exc), "artifacts": []}
     else:
         additive_features = [f for f in dsl["features"] if f["op"] in ADDITIVE_OPS]
