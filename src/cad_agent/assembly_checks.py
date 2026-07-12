@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import math
 
 
 @dataclass(frozen=True, slots=True)
@@ -222,6 +223,60 @@ def check_adjacency(
     tolerance_mm: float = 0.0,
 ) -> AssemblyCheckReport:
     return check_interference(parts, tolerance_mm=tolerance_mm)
+
+
+TOURBILLON_CAGE_RADIUS_VIOLATION = "ASSEMBLY_CONSTRAINT_FAILED"
+TOURBILLON_NO_CAGE = "TOURBILLON_NO_CAGE"
+
+
+def check_tourbillon_constraints(
+    parts: list[AssemblyPart] | tuple[AssemblyPart, ...],
+    tolerance_mm: float = 0.0,
+) -> AssemblyCheckReport:
+    """Validate that a tourbillon rotating cage physically contains its escapement.
+
+    The cage (a part whose id contains "cage") must have an outer radius that fully
+    encloses every carried escapement wheel (ids containing "escape" or "balance").
+    Each carried wheel's farthest corner is measured from the cage center; if it
+    exceeds the cage outer radius the check fails with ASSEMBLY_CONSTRAINT_FAILED so
+    the CAD runtime can surface the reserved contract error code.
+    """
+    issues = list(validate_parts(parts))
+    if tolerance_mm < 0:
+        issues.append(AssemblyValidationIssue("invalid_tolerance", "tolerance_mm must be non-negative", None))
+    cage = next((p for p in parts if "cage" in p.part_id.lower()), None)
+    carried = [p for p in parts if p is not cage and ("escape" in p.part_id.lower() or "balance" in p.part_id.lower())]
+    if cage is None:
+        issues.append(AssemblyValidationIssue(TOURBILLON_NO_CAGE, "tourbillon assembly is missing a rotating cage part", None))
+    else:
+        cx = (cage.bbox.min_x + cage.bbox.max_x) / 2.0
+        cy = (cage.bbox.min_y + cage.bbox.max_y) / 2.0
+        cage_r = max(cage.bbox.max_x - cage.bbox.min_x, cage.bbox.max_y - cage.bbox.min_y) / 2.0
+        for p in carried:
+            corners = (
+                (p.bbox.min_x, p.bbox.min_y),
+                (p.bbox.max_x, p.bbox.min_y),
+                (p.bbox.min_x, p.bbox.max_y),
+                (p.bbox.max_x, p.bbox.max_y),
+            )
+            dist = max(math.hypot(x - cx, y - cy) for x, y in corners)
+            if dist > cage_r + tolerance_mm:
+                issues.append(
+                    AssemblyValidationIssue(
+                        TOURBILLON_CAGE_RADIUS_VIOLATION,
+                        f"{p.part_id} reaches {dist:.3f}mm from cage center, exceeds cage radius {cage_r:.3f}mm",
+                        p.part_id,
+                    )
+                )
+    status = "fail" if issues else "pass"
+    return AssemblyCheckReport(
+        status=status,
+        analysis_scope="tourbillon_cage_containment",
+        interferences=(),
+        separations=(),
+        adjacent_within_tolerance=(),
+        issues=tuple(issues),
+    )
 
 
 def assembly_report_to_validation_result(report: AssemblyCheckReport | dict[str, object]) -> dict[str, object]:

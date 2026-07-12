@@ -5,8 +5,20 @@ import re
 from dataclasses import dataclass, field
 from typing import Any
 
-ALLOWED_DSL_OPERATIONS = frozenset({"box", "cylinder", "through_hole"})
+ALLOWED_DSL_OPERATIONS = frozenset({"box", "cylinder", "through_hole", "gear", "escape_wheel", "balance_wheel", "lever", "cage", "hairspring", "jewel"})
 APPROVED_MECHANISM_OPERATIONS = frozenset({"shaft"})
+PHASE1_REQUIRED_FIELDS: dict[str, set[str]] = {
+    "box": {"length_mm", "width_mm", "height_mm"},
+    "cylinder": {"radius_mm", "height_mm", "axis", "positions_mm"},
+    "through_hole": {"axis", "diameter_mm", "depth_mm", "positions_mm"},
+    "gear": {"module_mm", "teeth", "thickness_mm", "bore_diameter_mm", "axis", "positions_mm"},
+    "escape_wheel": {"teeth", "tip_radius_mm", "thickness_mm", "bore_diameter_mm", "axis", "positions_mm"},
+    "balance_wheel": {"outer_diameter_mm", "rim_width_mm", "spokes", "thickness_mm", "bore_diameter_mm", "axis", "positions_mm"},
+    "lever": {"length_mm", "width_mm", "thickness_mm", "fork_width_mm", "pivot_diameter_mm", "axis", "positions_mm"},
+    "cage": {"outer_diameter_mm", "arm_count", "thickness_mm", "bore_diameter_mm", "axis", "positions_mm"},
+    "hairspring": {"outer_diameter_mm", "coils", "wire_diameter_mm", "thickness_mm", "axis", "positions_mm"},
+    "jewel": {"diameter_mm", "thickness_mm", "axis", "positions_mm"},
+}
 TRACEABILITY_ID_PATTERN = re.compile(r"^tr_dsl_[A-Za-z0-9_]+$")
 PARAMETER_REFERENCE_PATTERN = re.compile(r"^\$[A-Za-z_][A-Za-z0-9_]*$")
 UNSUPPORTED_MECHANISM_OP = "UNSUPPORTED_MECHANISM_OP"
@@ -170,13 +182,7 @@ def _validate_phase1_feature(feature: Any, parameters: dict[str, Any], index: in
     if op not in ALLOWED_DSL_OPERATIONS:
         return CompileResult(valid=False, reason_code=NEW_OPERATION_APPROVAL_REQUIRED)
 
-    if op == "box":
-        required = {"length_mm", "width_mm", "height_mm"}
-    elif op == "cylinder":
-        required = {"radius_mm", "height_mm", "axis", "positions_mm"}
-    else:
-        required = {"axis", "diameter_mm", "depth_mm", "positions_mm"}
-
+    required = PHASE1_REQUIRED_FIELDS.get(op, set())
     missing = sorted(required - set(feature))
     if missing:
         return CompileResult(valid=False, reason_code=INVALID_FEATURE_SHAPE)
@@ -188,8 +194,7 @@ def _validate_phase1_feature(feature: Any, parameters: dict[str, Any], index: in
     if "positions_mm" in feature and not _is_valid_positions_mm(feature["positions_mm"]):
         return CompileResult(valid=False, reason_code=INVALID_POSITIONS_MM)
 
-    dimension_keys = sorted(required & {"length_mm", "width_mm", "height_mm", "radius_mm", "diameter_mm", "depth_mm"})
-    for key in dimension_keys:
+    for key in sorted(required - {"op", "axis", "positions_mm", "bridge"}):
         check = _resolve_dimension(feature, key, parameters, {})
         if not check.valid:
             return check

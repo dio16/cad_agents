@@ -104,6 +104,8 @@ Detailed task plans live under `docs/cadagent_plans/CAD-FG-*/implementation-plan
 | `CAD-FG-14` | HTML assembly viewer standard output + 7-stage flow | `docs/cadagent_plans/CAD-FG-14/implementation-plan.md` | `completed` |
 | `gear_train_v2` | Changed-dimension test case + viewer/STL fidelity test | `examples/gear_train_v2/` | `completed` (executable_now) |
 
+| `CAD-FG-17` | Mechanism DSL tourbillon operations — `gear`, `escape_wheel`, `balance_wheel`, `lever`, `cage`, `hairspring`, `jewel` — plus error codes `GEAR_GENERATION_FAILED`/`ASSEMBLY_CONSTRAINT_FAILED`, tourbillon assembly constraint check, example, and tests | `docs/cadagent_plans/CAD-FG-17/implementation-plan.md` | `completed` |
+
 ## 5. Detailed implementation phases
 
 ### `CAD-P00` — Source/design contract finalization

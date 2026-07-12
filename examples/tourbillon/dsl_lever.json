@@ -1,0 +1,9 @@
+{
+  "traceability_id": "tr_dsl_tb_lever",
+  "units": "mm",
+  "parameters": {"L": 12.0, "W": 2.0, "t": 1.0, "fw": 2.0, "pd": 0.8},
+  "features": [
+    {"op": "lever", "length_mm": "$L", "width_mm": "$W", "thickness_mm": "$t", "fork_width_mm": "$fw", "pivot_diameter_mm": "$pd", "axis": "z", "positions_mm": [[0.0, 0.0]]}
+  ],
+  "derivative_outputs": ["step_ap242", "stl"]
+}

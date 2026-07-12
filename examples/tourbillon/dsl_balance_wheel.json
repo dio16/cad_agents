@@ -1,0 +1,9 @@
+{
+  "traceability_id": "tr_dsl_tb_balance",
+  "units": "mm",
+  "parameters": {"od": 14.0, "rw": 2.0, "s": 3, "t": 1.0, "b": 1.0},
+  "features": [
+    {"op": "balance_wheel", "outer_diameter_mm": "$od", "rim_width_mm": "$rw", "spokes": "$s", "thickness_mm": "$t", "bore_diameter_mm": "$b", "axis": "z", "positions_mm": [[0.0, 0.0]]}
+  ],
+  "derivative_outputs": ["step_ap242", "stl"]
+}

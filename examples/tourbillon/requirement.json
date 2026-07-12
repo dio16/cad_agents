@@ -1,0 +1,26 @@
+{
+  "traceability_id": "tr_req_tourbillon",
+  "product_type": "tourbillon_mechanism",
+  "functional_requirements": [
+    "Neutralize positional gravity error by rotating the entire escapement once per minute inside a carriage",
+    "Drive cage rotation from a fixed fourth wheel at the cage center",
+    "Keep the cage outer diameter large enough to physically contain the carried escapement wheels"
+  ],
+  "dimensions": {
+    "cage_outer_diameter_mm": 24.0,
+    "overall_height_mm": 12.0
+  },
+  "manufacturing": {
+    "primary_process": "CNC_or_AM_prototype"
+  },
+  "unknowns": [
+    "Final material and heat treatment",
+    "Hairspring preload and rate",
+    "Exact jewel count and bearing layout"
+  ],
+  "assumptions": [
+    "Deterministic surrogate CAD is used; the approved Mechanism DSL now includes gear, escape_wheel, balance_wheel, lever, cage, hairspring, and jewel operations",
+    "Cage rotates around a fixed central fourth wheel; carried wheels are placed off-center inside the cage",
+    "Surrogate AABB checks treat each part as a distinct z-slab to avoid false interference for nested parts"
+  ]
+}

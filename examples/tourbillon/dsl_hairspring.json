@@ -1,0 +1,9 @@
+{
+  "traceability_id": "tr_dsl_tb_hairspring",
+  "units": "mm",
+  "parameters": {"od": 8.0, "co": 5.0, "wd": 0.3, "t": 0.5},
+  "features": [
+    {"op": "hairspring", "outer_diameter_mm": "$od", "coils": "$co", "wire_diameter_mm": "$wd", "thickness_mm": "$t", "axis": "z", "positions_mm": [[0.0, 0.0]]}
+  ],
+  "derivative_outputs": ["step_ap242", "stl"]
+}

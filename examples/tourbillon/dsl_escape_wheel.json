@@ -1,0 +1,9 @@
+{
+  "traceability_id": "tr_dsl_tb_escape",
+  "units": "mm",
+  "parameters": {"z": 15, "ra": 6.0, "t": 1.5, "b": 1.0},
+  "features": [
+    {"op": "escape_wheel", "teeth": "$z", "tip_radius_mm": "$ra", "thickness_mm": "$t", "bore_diameter_mm": "$b", "tooth_type": "club", "axis": "z", "positions_mm": [[0.0, 0.0]]}
+  ],
+  "derivative_outputs": ["step_ap242", "stl"]
+}

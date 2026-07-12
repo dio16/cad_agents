@@ -18,15 +18,17 @@ ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_OUTPUT_DIR = ROOT / "artifacts" / "phase1_poc"
 DEFAULT_REPORT_DIR = ROOT / "reports"
 
-ALLOWED_DSL_OPS = {"box", "cylinder", "through_hole"}
-ADDITIVE_OPS = {"box", "cylinder"}
+ALLOWED_DSL_OPS = {"box", "cylinder", "through_hole", "gear", "escape_wheel", "balance_wheel", "lever", "cage", "hairspring", "jewel"}
+ADDITIVE_OPS = {"box", "cylinder", "gear", "escape_wheel", "balance_wheel", "lever", "cage", "hairspring", "jewel"}
 SUBTRACTIVE_OPS = {"through_hole"}
 ALLOWED_OUTPUTS = {"step_ap242", "stl"}
 PARAMETER_REFERENCE_PATTERN = re.compile(r"^\$[A-Za-z_][A-Za-z0-9_]*$")
 
-# Error codes reserved for future CAD kernel boolean operations and timeouts.
+# Error codes for CAD kernel operations and timeouts.
 BOOLEAN_FAILED = "BOOLEAN_FAILED"
 KERNEL_TIMEOUT = "KERNEL_TIMEOUT"
+GEAR_GENERATION_FAILED = "GEAR_GENERATION_FAILED"
+ASSEMBLY_CONSTRAINT_FAILED = "ASSEMBLY_CONSTRAINT_FAILED"
 
 
 def utc_now() -> str:
@@ -178,6 +180,39 @@ def _feature_bbox(feature: dict[str, Any], parameters: dict[str, Any]) -> tuple[
         radius = float(resolve_value(feature["radius_mm"], parameters))
         height = float(resolve_value(feature["height_mm"], parameters))
         return (radius * 2.0, radius * 2.0, height)
+    if op == "gear":
+        m = float(resolve_value(feature["module_mm"], parameters))
+        z = float(resolve_value(feature["teeth"], parameters))
+        t = float(resolve_value(feature["thickness_mm"], parameters))
+        ra = m * z / 2.0 + m
+        return (ra * 2.0, ra * 2.0, t * 2.0)
+    if op == "escape_wheel":
+        ra = float(resolve_value(feature["tip_radius_mm"], parameters))
+        t = float(resolve_value(feature["thickness_mm"], parameters))
+        return (ra * 2.0, ra * 2.0, t * 2.0)
+    if op == "balance_wheel":
+        od = float(resolve_value(feature["outer_diameter_mm"], parameters))
+        t = float(resolve_value(feature["thickness_mm"], parameters))
+        return (od, od, t * 2.0)
+    if op == "lever":
+        L = float(resolve_value(feature["length_mm"], parameters))
+        W = float(resolve_value(feature["width_mm"], parameters))
+        t = float(resolve_value(feature["thickness_mm"], parameters))
+        return (L, W, t * 2.0)
+    if op == "cage":
+        od = float(resolve_value(feature["outer_diameter_mm"], parameters))
+        t = float(resolve_value(feature["thickness_mm"], parameters))
+        bridge = bool(feature.get("bridge", True))
+        h = t * 2.0 + (t * 0.5 if bridge else 0.0)
+        return (od, od, h)
+    if op == "hairspring":
+        od = float(resolve_value(feature["outer_diameter_mm"], parameters))
+        thick = float(resolve_value(feature["thickness_mm"], parameters))
+        return (od, od, thick)
+    if op == "jewel":
+        d = float(resolve_value(feature["diameter_mm"], parameters))
+        t = float(resolve_value(feature["thickness_mm"], parameters))
+        return (d, d, t * 2.0)
     raise ValueError(f"unsupported additive feature for bbox: {op}")
 
 
@@ -194,6 +229,55 @@ def _feature_volume(feature: dict[str, Any], parameters: dict[str, Any]) -> floa
         diameter = float(resolve_value(feature["diameter_mm"], parameters))
         depth = float(resolve_value(feature.get("depth_mm", 0.0), parameters))
         return -math.pi * (diameter / 2.0) ** 2 * depth
+    if op == "gear":
+        m = float(resolve_value(feature["module_mm"], parameters))
+        z = float(resolve_value(feature["teeth"], parameters))
+        t = float(resolve_value(feature["thickness_mm"], parameters))
+        ra = m * z / 2.0 + m
+        return math.pi * ra * ra * (t * 2.0) * 1.1
+    if op == "escape_wheel":
+        ra = float(resolve_value(feature["tip_radius_mm"], parameters))
+        t = float(resolve_value(feature["thickness_mm"], parameters))
+        return math.pi * ra * ra * (t * 2.0) * 1.05
+    if op == "balance_wheel":
+        od = float(resolve_value(feature["outer_diameter_mm"], parameters))
+        rw = float(resolve_value(feature["rim_width_mm"], parameters))
+        n = float(resolve_value(feature["spokes"], parameters))
+        t = float(resolve_value(feature["thickness_mm"], parameters))
+        R = od / 2.0
+        ri = R - rw
+        ring = math.pi * (R * R - ri * ri) * (t * 2.0)
+        hub = math.pi * (max(ri / 2.0, 1.0)) ** 2 * (t * 2.0)
+        L = R - ri / 2.0
+        spokes = n * (L * rw * 0.6 * (t * 2.0))
+        return ring + hub + spokes
+    if op == "lever":
+        L = float(resolve_value(feature["length_mm"], parameters))
+        W = float(resolve_value(feature["width_mm"], parameters))
+        t = float(resolve_value(feature["thickness_mm"], parameters))
+        return L * W * (t * 2.0)
+    if op == "cage":
+        od = float(resolve_value(feature["outer_diameter_mm"], parameters))
+        n = float(resolve_value(feature["arm_count"], parameters))
+        t = float(resolve_value(feature["thickness_mm"], parameters))
+        bore = float(resolve_value(feature["bore_diameter_mm"], parameters))
+        bridge = bool(feature.get("bridge", True))
+        R = od / 2.0
+        ring = math.pi * (R * R - (0.72 * R) ** 2) * (t * 2.0)
+        hub = math.pi * (bore / 2.0 + 1.0) ** 2 * (t * 2.0)
+        armL = R * 0.85
+        arms = n * (armL * (R * 0.16) * (t * 2.0))
+        br = (math.pi * (R * R - (0.6 * R) ** 2) * (t * 0.5)) if bridge else 0.0
+        return ring + hub + arms + br
+    if op == "hairspring":
+        od = float(resolve_value(feature["outer_diameter_mm"], parameters))
+        thick = float(resolve_value(feature["thickness_mm"], parameters))
+        R = od / 2.0
+        return math.pi * R * R * 0.15 * thick
+    if op == "jewel":
+        d = float(resolve_value(feature["diameter_mm"], parameters))
+        t = float(resolve_value(feature["thickness_mm"], parameters))
+        return math.pi * (d / 2.0) ** 2 * (t * 2.0)
     raise ValueError(f"unsupported feature for volume: {op}")
 
 
@@ -264,26 +348,216 @@ def _build_cadquery_model(dsl: dict[str, Any]) -> Any:
     model: Any | None = None
     for feature in dsl["features"]:
         op = feature["op"]
-        if op == "box":
-            length = float(resolve_value(feature["length_mm"], parameters))
-            width = float(resolve_value(feature["width_mm"], parameters))
-            height = float(resolve_value(feature["height_mm"], parameters))
-            primitive = cq.Workplane("XY").box(length, width, height)
-            model = primitive if model is None else model.union(primitive)
-        elif op == "cylinder":
-            radius = float(resolve_value(feature["radius_mm"], parameters))
-            height = float(resolve_value(feature["height_mm"], parameters))
-            primitive = cq.Workplane("XY").circle(radius).extrude(height, both=True)
-            model = primitive if model is None else model.union(primitive)
-        elif op == "through_hole":
+        if op == "through_hole":
             if model is None:
                 raise ValueError("through_hole cannot be the first feature")
             diameter = float(resolve_value(feature["diameter_mm"], parameters))
             positions = [(float(x), float(y)) for x, y in feature.get("positions_mm", [[0.0, 0.0]])]
             model = model.faces(">Z").workplane().pushPoints(positions).hole(diameter)
+            continue
+        builder = _CADQUERY_BUILDERS.get(op)
+        if builder is None:
+            raise ValueError(f"unsupported additive feature for cadquery: {op}")
+        try:
+            primitive = builder(feature, parameters, cq)
+        except (KeyError, TypeError, ValueError, RuntimeError) as exc:
+            raise RuntimeError(GEAR_GENERATION_FAILED) from exc
+        model = primitive if model is None else model.union(primitive)
     if model is None:
         raise ValueError("no additive feature created a CAD model")
     return model
+
+
+def _annulus(R: float, ri: float, t: float, cq: Any) -> Any:
+    na = 48
+    outer = [(R * math.cos(2 * math.pi * k / na), R * math.sin(2 * math.pi * k / na), 0.0) for k in range(na)]
+    inner = [(ri * math.cos(2 * math.pi * k / na), ri * math.sin(2 * math.pi * k / na), 0.0) for k in range(na)]
+    face = cq.Face.makeFromWires(
+        cq.Wire.makePolygon(outer, close=True),
+        [cq.Wire.makePolygon(inner, close=True)],
+    )
+    return cq.Workplane("XY").add(face).extrude(t, both=True)
+
+
+def _build_box(feature, parameters, cq):
+    length = float(resolve_value(feature["length_mm"], parameters))
+    width = float(resolve_value(feature["width_mm"], parameters))
+    height = float(resolve_value(feature["height_mm"], parameters))
+    return cq.Workplane("XY").box(length, width, height)
+
+
+def _build_cylinder(feature, parameters, cq):
+    radius = float(resolve_value(feature["radius_mm"], parameters))
+    height = float(resolve_value(feature["height_mm"], parameters))
+    return cq.Workplane("XY").circle(radius).extrude(height, both=True)
+
+
+def _build_gear(feature, parameters, cq):
+    m = float(resolve_value(feature["module_mm"], parameters))
+    z = int(round(float(resolve_value(feature["teeth"], parameters))))
+    t = float(resolve_value(feature["thickness_mm"], parameters))
+    bore = float(resolve_value(feature["bore_diameter_mm"], parameters))
+    if m <= 0 or z <= 0 or t <= 0:
+        raise ValueError("gear requires positive module/teeth/thickness")
+    pitch = m * z / 2.0
+    ra = pitch + m
+    rd = max(pitch - 1.25 * m, 0.5)
+    step = 2 * math.pi / z
+    pts = []
+    for i in range(z):
+        b = i * step
+        pts += [
+            (rd * math.cos(b), rd * math.sin(b)),
+            (pitch * math.cos(b + 0.1 * step), pitch * math.sin(b + 0.1 * step)),
+            (ra * math.cos(b + 0.2 * step), ra * math.sin(b + 0.2 * step)),
+            (ra * math.cos(b + 0.3 * step), ra * math.sin(b + 0.3 * step)),
+            (pitch * math.cos(b + 0.4 * step), pitch * math.sin(b + 0.4 * step)),
+            (rd * math.cos(b + 0.5 * step), rd * math.sin(b + 0.5 * step)),
+        ]
+    wp = cq.Workplane("XY").polyline([(x, y, 0.0) for x, y in pts]).close().extrude(t, both=True)
+    if bore > 0:
+        wp = wp.cut(cq.Workplane("XY").circle(bore / 2.0).extrude(t * 3.0, both=True))
+    return wp
+
+
+def _build_escape_wheel(feature, parameters, cq):
+    z = int(round(float(resolve_value(feature["teeth"], parameters))))
+    ra = float(resolve_value(feature["tip_radius_mm"], parameters))
+    t = float(resolve_value(feature["thickness_mm"], parameters))
+    bore = float(resolve_value(feature["bore_diameter_mm"], parameters))
+    if z <= 0 or ra <= 0 or t <= 0:
+        raise ValueError("escape_wheel requires positive teeth/tip_radius/thickness")
+    tooth_type = feature.get("tooth_type", "pointed")
+    rd = ra * 0.55
+    step = 2 * math.pi / z
+    pts = []
+    for i in range(z):
+        b = i * step
+        if tooth_type == "club":
+            pts += [
+                (rd * math.cos(b), rd * math.sin(b)),
+                (ra * math.cos(b + 0.1 * step), ra * math.sin(b + 0.1 * step)),
+                (ra * math.cos(b + 0.25 * step), ra * math.sin(b + 0.25 * step)),
+                (rd * math.cos(b + 0.35 * step), rd * math.sin(b + 0.35 * step)),
+            ]
+        else:
+            pts += [
+                (rd * math.cos(b), rd * math.sin(b)),
+                (ra * math.cos(b + 0.12 * step), ra * math.sin(b + 0.12 * step)),
+                (rd * math.cos(b + 0.30 * step), rd * math.sin(b + 0.30 * step)),
+            ]
+    wp = cq.Workplane("XY").polyline([(x, y, 0.0) for x, y in pts]).close().extrude(t, both=True)
+    if bore > 0:
+        wp = wp.cut(cq.Workplane("XY").circle(bore / 2.0).extrude(t * 3.0, both=True))
+    return wp
+
+
+def _build_balance_wheel(feature, parameters, cq):
+    od = float(resolve_value(feature["outer_diameter_mm"], parameters))
+    rw = float(resolve_value(feature["rim_width_mm"], parameters))
+    n = int(round(float(resolve_value(feature["spokes"], parameters))))
+    t = float(resolve_value(feature["thickness_mm"], parameters))
+    bore = float(resolve_value(feature["bore_diameter_mm"], parameters))
+    if od <= 0 or rw <= 0 or n <= 0 or t <= 0:
+        raise ValueError("balance_wheel requires positive dims")
+    R = od / 2.0
+    ri = max(R - rw, 0.5)
+    parts = [_annulus(R, ri, t, cq), cq.Workplane("XY").circle(max(bore / 2.0 + 0.5, 1.0)).extrude(t, both=True)]
+    L = R - ri / 2.0
+    for i in range(n):
+        ang = i * 2 * math.pi / n
+        bar = cq.Workplane("XY").rect(L, rw * 0.6).extrude(t, both=True)
+        bar = bar.rotate((0, 0, 0), (0, 0, 1), math.degrees(ang)).translate((math.cos(ang) * L / 2.0, math.sin(ang) * L / 2.0, 0.0))
+        parts.append(bar)
+    s = parts[0]
+    for p in parts[1:]:
+        s = s.union(p)
+    return s
+
+
+def _build_lever(feature, parameters, cq):
+    L = float(resolve_value(feature["length_mm"], parameters))
+    W = float(resolve_value(feature["width_mm"], parameters))
+    t = float(resolve_value(feature["thickness_mm"], parameters))
+    fw = float(resolve_value(feature["fork_width_mm"], parameters))
+    pd = float(resolve_value(feature["pivot_diameter_mm"], parameters))
+    if L <= 0 or W <= 0 or t <= 0:
+        raise ValueError("lever requires positive dims")
+    s = cq.Workplane("XY").rect(L, W).extrude(t, both=True)
+    for sgn in (-1, 1):
+        pr = cq.Workplane("XY").rect(fw, W * 0.3).extrude(t, both=True).translate((L / 2.0 - fw / 2.0, sgn * (W / 2.0 - W * 0.15), 0.0))
+        s = s.union(pr)
+    if pd > 0:
+        s = s.cut(cq.Workplane("XY").circle(pd / 2.0).extrude(t * 3.0, both=True))
+    return s
+
+
+def _build_cage(feature, parameters, cq):
+    od = float(resolve_value(feature["outer_diameter_mm"], parameters))
+    n = int(round(float(resolve_value(feature["arm_count"], parameters))))
+    t = float(resolve_value(feature["thickness_mm"], parameters))
+    bore = float(resolve_value(feature["bore_diameter_mm"], parameters))
+    bridge = bool(feature.get("bridge", True))
+    if od <= 0 or n <= 0 or t <= 0 or bore <= 0:
+        raise ValueError("cage requires positive dims and a bore")
+    R = od / 2.0
+    parts = [_annulus(R, R * 0.72, t, cq), cq.Workplane("XY").circle(bore / 2.0 + 1.0).extrude(t, both=True)]
+    armL = R * 0.85
+    for i in range(n):
+        ang = i * 2 * math.pi / n
+        arm = cq.Workplane("XY").rect(armL, R * 0.16).extrude(t, both=True)
+        arm = arm.rotate((0, 0, 0), (0, 0, 1), math.degrees(ang)).translate((math.cos(ang) * armL / 2.0, math.sin(ang) * armL / 2.0, 0.0))
+        parts.append(arm)
+    if bridge:
+        parts.append(_annulus(R, R * 0.6, t * 0.5, cq).translate((0.0, 0.0, t)))
+    s = parts[0]
+    for p in parts[1:]:
+        s = s.union(p)
+    s = s.cut(cq.Workplane("XY").circle(bore / 2.0).extrude(t * 4.0, both=True))
+    return s
+
+
+def _build_hairspring(feature, parameters, cq):
+    od = float(resolve_value(feature["outer_diameter_mm"], parameters))
+    coils = float(resolve_value(feature["coils"], parameters))
+    wd = float(resolve_value(feature["wire_diameter_mm"], parameters))
+    thick = float(resolve_value(feature["thickness_mm"], parameters))
+    if od <= 0 or coils <= 0 or wd <= 0 or thick <= 0:
+        raise ValueError("hairspring requires positive dims")
+    R = od / 2.0
+    th_max = 2 * math.pi * coils
+    n = int(90 * coils)
+    out = []
+    inn = []
+    for k in range(n + 1):
+        th = th_max * k / n
+        r_out = R * (th / th_max) + 0.4
+        r_in = r_out - wd
+        out.append((r_out * math.cos(th), r_out * math.sin(th)))
+        inn.append((r_in * math.cos(th), r_in * math.sin(th)))
+    pts = [(x, y, 0.0) for x, y in out] + [(x, y, 0.0) for x, y in list(reversed(inn))]
+    return cq.Workplane("XY").polyline(pts).close().extrude(thick)
+
+
+def _build_jewel(feature, parameters, cq):
+    d = float(resolve_value(feature["diameter_mm"], parameters))
+    t = float(resolve_value(feature["thickness_mm"], parameters))
+    if d <= 0 or t <= 0:
+        raise ValueError("jewel requires positive dims")
+    return cq.Workplane("XY").circle(d / 2.0).extrude(t, both=True)
+
+
+_CADQUERY_BUILDERS = {
+    "box": _build_box,
+    "cylinder": _build_cylinder,
+    "gear": _build_gear,
+    "escape_wheel": _build_escape_wheel,
+    "balance_wheel": _build_balance_wheel,
+    "lever": _build_lever,
+    "cage": _build_cage,
+    "hairspring": _build_hairspring,
+    "jewel": _build_jewel,
+}
 
 
 def _model_bbox_mm(model: Any) -> tuple[float, float, float]:
@@ -331,6 +605,9 @@ def run_cad_runtime(dsl: dict[str, Any], output_dir: Path = DEFAULT_OUTPUT_DIR) 
             volume = _model_volume_mm3(model)
             backend = "cadquery_occt"
         except (KeyError, TypeError, ValueError, RuntimeError) as exc:
+            code = str(exc)
+            if code in (GEAR_GENERATION_FAILED, ASSEMBLY_CONSTRAINT_FAILED):
+                return {"status": "fail", "traceability_id": traceability_id, "reason_code": code, "detail": str(exc), "artifacts": []}
             return {"status": "fail", "traceability_id": traceability_id, "reason_code": "CAD_BUILD_FAILED", "detail": str(exc), "artifacts": []}
     else:
         additive_features = [f for f in dsl["features"] if f["op"] in ADDITIVE_OPS]
