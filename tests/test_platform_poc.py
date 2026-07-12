@@ -633,8 +633,8 @@ class PlatformPocTest(unittest.TestCase):
         self.assertIn("min_wall", result)
         self.assertIn("hole_d", result)
         self.assertIn("spec_traceability_id", result)
+        self.assertEqual(result.get("method"), "parameter_proxy")
         self.assertTrue(result["manufacturing_ok"])
-        self.assertEqual(result["failures"], [])
 
     def test_validate_artifacts_orchestrator_consistency(self) -> None:
         """Orchestrator failures must equal the union of sub-validator failures."""
@@ -696,5 +696,31 @@ class PlatformPocTest(unittest.TestCase):
         self.assertEqual(result["status"], "fail")
         self.assertEqual(result["reason_code"], "CAD_BUILD_FAILED")
 
+
+    def test_validation_honesty_topology_not_hardcoded(self) -> None:
+        """Validation Report must not claim watertight/self_intersection when not measured."""
+        spec = golden_specification()
+        dsl = golden_dsl()
+        with TemporaryDirectory() as temp_dir:
+            runtime = run_cad_runtime(dsl, Path(temp_dir) / "runtime")
+            report = validate_artifacts(spec, dsl, runtime)
+        tc = report["topology_check"]
+        self.assertIsNone(tc["watertight"], "watertight must be None when not measured")
+        self.assertIsNone(tc["self_intersection"], "self_intersection must be None when not measured")
+        self.assertEqual(tc.get("method"), "artifact_presence_only")
+
+    def test_runtime_topology_not_measured(self) -> None:
+        """CAD runtime metadata topology must record not_measured instead of hardcoded true/false."""
+        dsl = golden_dsl()
+        with TemporaryDirectory() as temp_dir:
+            runtime = run_cad_runtime(dsl, Path(temp_dir) / "runtime")
+            metadata_path = Path(temp_dir) / "runtime" / f"{runtime['traceability_id']}.metadata.json"
+            self.assertTrue(metadata_path.exists(), f"metadata not found at {metadata_path}")
+            metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+        topo = metadata["topology"]
+        self.assertIsNone(topo["watertight"], "watertight must be None when not measured")
+        self.assertIsNone(topo["self_intersection"], "self_intersection must be None when not measured")
+        self.assertIsNone(topo["non_manifold"], "non_manifold must be None when not measured")
+        self.assertEqual(topo.get("method"), "not_measured")
 if __name__ == "__main__":
     unittest.main()

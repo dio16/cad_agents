@@ -5,10 +5,10 @@ import json
 import tempfile
 from pathlib import Path
 
+from cad_agent.job_runner import run_job
 from cad_agent.phase2_pilot import DEFAULT_PHASE2_OUTPUT_DIR, run_phase2_pilot
 from cad_agent.platform_poc import DEFAULT_OUTPUT_DIR, contract_report, run_golden_pipeline
 from cad_agent.tools.validate_platform_contracts import validate
-
 
 MAINTAINED_COMMANDS = [
     "status",
@@ -16,6 +16,7 @@ MAINTAINED_COMMANDS = [
     "phase1-contract-test",
     "phase1-golden-pipeline",
     "phase2-pilot-run",
+    "run-job",
     "serve",
     "sbom",
     "provenance",
@@ -34,6 +35,30 @@ def _status_report() -> dict[str, object]:
     }
 
 
+
+
+def _run_job_command(args: argparse.Namespace) -> int:
+    """CLI handler for 'run-job' subcommand."""
+    import sys
+
+    if args.input:
+        input_spec = json.loads(Path(args.input).read_text(encoding="utf-8"))
+    else:
+        raw = sys.stdin.read()
+        if not raw.strip():
+            # Default to fixture_pipeline if no input
+            input_spec = {"mode": "fixture_pipeline"}
+        else:
+            input_spec = json.loads(raw)
+
+    if not isinstance(input_spec, dict):
+        _print_json({"error": "input must be a JSON object"})
+        return 2
+
+    output_dir = args.output_dir
+    result = run_job(input_spec, output_dir=output_dir)
+    _print_json({"job_id": result.job_id, "state": result.state, "mode": result.mode, "traceability_id": result.traceability_id, "blocked": result.blocked, "reason_code": result.reason_code, "detail": result.detail, "audit_event_count": len(result.audit_events)})
+    return 0 if not result.blocked else 2
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="AI machine design platform repository checks")
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -71,6 +96,12 @@ def build_parser() -> argparse.ArgumentParser:
     provenance_parser.add_argument("--output", type=Path)
     provenance_parser.add_argument("--created-at")
     provenance_parser.set_defaults(func=None)
+
+
+    run_job_parser = subparsers.add_parser("run-job", help="Run an E2E pipeline job (fixture_pipeline or structured_pipeline)")
+    run_job_parser.add_argument("--input", type=Path, help="Path to JSON input spec (reads stdin if omitted)")
+    run_job_parser.add_argument("--output-dir", type=Path, help="Output directory for artifacts")
+    run_job_parser.set_defaults(func=_run_job_command)
 
     return parser
 
@@ -118,6 +149,9 @@ def main(argv: list[str] | None = None) -> int:
 
         write_json(build_provenance(args.project, args.lock, args.created_at), args.output)
         return 0
+
+    if args.command == "run-job":
+        return args.func(args)
 
     parser.error(f"unknown command: {args.command}")
     return 2

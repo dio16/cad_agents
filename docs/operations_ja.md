@@ -11,9 +11,9 @@ bash ./run_cad_agent.sh phase1-contract-test
 bash ./run_cad_agent.sh phase1-golden-pipeline
 bash ./run_cad_agent.sh phase2-pilot-run
 bash ./run_cad_agent.sh serve --dry-run
-bash ./run_cad_agent.sh sbom --output /tmp/cad_agent_sbom.json
-bash ./run_cad_agent.sh provenance --output /tmp/cad_agent_provenance.json
-```
+bash ./run_cad_agent.sh run-job
+bash ./run_cad_agent.sh run-job --input job_spec.json
+echo '{"mode":"fixture_pipeline"}' | bash ./run_cad_agent.sh run-job
 
 ## Prompt-driven workflow
 

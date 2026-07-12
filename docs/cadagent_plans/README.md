@@ -41,6 +41,7 @@ Record the deviation check result in `TASKS.md` with validation commands and the
 | `CAD-FG-04` | `CAD-FG-04/implementation-plan.md` |
 | `CAD-FG-05` | `CAD-FG-05/implementation-plan.md` |
 | `CAD-REVIEW-01` | `CAD-REVIEW-01/implementation-plan.md` |
+| `CAD-REVIEW-02` | `CAD-REVIEW-02/implementation-plan.md` (active catch-up batch; FG-18–22) |
 | `CAD-FG-06` | `CAD-FG-06/implementation-plan.md` |
 | `CAD-FG-07` | `CAD-FG-07/implementation-plan.md` |
 | `CAD-FG-08` | `CAD-FG-08/implementation-plan.md` |

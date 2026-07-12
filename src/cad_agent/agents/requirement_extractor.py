@@ -75,3 +75,41 @@ def requirement_fixture() -> dict[str, Any]:
         "unknowns": ["service temperature", "applied clamp load"],
         "assumptions": ["PLA or PETG prototype", "non-safety-critical fixture"],
     }
+
+
+def extract_requirement_llm(
+    input_text: str,
+    data_classification: str = "internal",
+    requested_route: str | None = None,
+    traceability_id: str = "",
+    audit_path: str | None = None,
+) -> AgentRouteResult:
+    """Extract a Requirement JSON using the LLM adapter (mock or live).
+
+    In mock mode (default), returns fixture. In live mode (CAD_AGENT_LLM_LIVE=1),
+    calls the configured LLM endpoint with routing enforcement.
+    """
+    from cad_agent.llm_adapter import LLMAdapter
+
+    adapter = LLMAdapter(audit_path=audit_path)
+    result = adapter.extract_requirement(
+        input_text=input_text,
+        data_classification=data_classification,
+        requested_route=requested_route,
+        traceability_id=traceability_id,
+    )
+    if not result.valid:
+        return failure(
+            result.reason_code or "LLM_EXTRACTION_FAILED",
+            "requirement_extractor_llm",
+            result.detail or "LLM extraction failed",
+            model_routing=result.model_routing,
+            traceability_id=traceability_id,
+        )
+    return success(
+        result.json,
+        "requirement_extractor_llm",
+        model_routing=result.model_routing,
+        attempt_count=result.attempt_count,
+        traceability_id=result.json.get("traceability_id", traceability_id),
+    )

@@ -49,22 +49,29 @@ The runner exposes platform documentation checks plus the Phase 1 PoC/native Cad
 ## Repository layout
 
 ```text
-docs/Origen/   Original proposal supplied by the user
-docs/          Maintained platform documentation
-scripts/       Deterministic validation scripts for the platform docs
-cad_agent/platform_poc.py  Phase 1 single-part platform PoC runtime and gates
-cad_agent/phase2_pilot.py  Phase 2 pilot adapters, DFM/AM catalog, review diff, audit, and gateway checks
-cad_agent/api_server.py     Production v1 API skeleton using stdlib http.server
-cad_agent/project_service.py In-memory project service skeleton
-cad_agent/job_queue.py      Synchronous job queue simulation
-cad_agent/observability.py  In-process Prometheus-text counters
-cad_agent/material_catalog.py Production v2 static material catalog stub
-cad_agent/bom.py            Decoupled BOM aggregation stub
-cad_agent/assembly_checks.py Axis-aligned bbox assembly interference stub
-schemas/phase1/  JSON Schema contracts for Phase 1 I/O boundaries
-tests/         Unit tests for schema, AST, runtime, validation, artifact, and approval gates
+docs/Origen/      Original proposal supplied by the user
+docs/             Maintained platform documentation
+src/cad_agent/    Platform implementation (PoC/Pilot runtime, API, agents, validation)
+src/cad_agent/contracts/phase1/  JSON Schema contracts for Phase 1 I/O boundaries
+tests/            Unit tests for schema, AST, runtime, validation, artifact, and approval gates
 run_cad_agent.sh  Bash entrypoint for local checks
+.slim/            OpenCode session state (gitignored)
 ```
+
+Key source files:
+
+| File | Purpose |
+|---|---|
+| `src/cad_agent/platform_poc.py` | Phase 1 single-part platform PoC runtime and gates |
+| `src/cad_agent/phase2_pilot.py` | Phase 2 pilot adapters, DFM/AM catalog, review diff, audit, and gateway checks |
+| `src/cad_agent/api_server.py` | Production v1 API skeleton using stdlib http.server |
+| `src/cad_agent/orchestrator.py` | Workflow state machine and audit |
+| `src/cad_agent/dsl_compiler.py` | Mechanism DSL compiler (allowlist-based) |
+| `src/cad_agent/agents/` | Requirement Extractor, Spec Composer, Mechanism Planner fixtures |
+| `src/cad_agent/motion_validation.py` | Bounded motion-state validation |
+| `src/cad_agent/assembly_checks.py` | Axis-aligned bbox assembly interference stub |
+| `src/cad_agent/viewer.py` | Self-contained HTML assembly viewer |
+| `src/cad_agent/tools/validate_platform_contracts.py` | Document validation tooling |
 
 ## License
 

@@ -56,6 +56,13 @@ TRANSITIONS: dict[str, frozenset[str]] = {
 
 MOTION_VALIDATION_PASSED_NOT_EXPORT_APPROVAL = "MOTION_VALIDATION_PASSED_NOT_EXPORT_APPROVAL"
 
+NATIVE_KERNELS = frozenset({"cadquery_occt", "freecad_occt", "blender_cycles"})
+
+
+def _is_native_kernel(cad_kernel: str) -> bool:
+    """Return True if the cad_kernel is a native (non-surrogate) backend."""
+    return cad_kernel in NATIVE_KERNELS
+
 
 @dataclass(frozen=True, slots=True)
 class WorkflowDecision:
@@ -307,9 +314,11 @@ class Workflow:
         event = self._record_event("validation_passed", traceability_id=traceability_id, **payload)
         return WorkflowDecision(approved=True, approval_id=event["traceability_id"], payload=event["payload"])
 
-    def request_export(self, traceability_id: str | None = None, **payload: object) -> WorkflowDecision:
+    def request_export(self, traceability_id: str | None = None, cad_kernel: str | None = None, **payload: object) -> WorkflowDecision:
         if self._state != VALIDATION_PASSED:
             return WorkflowDecision(blocked=True, reason="VALIDATION_NOT_PASSED")
+        if cad_kernel is not None and not _is_native_kernel(cad_kernel):
+            return WorkflowDecision(blocked=True, reason="EXPORT_REQUIRES_NATIVE_KERNEL", payload={"cad_kernel": cad_kernel})
         self._transition(EXPORT_PENDING_APPROVAL)
         event = self._record_event("export_requested", traceability_id=traceability_id, **payload)
         return WorkflowDecision(blocked=True, reason="EXPORT_APPROVAL_REQUIRED", approval_id=event["traceability_id"], payload=event["payload"])
@@ -447,6 +456,7 @@ def _json_ready(value: Any) -> Any:
     return str(value)
 
 
+
 __all__ = [
     "CAD_BUILT",
     "CREATED",
@@ -467,6 +477,6 @@ __all__ = [
     "WorkflowDecision",
     "RevisionRequest",
     "NewOperationApprovalRequest",
+    "NATIVE_KERNELS",
     "audit_event",
-    "request_new_operation",
 ]
