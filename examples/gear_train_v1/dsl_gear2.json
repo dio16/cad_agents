@@ -1,0 +1,9 @@
+{
+  "traceability_id": "tr_dsl_gear_gear2",
+  "units": "mm",
+  "parameters": {"r": 100.0, "h": 20.0},
+  "features": [
+    {"op": "cylinder", "radius_mm": "$r", "height_mm": "$h", "axis": "z", "positions_mm": [[180.0, 0.0]]}
+  ],
+  "derivative_outputs": ["step_ap242", "stl"]
+}
