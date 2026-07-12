@@ -28,7 +28,7 @@ This validates the Requirement/Specification JSON against their schemas, runs ea
 Parametric DSL through `run_cad_runtime` (deterministic surrogate STEP/STL), runs the
 assembly AABB interference check, and asserts the 1:10 ratio. Output:
 `gear_train_validation_report.json`.
-- The HTML assembly viewer is written to `artifacts/gear_train_v1/assembly_viewer.html` (the artifact directory, same place as the generated STEP/STL). Each part is drawn from its `run_cad_runtime` `bbox_mm` (the artifact's actual dimensions).
+- The HTML assembly viewer is written to `artifacts/gear_train_v1/assembly_viewer.html` (the artifact directory, same place as the generated STEP/STL). Each part is rendered from its `run_cad_runtime` STL mesh (the artifact's actual geometry), placed at the assembly location.
 
 ## Limitations
 

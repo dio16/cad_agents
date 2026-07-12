@@ -143,7 +143,7 @@
     "artifact_id": "art_assembly_viewer",
     "format": "html",
     "path": "/home/diobrando/codex_wsl/cad_agent_framework/artifacts/gear_train_v1/assembly_viewer.html",
-    "artifact_hash": "sha256:61e9a8140ddb0c313077f6f4eabad2ba77ec1a742b6b1366712ae633ab708726"
+    "artifact_hash": "sha256:233371de5badd47e667b3eb98442b138b38cdf277142107025f23116951ee08b"
   },
   "overall_status": "pass"
 }

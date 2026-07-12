@@ -979,14 +979,23 @@ def run_assembly_pipeline(
     Each entry in ``gears`` must be a dict with keys:
         part_id, traceability_id, dsl, cx, cy, r, zmin, zmax
     where (cx, cy) is the shaft-center in the x-y plane, ``r`` the pitch radius,
-    and [zmin, zmax] the axial extent. The HTML viewer is the standard human-review
-    artifact for assemblies (see ``cad_agent.viewer.write_assembly_viewer``).
+    and [zmin, zmax] the axial extent. The HTML viewer renders each part's actual STL
+    mesh (run_cad_runtime artifact) placed at the assembly location; see
+    ``cad_agent.viewer.write_assembly_viewer``.
     """
     from cad_agent.assembly_checks import AssemblyPart, BBox, check_interference
-    from cad_agent.viewer import write_assembly_viewer
+    from cad_agent.viewer import (
+        write_assembly_viewer,
+        read_stl_triangles,
+        box_mesh,
+        triangles_bbox,
+        SHAFT_COLORS,
+    )
+    from types import SimpleNamespace
 
     output_dir = Path(output_dir)
     parts: list[AssemblyPart] = []
+    viewer_parts: list[Any] = []
     gear_results: list[dict[str, Any]] = []
     for gear in gears:
         dsl = gear["dsl"]
@@ -1001,6 +1010,26 @@ def run_assembly_pipeline(
         bbox = BBox(cx - hx, cy - hy, zmin, cx + hx, cy + hy, zmin + hz)
         parts.append(
             AssemblyPart(part_id=gear["part_id"], traceability_id=gear["traceability_id"], bbox=bbox)
+        )
+        # Viewer mesh: render the actual STL artifact geometry, placed at the assembly location.
+        stl_path = next(
+            (a.get("path") for a in runtime.get("artifacts", []) if a.get("format") == "stl"), None
+        )
+        if stl_path is not None and Path(stl_path).exists():
+            tris = read_stl_triangles(Path(stl_path))
+            (lmin, lmax) = triangles_bbox(tris)
+            dx = cx - (lmin[0] + lmax[0]) / 2.0
+            dy = cy - (lmin[1] + lmax[1]) / 2.0
+            dz = (zmin + hz) - (lmin[2] + lmax[2]) / 2.0
+            tris = [[[v[0] + dx, v[1] + dy, v[2] + dz] for v in tri] for tri in tris]
+        else:
+            tris = box_mesh(cx - hx, cy - hy, zmin, cx + hx, cy + hy, zmin + hz)
+        viewer_parts.append(
+            SimpleNamespace(
+                part_id=gear["part_id"],
+                color=SHAFT_COLORS[len(viewer_parts) % len(SHAFT_COLORS)],
+                triangles=tris,
+            )
         )
         gear_results.append(
             {
@@ -1025,7 +1054,7 @@ def run_assembly_pipeline(
         viewer_path = output_dir / "assembly_viewer.html"
     viewer = write_assembly_viewer(
         Path(viewer_path),
-        parts=parts,
+        parts=viewer_parts,
         report=report,
         spec=specification,
         requirement=requirement,

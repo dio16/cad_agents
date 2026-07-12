@@ -27,11 +27,19 @@ def _load(path: Path) -> dict:
 
 class ViewerTest(TestCase):
     def test_write_assembly_viewer_creates_html_and_artifact(self):
+        from cad_agent.viewer import box_mesh
+        from types import SimpleNamespace
+
         parts = [
-            AssemblyPart("pinion1", "tr1", BBox(0, 0, 0, 40, 40, 20)),
-            AssemblyPart("gear1", "tr2", BBox(60, 0, 0, 100, 40, 20)),
+            SimpleNamespace(part_id="pinion1", color="#4e79a7", triangles=box_mesh(0, 0, 0, 40, 40, 20)),
+            SimpleNamespace(part_id="gear1", color="#f28e2b", triangles=box_mesh(60, 0, 0, 100, 40, 20)),
         ]
-        report = check_interference(parts)
+        report = check_interference(
+            [
+                AssemblyPart("pinion1", "tr1", BBox(0, 0, 0, 40, 40, 20)),
+                AssemblyPart("gear1", "tr2", BBox(60, 0, 0, 100, 40, 20)),
+            ]
+        )
         spec = {"unresolved_risks": ["surrogate geometry"]}
         requirement = {"product_type": "gear train", "functional_requirements": ["1:10 ratio"]}
 

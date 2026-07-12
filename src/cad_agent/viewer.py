@@ -1,26 +1,26 @@
 """Self-contained HTML assembly viewer for human review.
 
-The deterministic surrogate CAD path emits placeholder STEP / box STL, so a human
-cannot visually confirm an assembled result from those artifacts alone. This module
-generates a single, dependency-free HTML file (no CDN, no network) that renders the
-assembly from each part's bounding box using a small Canvas2D 3D renderer. It is the
+The deterministic CAD runtime (``run_cad_runtime``) emits STEP / STL artifacts. The
+STEP file is a metadata placeholder; the STL file carries the actual mesh geometry
+(real cadquery/OpenCASCADE mesh when available, otherwise a surrogate box mesh). This
+viewer renders the **actual STL triangles** of every part so what a human sees matches
+the generated artifact, then places each part at its assembly location. It is the
 standard human-review artifact produced by the assembly pipeline
 (see :func:`cad_agent.platform_poc.run_assembly_pipeline`).
 
-The displayed box for each part is taken from the part's ``bbox_mm`` returned by
-``run_cad_runtime`` (the artifact's actual dimensions); the assembly pipeline places
-each part at its shaft/axis location. Known limitation: the viewer shows surrogate
-bounding boxes, not true part geometry (e.g. no involute gear teeth). It is a review
-aid, not a manufacturing drawing.
+The output is a single, dependency-free HTML file (no CDN, no network) using a small
+Canvas2D 3D triangle renderer. Known limitation: surrogate CAD produces simplified box
+meshes, not true gear teeth; the viewer faithfully shows whatever the STL contains.
 """
 from __future__ import annotations
 
 import hashlib
 import json
+import struct
 from pathlib import Path
 from typing import Any
 
-_SHAFT_COLORS = (
+SHAFT_COLORS = (
     "#4e79a7",
     "#f28e2b",
     "#59a14f",
@@ -45,6 +45,77 @@ def _hash_file(path: Path) -> str:
     return "sha256:" + hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def read_stl_triangles(path: Path) -> list[list[list[float]]]:
+    """Parse an STL file (ASCII or binary) into a list of triangles (each 3 vertices)."""
+    data = Path(path).read_bytes()
+    stripped = data.lstrip()
+    if stripped[:5].lower() == b"solid":
+        return _read_stl_ascii(data)
+    if len(data) >= 84:
+        count = struct.unpack("<I", data[80:84])[0]
+        if len(data) == 84 + count * 50:
+            return _read_stl_binary(data, count)
+    return _read_stl_ascii(data)
+
+
+def _read_stl_binary(data: bytes, count: int) -> list[list[list[float]]]:
+    tris: list[list[list[float]]] = []
+    off = 84
+    for _ in range(count):
+        vals = struct.unpack("<12f", data[off : off + 48])
+        off += 48
+        tris.append(
+            [
+                [vals[3], vals[4], vals[5]],
+                [vals[6], vals[7], vals[8]],
+                [vals[9], vals[10], vals[11]],
+            ]
+        )
+        off += 2
+    return tris
+
+
+def _read_stl_ascii(data: bytes) -> list[list[list[float]]]:
+    text = data.decode("utf-8", errors="ignore")
+    tris: list[list[list[float]]] = []
+    verts: list[list[float]] = []
+    for line in text.splitlines():
+        parts = line.split()
+        if len(parts) >= 4 and parts[0] == "vertex":
+            verts.append([float(parts[1]), float(parts[2]), float(parts[3])])
+            if len(verts) == 3:
+                tris.append(verts)
+                verts = []
+    return tris
+
+
+def box_mesh(x0: float, y0: float, z0: float, x1: float, y1: float, z1: float) -> list[list[list[float]]]:
+    """Fallback: build the 12 triangles of an axis-aligned box (used when no STL exists)."""
+    v = [
+        [x0, y0, z0], [x1, y0, z0], [x1, y1, z0], [x0, y1, z0],
+        [x0, y0, z1], [x1, y0, z1], [x1, y1, z1], [x0, y1, z1],
+    ]
+    quads = [[0, 1, 2, 3], [4, 5, 6, 7], [0, 1, 5, 4], [3, 2, 6, 7], [0, 3, 7, 4], [1, 2, 6, 5]]
+    tris: list[list[list[float]]] = []
+    for q in quads:
+        a, b, c, d = (v[i] for i in q)
+        tris.append([a, b, c])
+        tris.append([a, c, d])
+    return tris
+
+
+def triangles_bbox(tris: list[list[list[float]]]) -> tuple[list[float], list[float]]:
+    xs: list[float] = []
+    ys: list[float] = []
+    zs: list[float] = []
+    for tri in tris:
+        for v in tri:
+            xs.append(v[0])
+            ys.append(v[1])
+            zs.append(v[2])
+    return ([min(xs), min(ys), min(zs)], [max(xs), max(ys), max(zs)])
+
+
 def _build_data(
     parts: list[Any],
     report: Any,
@@ -53,23 +124,22 @@ def _build_data(
     ratio: float | None,
 ) -> dict[str, Any]:
     part_data: list[dict[str, Any]] = []
-    for index, part in enumerate(parts):
-        bbox = part.bbox
+    for part in parts:
+        tris = part.triangles
+        (lmin, lmax) = triangles_bbox(tris)
         part_data.append(
             {
                 "id": part.part_id,
-                "color": _SHAFT_COLORS[index % len(_SHAFT_COLORS)],
-                "min": [bbox.min_x, bbox.min_y, bbox.min_z],
-                "max": [bbox.max_x, bbox.max_y, bbox.max_z],
+                "color": part.color,
+                "triangles": tris,
+                "center": [(lmin[0] + lmax[0]) / 2.0, (lmin[1] + lmax[1]) / 2.0, (lmin[2] + lmax[2]) / 2.0],
             }
         )
 
     centers: set[tuple[float, float]] = set()
-    for part in parts:
-        bbox = part.bbox
-        cx = round((bbox.min_x + bbox.max_x) / 2.0, 3)
-        cy = round((bbox.min_y + bbox.max_y) / 2.0, 3)
-        centers.add((cx, cy))
+    for p in part_data:
+        c = p["center"]
+        centers.add((round(c[0], 3), round(c[1], 3)))
     shafts = [[cx, cy] for cx, cy in sorted(centers)]
 
     summary = (
@@ -82,7 +152,7 @@ def _build_data(
     limitations = (
         "<ul>"
         + "".join(f"<li>{_esc(item)}</li>" for item in spec.get("unresolved_risks", []))
-        + "</ul><p>※ Surrogate CAD は簡易シリンダ/ボックスであり真の歯形は含まれません。各ギアの表示は run_cad_runtime の bbox_mm（成果物の実寸法）を使用します。真の歯車幾何には新規 DSL 操作の承認が必要です。</p>"
+        + "</ul><p>※ 各ギアは run_cad_runtime が出力した STL メッシュ（成果物そのものの幾何）を描画します。STEP はメタデータ placeholder のため STL を可視化します。Surrogate CAD の場合は簡易ボックスメッシュとなります。</p>"
     )
 
     return {
@@ -152,14 +222,14 @@ html,body{margin:0;height:100%;font-family:-apple-system,"Segoe UI",Roboto,"Helv
     <div class="controls">
       <button id="btn-reset" title="&#35239;&#28857;&#12522;&#12475;&#12483;&#12488;">&#10227;</button>
       <button id="btn-zoom-in" title="&#12470;&#12540;&#12512;&#12452;&#12531;">&#65291;</button>
-      <button id="btn-zoom-out" title="&#12470;&#12540;&#12512;&#12450;&#12454;&#12488;">&#65293;</button>
+      <button id="btn-zoom-out" title="&#12470;&#12540;&#12531;&#12450;&#12454;&#12488;">&#65293;</button>
     </div>
-    <div class="hint">&#24038;&#12489;&#12521;&#12464;:&#22238;&#36752; &middot; &#21491;&#12489;&#12521;&#12464;:&#31227;&#21205; &middot; &#12507;&#12451;&#12540;&#12523;:&#12470;&#12540;&#12512;</div>
+    <div class="hint">&#24038;&#12489;&#12521;&#12464;:&#22238;&#36752; &middot; &#21491;&#12489;&#12521;&#12464;:&#31227;&#21205; &middot; &#12507;&#12451;&#12540;&#12523;:&#12470;&#12540;&#12512; &middot; &#28961;&#21046;&#38480;&#22238;&#36752;</div>
   </main>
   <aside class="panel">
     <section><h3>&#27010;&#35201;</h3><div id="summary"></div></section>
     <section><h3>&#37096;&#21697; <span id="part-count" class="muted"></span></h3><ul id="parts"></ul></section>
-    <section><h3>&#21046;&#38480;&#20107;&#38918;</h3><div id="limitations"></div></section>
+    <section><h3>&#21046;&#38480;&#20108;&#38918;</h3><div id="limitations"></div></section>
   </aside>
 </div>
 <script>
@@ -193,27 +263,22 @@ function project(p){
 }
 function fitView(){
   let minx=1e9,miny=1e9,minz=1e9,maxx=-1e9,maxy=-1e9,maxz=-1e9;
-  for(const p of PARTS){ for(const c of [[p.min[0],p.min[1],p.min[2]],[p.max[0],p.max[1],p.max[2]]]){
+  for(const p of PARTS){ for(const t of p.triangles){ for(const c of t){
     minx=Math.min(minx,c[0]); maxx=Math.max(maxx,c[0]);
     miny=Math.min(miny,c[1]); maxy=Math.max(maxy,c[1]);
-    minz=Math.min(minz,c[2]); maxz=Math.max(maxz,c[2]); } }
+    minz=Math.min(minz,c[2]); maxz=Math.max(maxz,c[2]); } } }
   const ext = Math.max(maxx-minx, maxy-miny, (maxz-minz)||1);
   scale = Math.min(canvas.width, canvas.height) / (ext*1.6);
   panX = 0; panY = 0;
 }
-function boxFaces(min,max){
-  const [x0,y0,z0]=min,[x1,y1,z1]=max;
-  const v=[[x0,y0,z0],[x1,y0,z0],[x1,y1,z0],[x0,y1,z0],[x0,y0,z1],[x1,y0,z1],[x1,y1,z1],[x0,y1,z1]];
-  return [[v[0],v[1],v[2],v[3]],[v[4],v[5],v[6],v[7]],[v[0],v[1],v[5],v[4]],[v[3],v[2],v[6],v[7]],[v[0],v[3],v[7],v[4]],[v[1],v[2],v[6],v[5]]];
-}
-function shade(facePts, base){
-  const a=rotate(facePts[0]), b=rotate(facePts[1]), c=rotate(facePts[2]);
+function shade(tri, base){
+  const a=rotate(tri[0]), b=rotate(tri[1]), c=rotate(tri[2]);
   const u=[b[0]-a[0],b[1]-a[1],b[2]-a[2]], w=[c[0]-a[0],c[1]-a[1],c[2]-a[2]];
   let n=[u[1]*w[2]-u[2]*w[1], u[2]*w[0]-u[0]*w[2], u[0]*w[1]-u[1]*w[0]];
   const m=Math.hypot(n[0],n[1],n[2])||1; n=[n[0]/m,n[1]/m,n[2]/m];
   let d=n[0]*LIGHT[0]+n[1]*LIGHT[1]+n[2]*LIGHT[2];
   if(d<0) d=-d;
-  const f=0.45+0.55*d;
+  const f=0.5+0.5*d;
   const r=parseInt(base.slice(1,3),16), g=parseInt(base.slice(3,5),16), bl=parseInt(base.slice(5,7),16);
   return 'rgb('+Math.round(r*f)+','+Math.round(g*f)+','+Math.round(bl*f)+')';
 }
@@ -229,25 +294,25 @@ function draw(){
   }
   const draws=[];
   for(const p of PARTS){
-    const faces=boxFaces(p.min,p.max);
-    for(const f of faces){
-      const pts=f.map(project);
-      const depth=(pts[0][2]+pts[1][2]+pts[2][2]+pts[3][2])/4;
-      draws.push({pts:pts, depth:depth, color:shade(f,p.color), id:p.id});
+    for(const tri of p.triangles){
+      const pts=tri.map(project);
+      const depth=(pts[0][2]+pts[1][2]+pts[2][2])/3;
+      draws.push({pts:pts, depth:depth, color:shade(tri,p.color)});
     }
   }
   draws.sort((A,B)=>A.depth-B.depth);
   for(const d of draws){
     ctx.beginPath();
     ctx.moveTo(d.pts[0][0],d.pts[0][1]);
-    for(let i=1;i<d.pts.length;i++) ctx.lineTo(d.pts[i][0],d.pts[i][1]);
+    ctx.lineTo(d.pts[1][0],d.pts[1][1]);
+    ctx.lineTo(d.pts[2][0],d.pts[2][1]);
     ctx.closePath();
     ctx.fillStyle=d.color; ctx.fill();
-    ctx.strokeStyle='rgba(10,14,22,.65)'; ctx.lineWidth=1*dpr; ctx.stroke();
+    ctx.strokeStyle='rgba(10,14,22,.35)'; ctx.lineWidth=0.6*dpr; ctx.stroke();
   }
   ctx.fillStyle='#cdd6e6'; ctx.font=(12*dpr)+'px sans-serif';
   for(const p of PARTS){
-    const c=project([(p.min[0]+p.max[0])/2,(p.min[1]+p.max[1])/2,(p.min[2]+p.max[2])/2]);
+    const c=project(p.center);
     ctx.fillText(p.id, c[0]+5*dpr, c[1]-4*dpr);
   }
   ctx.restore();
@@ -264,7 +329,7 @@ window.addEventListener('mousemove', e=>{
   if(!mode) return;
   const dx=e.clientX-lx, dy=e.clientY-ly; lx=e.clientX; ly=e.clientY;
   if(mode==='pan'){ panX+=dx*dpr; panY+=dy*dpr; }
-  else { yaw+=dx*0.01; pitch+=dy*0.01; pitch=Math.max(-1.5,Math.min(1.5,pitch)); }
+  else { yaw+=dx*0.01; pitch+=dy*0.01; }
   draw();
 });
 canvas.addEventListener('wheel', e=>{
@@ -312,7 +377,10 @@ def write_assembly_viewer(
 
     Args:
         output_path: destination ``.html`` path.
-        parts: sequence of :class:`cad_agent.assembly_checks.AssemblyPart`.
+        parts: sequence of objects exposing ``part_id``, ``color``, and ``triangles``
+            (list of triangles, each a list of three ``[x, y, z]`` vertices already
+            placed at the assembly location). Triangles are rendered verbatim, so the
+            viewer shows exactly the geometry carried by the STL artifacts.
         report: :class:`cad_agent.assembly_checks.AssemblyCheckReport`.
         spec: Specification JSON (used for limitations / ratio context).
         requirement: Requirement JSON (used for the summary panel).
