@@ -625,5 +625,51 @@ class APIServerTest(unittest.TestCase):
         return None
 
 
+def test_api_key_from_environment_variable(monkeypatch):
+    """API key can be overridden via the CAD_AGENT_API_KEY environment variable."""
+    import importlib
+
+    from cad_agent import security_policy as sp
+
+    monkeypatch.setenv("CAD_AGENT_API_KEY", "custom-test-key")
+    importlib.reload(sp)
+    try:
+        assert sp.CAD_AGENT_API_KEY == "custom-test-key"
+    finally:
+        monkeypatch.delenv("CAD_AGENT_API_KEY", raising=False)
+        importlib.reload(sp)
+
+
+def test_set_cors_headers_emits_expected_headers():
+    """_set_cors_headers emits the standard CORS headers on every response."""
+    from cad_agent.api_server import instantiate_handler
+
+    handler = instantiate_handler()
+    recorded: list[tuple[str, str]] = []
+    handler.send_header = lambda k, v: recorded.append((k, v))  # type: ignore[method-assign]
+    handler._set_cors_headers()
+    keys = {k for k, _ in recorded}
+    assert "Access-Control-Allow-Origin" in keys
+    assert "Access-Control-Allow-Methods" in keys
+    assert "Access-Control-Allow-Headers" in keys
+    assert "Access-Control-Max-Age" in keys
+
+
+def test_options_preflight_returns_204_with_cors():
+    """OPTIONS preflight returns 204 and includes CORS headers."""
+    from cad_agent.api_server import instantiate_handler
+
+    handler = instantiate_handler()
+    recorded: list[tuple[str, str]] = []
+    handler.send_header = lambda k, v: recorded.append((k, v))  # type: ignore[method-assign]
+    sent_code: list[int] = []
+    handler.send_response = lambda code: sent_code.append(code)  # type: ignore[method-assign]
+    handler.end_headers = lambda: None  # type: ignore[method-assign]
+    handler.do_OPTIONS()
+    assert sent_code == [204]
+    keys = {k for k, _ in recorded}
+    assert "Access-Control-Allow-Origin" in keys
+
+
 if __name__ == "__main__":
     unittest.main()
