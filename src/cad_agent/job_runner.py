@@ -7,11 +7,13 @@ llm_pipeline mode is approval_required and raises NotImplementedError.
 
 from __future__ import annotations
 
-import json
 from dataclasses import dataclass, field
-from pathlib import Path
-from typing import Any
+from typing import Any, TYPE_CHECKING
 
+if TYPE_CHECKING:
+    from .job_store import JobStore
+
+from pathlib import Path
 from . import platform_poc
 from .agents.requirement_extractor import extract_requirement, requirement_fixture
 from .agents.spec_composer import compose_specification, specification_fixture
@@ -53,6 +55,7 @@ class JobResult:
 def run_job(
     input_spec: dict[str, Any],
     output_dir: Path | None = None,
+    job_store: JobStore | None = None,
 ) -> JobResult:
     """Run an end-to-end pipeline job.
 
@@ -275,7 +278,7 @@ def run_job(
     # ── Step 6: Store artifacts (only on validation pass) ──────────────
     store = store_artifacts(runtime, validation, output_dir / "artifact_store")
 
-    return JobResult(
+    result = JobResult(
         job_id=traceability_id,
         state=workflow.state,
         traceability_id=traceability_id,
@@ -288,3 +291,30 @@ def run_job(
         artifact_store=store,
         audit_events=list(workflow.events),
     )
+
+    # Persist to durable store if provided
+    if job_store is not None:
+        _persist_job_result(job_store, result)
+
+    return result
+
+
+def _persist_job_result(store: JobStore, result: JobResult) -> None:
+    """Record job state and audit events in the durable store."""
+    import json as _json
+    from dataclasses import asdict
+
+    payload = {
+        "mode": result.mode,
+        "requirement": result.requirement,
+        "specification": result.specification,
+    }
+    result_data = {
+        "runtime": result.runtime,
+        "validation_report": result.validation_report,
+        "artifact_store": result.artifact_store,
+    }
+    store.upsert_job(result.job_id, state=result.state, payload=payload, result=result_data)
+    for event in result.audit_events:
+        event_type = event.get("type", event.get("event_type", "unknown"))
+        store.record_audit_event(result.job_id, event_type, payload=event)
