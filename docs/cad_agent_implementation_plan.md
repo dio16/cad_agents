@@ -108,7 +108,7 @@ Detailed task plans live under `docs/cadagent_plans/CAD-FG-*/implementation-plan
 | `CAD-REVIEW-02` | 2026-07-12 repository review catch-up batch (honesty, E2E job, job store, export gate, optional LLM) | `docs/cadagent_plans/CAD-REVIEW-02/implementation-plan.md` | **`active`** |
 | `CAD-FG-18` | Validation honesty + docs reconcile | `docs/cadagent_plans/CAD-REVIEW-02/implementation-plan.md` | **`completed`** (pytest 247 pass, validate-docs pass, phase1-golden pass) |
 | `CAD-FG-19` | E2E job runner (fixture/structured) | `docs/cadagent_plans/CAD-REVIEW-02/implementation-plan.md` | **`completed`** (pytest 258 pass, validate-docs pass, phase1-golden pass) |
-| `CAD-FG-20` | Local job store + job_id workflow | `docs/cadagent_plans/CAD-REVIEW-02/implementation-plan.md` | `executable_now` |
+| `CAD-FG-20` | Local job store + job_id workflow | `docs/cadagent_plans/CAD-REVIEW-02/implementation-plan.md` | **`completed`** (pytest 272 pass, validate-docs pass) |
 | `CAD-FG-21` | Native-required print/export gate | `docs/cadagent_plans/CAD-REVIEW-02/implementation-plan.md` | `executable_now` |
 | `CAD-FG-22` | Real LLM agent loop via Model Gateway | `docs/cadagent_plans/CAD-REVIEW-02/implementation-plan.md` | `approval_required` |
 
