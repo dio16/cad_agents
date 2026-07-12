@@ -28,8 +28,7 @@ from .platform_poc import (
     store_artifacts,
 )
 
-ALLOWED_MODES = frozenset({"fixture_pipeline", "structured_pipeline"})
-# llm_pipeline is approval_required — not executable now
+ALLOWED_MODES = frozenset({"fixture_pipeline", "structured_pipeline", "llm_pipeline"})
 
 
 @dataclass
@@ -124,9 +123,40 @@ def run_job(
                 reason_code="REQUIREMENT_SCHEMA_FAILED",
                 detail="requirement schema validation failed",
             )
+    elif mode == "llm_pipeline":
+
+        from .agents.requirement_extractor import extract_requirement_llm
+
+        input_text = input_spec.get("design_intent", "")
+        if not isinstance(input_text, str) or not input_text.strip():
+            return JobResult(
+                job_id=traceability_id,
+                state="blocked",
+                traceability_id=traceability_id,
+                mode=mode,
+                blocked=True,
+                reason_code="INVALID_DESIGN_INTENT",
+                detail="llm_pipeline requires a non-empty 'design_intent' string",
+            )
+        req_result = extract_requirement_llm(
+            input_text=input_text,
+            data_classification=data_classification,
+            requested_route=input_spec.get("model_route"),
+            traceability_id=traceability_id,
+        )
+        if not req_result.valid:
+            return JobResult(
+                job_id=traceability_id,
+                state="blocked",
+                traceability_id=traceability_id,
+                mode=mode,
+                blocked=True,
+                reason_code=req_result.reason_code or "LLM_REQUIREMENT_FAILED",
+                detail=req_result.metadata.get("error", "LLM extraction failed"),
+            )
+        requirement = req_result.json
     else:
         requirement = requirement_fixture()
-
     # ── Step 2: Specification ──────────────────────────────────────────
     if mode == "structured_pipeline":
         specification = input_spec.get("specification")
@@ -154,6 +184,27 @@ def run_job(
                 reason_code="SPECIFICATION_SCHEMA_FAILED",
                 detail="specification schema validation failed",
             )
+    elif mode == "llm_pipeline":
+        from .agents.spec_composer import compose_specification_llm
+
+        spec_result = compose_specification_llm(
+            requirement=requirement,
+            data_classification=data_classification,
+            requested_route=input_spec.get("model_route"),
+            traceability_id=traceability_id,
+        )
+        if not spec_result.valid:
+            return JobResult(
+                job_id=traceability_id,
+                state="blocked",
+                traceability_id=traceability_id,
+                mode=mode,
+                requirement=requirement,
+                blocked=True,
+                reason_code=spec_result.reason_code or "LLM_SPECIFICATION_FAILED",
+                detail=spec_result.metadata.get("error", "LLM composition failed"),
+            )
+        specification = spec_result.json
     else:
         specification = specification_fixture(requirement_id=requirement.get("traceability_id", "tr_req_agent_fixture"))
     # Auto-approve spec for fixture and internal data

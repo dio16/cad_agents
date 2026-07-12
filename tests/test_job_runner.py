@@ -48,10 +48,10 @@ class JobRunnerTest(TestCase):
         self.assertEqual(result.traceability_id, "tr_job_test_structured")
 
     def test_llm_pipeline_mode_is_blocked(self) -> None:
-        """llm_pipeline mode must return blocked with UNSUPPORTED_MODE."""
+        """llm_pipeline without design_intent must return blocked."""
         result = run_job({"mode": "llm_pipeline"})
         self.assertTrue(result.blocked)
-        self.assertEqual(result.reason_code, "UNSUPPORTED_MODE")
+        self.assertEqual(result.reason_code, "INVALID_DESIGN_INTENT")
 
     def test_invalid_mode_is_blocked(self) -> None:
         """Unknown mode must be blocked."""

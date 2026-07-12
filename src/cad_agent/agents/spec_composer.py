@@ -63,3 +63,41 @@ def _requirement_id(requirement: dict[str, Any] | str | None) -> str:
         requirement_id = requirement.get("traceability_id")
         return requirement_id if isinstance(requirement_id, str) and requirement_id.startswith("tr_req_") else "tr_req_agent_fixture"
     return "tr_req_agent_fixture"
+
+
+def compose_specification_llm(
+    requirement: dict[str, Any],
+    data_classification: str = "internal",
+    requested_route: str | None = None,
+    traceability_id: str = "",
+    audit_path: str | None = None,
+) -> AgentRouteResult:
+    """Compose a Specification JSON using the LLM adapter (mock or live).
+
+    In mock mode (default), returns fixture. In live mode (CAD_AGENT_LLM_LIVE=1),
+    calls the configured LLM endpoint with routing enforcement.
+    """
+    from cad_agent.llm_adapter import LLMAdapter
+
+    adapter = LLMAdapter(audit_path=audit_path)
+    result = adapter.compose_specification(
+        requirement=requirement,
+        data_classification=data_classification,
+        requested_route=requested_route,
+        traceability_id=traceability_id,
+    )
+    if not result.valid:
+        return failure(
+            result.reason_code or "LLM_COMPOSITION_FAILED",
+            "spec_composer_llm",
+            result.detail or "LLM composition failed",
+            model_routing=result.model_routing,
+            traceability_id=traceability_id,
+        )
+    return success(
+        result.json,
+        "spec_composer_llm",
+        model_routing=result.model_routing,
+        attempt_count=result.attempt_count,
+        traceability_id=result.json.get("traceability_id", traceability_id),
+    )
