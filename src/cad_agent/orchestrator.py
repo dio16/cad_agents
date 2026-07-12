@@ -124,6 +124,8 @@ class Workflow:
             "specification_id": specification_id,
             **_json_ready(payload),
         }
+        if self._state == REVISION_REQUESTED:
+            self._transition(SPEC_PENDING_APPROVAL)
         self._transition(SPEC_APPROVED)
         event = self._record_event("specification_approved", traceability_id=specification_id, decision=approval, **payload)
         self.approval_decisions.append(approval)
