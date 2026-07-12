@@ -1,0 +1,29 @@
+{
+  "traceability_id": "tr_req_gear_train_v2",
+  "product_type": "gear_assembly",
+  "functional_requirements": [
+    "Transmit rotation from an input shaft to an output shaft with a total speed reduction of 1:10",
+    "Use parallel shaft axes",
+    "Compose the train from at least two distinct gear types (spur and helical)",
+    "Keep single-mesh tooth counts practical"
+  ],
+  "dimensions": {
+    "overall_length_mm": 160.0,
+    "overall_width_mm": 110.0,
+    "overall_height_mm": 55.0,
+    "module_mm": 2.0
+  },
+  "manufacturing": {
+    "primary_process": "CNC_or_AM_prototype"
+  },
+  "unknowns": [
+    "Final material and heat treatment",
+    "Target torque and input speed",
+    "Helix angle for the helical stage"
+  ],
+  "assumptions": [
+    "Deterministic surrogate CAD is used; gear tooth geometry is not generated (no 'gear' DSL op exists)",
+    "Gear blanks are modeled as cylinders on parallel z-axes; the 1:10 ratio is realized by pitch radii",
+    "Compound train uses three parallel shafts (input, intermediate, output)"
+  ]
+}

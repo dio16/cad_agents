@@ -1,0 +1,149 @@
+{
+  "example": "gear_train_v2",
+  "schema_checks": {
+    "requirement": [
+      "pass"
+    ],
+    "specification": [
+      "pass"
+    ]
+  },
+  "status": "pass",
+  "gears": [
+    {
+      "part_id": "pinion1",
+      "traceability_id": "tr_dsl_gear_pinion1",
+      "dsl_ast_status": "pass",
+      "runtime_status": "pass",
+      "bbox_mm": {
+        "length": 20.0,
+        "width": 20.0,
+        "height": 24.0
+      },
+      "volume_mm3": 7539.822369,
+      "artifacts": [
+        "/home/diobrando/codex_wsl/cad_agent_framework/artifacts/gear_train_v2/tr_dsl_gear_pinion1/tr_dsl_gear_pinion1.step",
+        "/home/diobrando/codex_wsl/cad_agent_framework/artifacts/gear_train_v2/tr_dsl_gear_pinion1/tr_dsl_gear_pinion1.stl",
+        "/home/diobrando/codex_wsl/cad_agent_framework/artifacts/gear_train_v2/tr_dsl_gear_pinion1/tr_dsl_gear_pinion1.metadata.json"
+      ]
+    },
+    {
+      "part_id": "gear1",
+      "traceability_id": "tr_dsl_gear_gear1",
+      "dsl_ast_status": "pass",
+      "runtime_status": "pass",
+      "bbox_mm": {
+        "length": 50.0,
+        "width": 50.0,
+        "height": 24.0
+      },
+      "volume_mm3": 47123.889804,
+      "artifacts": [
+        "/home/diobrando/codex_wsl/cad_agent_framework/artifacts/gear_train_v2/tr_dsl_gear_gear1/tr_dsl_gear_gear1.step",
+        "/home/diobrando/codex_wsl/cad_agent_framework/artifacts/gear_train_v2/tr_dsl_gear_gear1/tr_dsl_gear_gear1.stl",
+        "/home/diobrando/codex_wsl/cad_agent_framework/artifacts/gear_train_v2/tr_dsl_gear_gear1/tr_dsl_gear_gear1.metadata.json"
+      ]
+    },
+    {
+      "part_id": "pinion2",
+      "traceability_id": "tr_dsl_gear_pinion2",
+      "dsl_ast_status": "pass",
+      "runtime_status": "pass",
+      "bbox_mm": {
+        "length": 24.0,
+        "width": 24.0,
+        "height": 16.0
+      },
+      "volume_mm3": 7238.229474,
+      "artifacts": [
+        "/home/diobrando/codex_wsl/cad_agent_framework/artifacts/gear_train_v2/tr_dsl_gear_pinion2/tr_dsl_gear_pinion2.step",
+        "/home/diobrando/codex_wsl/cad_agent_framework/artifacts/gear_train_v2/tr_dsl_gear_pinion2/tr_dsl_gear_pinion2.stl",
+        "/home/diobrando/codex_wsl/cad_agent_framework/artifacts/gear_train_v2/tr_dsl_gear_pinion2/tr_dsl_gear_pinion2.metadata.json"
+      ]
+    },
+    {
+      "part_id": "gear2",
+      "traceability_id": "tr_dsl_gear_gear2",
+      "dsl_ast_status": "pass",
+      "runtime_status": "pass",
+      "bbox_mm": {
+        "length": 96.0,
+        "width": 96.0,
+        "height": 16.0
+      },
+      "volume_mm3": 115811.671582,
+      "artifacts": [
+        "/home/diobrando/codex_wsl/cad_agent_framework/artifacts/gear_train_v2/tr_dsl_gear_gear2/tr_dsl_gear_gear2.step",
+        "/home/diobrando/codex_wsl/cad_agent_framework/artifacts/gear_train_v2/tr_dsl_gear_gear2/tr_dsl_gear_gear2.stl",
+        "/home/diobrando/codex_wsl/cad_agent_framework/artifacts/gear_train_v2/tr_dsl_gear_gear2/tr_dsl_gear_gear2.metadata.json"
+      ]
+    }
+  ],
+  "assembly": {
+    "status": "pass",
+    "analysis_scope": "axis_aligned_bounding_box_only",
+    "interferences": [],
+    "separations": [
+      {
+        "parts": [
+          "pinion1",
+          "pinion2"
+        ],
+        "distance_mm": 13.0,
+        "gap_axis": "x"
+      },
+      {
+        "parts": [
+          "pinion1",
+          "gear2"
+        ],
+        "distance_mm": 28.0,
+        "gap_axis": "z"
+      },
+      {
+        "parts": [
+          "gear1",
+          "pinion2"
+        ],
+        "distance_mm": 28.0,
+        "gap_axis": "z"
+      },
+      {
+        "parts": [
+          "gear1",
+          "gear2"
+        ],
+        "distance_mm": 28.0,
+        "gap_axis": "z"
+      }
+    ],
+    "adjacent": [
+      {
+        "parts": [
+          "pinion1",
+          "gear1"
+        ],
+        "gap_axis": "x"
+      },
+      {
+        "parts": [
+          "pinion2",
+          "gear2"
+        ],
+        "gap_axis": "x"
+      }
+    ]
+  },
+  "ratio_check": {
+    "specified_total_ratio": 10.0,
+    "computed_total_ratio": 10.0,
+    "pass": true
+  },
+  "viewer": {
+    "artifact_id": "art_assembly_viewer",
+    "format": "html",
+    "path": "/home/diobrando/codex_wsl/cad_agent_framework/artifacts/gear_train_v2/assembly_viewer.html",
+    "artifact_hash": "sha256:5db333bcd3e4a6c20a6c884ffc49d8ad397a208891c9590158e7dc7052bbf78c"
+  },
+  "overall_status": "pass"
+}
