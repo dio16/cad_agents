@@ -461,3 +461,54 @@ def test_assembly_then_motion_validation_workflow() -> None:
     motion_decision = workflow.handle_motion_validation(motion_result, traceability_id="tr_test_combined")
     assert motion_decision.approved is False
     assert motion_decision.reason == MOTION_VALIDATION_PASSED_NOT_EXPORT_APPROVAL
+
+
+
+class TestNativeExportGate:
+    def test_export_blocked_when_surrogate_kernel(self) -> None:
+        """Surrogate cad_kernel must block export with EXPORT_REQUIRES_NATIVE_KERNEL."""
+        workflow = Workflow()
+        workflow.approve_specification("spec-1")
+        workflow.run_cad({"traceability_id": "tr_cad"})
+        workflow.start_validation("tr_val_1")
+        workflow.handle_validation({"passed": True, "reason_codes": []})
+
+        result = workflow.request_export("tr_val_1", cad_kernel="deterministic_surrogate_no_libgl")
+
+        assert result.blocked is True
+        assert result.reason == "EXPORT_REQUIRES_NATIVE_KERNEL"
+
+    def test_export_allowed_when_native_kernel(self) -> None:
+        """Native cad_kernel must allow export request to proceed."""
+        workflow = Workflow()
+        workflow.approve_specification("spec-1")
+        workflow.run_cad({"traceability_id": "tr_cad"})
+        workflow.start_validation("tr_val_1")
+        workflow.handle_validation({"passed": True, "reason_codes": []})
+
+        result = workflow.request_export("tr_val_1", cad_kernel="cadquery_occt")
+
+        assert result.blocked is True  # still blocked by EXPORT_APPROVAL_REQUIRED
+        assert result.reason == "EXPORT_APPROVAL_REQUIRED"
+
+    def test_export_without_kernel_unchanged(self) -> None:
+        """Export without cad_kernel parameter must behave as before (backward compat)."""
+        workflow = Workflow()
+        workflow.approve_specification("spec-1")
+        workflow.run_cad({"traceability_id": "tr_cad"})
+        workflow.start_validation("tr_val_1")
+        workflow.handle_validation({"passed": True, "reason_codes": []})
+
+        result = workflow.request_export("tr_val_1")  # no cad_kernel
+
+        assert result.blocked is True
+        assert result.reason == "EXPORT_APPROVAL_REQUIRED"
+
+    def test_is_native_kernel_helper(self) -> None:
+        from cad_agent.orchestrator import _is_native_kernel
+
+        assert _is_native_kernel("cadquery_occt") is True
+        assert _is_native_kernel("freecad_occt") is True
+        assert _is_native_kernel("blender_cycles") is True
+        assert _is_native_kernel("deterministic_surrogate_no_libgl") is False
+        assert _is_native_kernel("unknown_backend") is False
