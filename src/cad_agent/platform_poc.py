@@ -663,7 +663,7 @@ def run_cad_runtime(dsl: dict[str, Any], output_dir: Path = DEFAULT_OUTPUT_DIR) 
         "units": dsl["units"],
         "bbox_mm": {"length": bbox[0], "width": bbox[1], "height": bbox[2]},
         "volume_mm3": volume,
-        "topology": {"watertight": True, "self_intersection": False, "non_manifold": False},
+        "topology": {"watertight": None, "self_intersection": None, "non_manifold": None, "method": "not_measured"},
         "features_executed": [feature["op"] for feature in dsl["features"]],
         "cad_kernel": backend,
     }
@@ -1008,6 +1008,7 @@ def _validate_manufacturing(dsl: dict[str, Any], specification: dict[str, Any], 
         "min_wall": min_wall,
         "hole_d": hole_d,
         "spec_traceability_id": spec_traceability_id,
+        "method": "parameter_proxy",
     }
 
 
@@ -1073,9 +1074,10 @@ def validate_artifacts(specification: dict[str, Any], dsl: dict[str, Any], runti
         "topology_check": _status_item(
             "pass" if topology_ok else "fail",
             "ARTIFACT_FORMAT_CHECK",
-            "canonical STEP and derived STL artifacts are present" if topology_ok else "canonical STEP and derived STL artifacts are missing",
-            watertight=True,
-            self_intersection=False,
+            "canonical STEP and derived STL artifacts are present; mesh topology not measured" if topology_ok else "canonical STEP and derived STL artifacts are missing",
+            watertight=None,
+            self_intersection=None,
+            method="artifact_presence_only",
         ),
         "unit_consistency": _status_item(
             "pass" if unit_ok else "fail",

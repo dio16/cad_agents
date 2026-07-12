@@ -83,10 +83,10 @@
           "type": "number"
         },
         "watertight": {
-          "type": "boolean"
+          "type": ["boolean", "null"]
         },
         "self_intersection": {
-          "type": "boolean"
+          "type": ["boolean", "null"]
         },
         "units": {
           "type": "string"
@@ -109,6 +109,10 @@
         "artifacts_checked": {
           "type": "integer",
           "minimum": 0
+        },
+        "method": {
+          "type": "string",
+          "minLength": 1
         }
       },
       "additionalProperties": false

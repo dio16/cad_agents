@@ -37,8 +37,9 @@
 
 - [x] Phase 2 Pilot, Phase 3 Production v1 readiness skeleton, Phase 4 Production v2 data-model stubs, Phase 5 assembly AABB validation, Phase 6 mechanism DSL compiler, Phase 7 local/mock LLM-agent routes, Phase 8 bounded motion validation, and Phase 9 first target object integration are implemented and validated.
 - These completed phases remain skeleton/Pilot maturity only where noted; production deployment, real worker pools, real LLM endpoints, production-grade material DB/adapters, FEA, production dynamic simulation, and production artifact storage remain deferred.
-- Current implementation work is status/documentation reconciliation only unless a new approval gate explicitly authorizes code work.
-- Functional gap implementation plan is recorded below as `CAD-FG-*`; code phases are `approval_required` and must not start without explicit user approval.
+- **Active batch:** `CAD-REVIEW-02` (2026-07-12 repository review catch-up). Design: `docs/cad_agent_catchup_detailed_design.md`. Plan: `docs/cadagent_plans/CAD-REVIEW-02/implementation-plan.md`. Report: `docs/repository_review_2026-07-12_ja.md`.
+- Child tasks `CAD-FG-18`–`CAD-FG-21` are `executable_now` (honesty, E2E runner, local job store, native export gate). `CAD-FG-22` (real LLM loop) is `approval_required`.
+- Functional gap implementation plan is recorded below as `CAD-FG-*`; production deployment and unapproved LLM endpoints remain out of scope.
 
 ## Remaining tasks and deferred scope (CAD-REVIEW-01 follow-up)
 
@@ -82,6 +83,23 @@ Detailed plan paths are controlled by this file. Current entries point to `docs/
 - [x] `CAD-FG-15` — Detailed-design / implementation gap inventory & remaining-plan formulation. Plan: `docs/cadagent_plans/CAD-FG-15/implementation-plan.md`. Classification: `executable_now` (documentation/status reconciliation). Scope: reconcile detailed design vs implementation; record gaps; formulate remaining plan; evaluate + adversarial review + brush-up. Changes: `docs/cad_agent_implementation_plan.md` §4.1 updated to list `CAD-FG-06`–`CAD-FG-14` + `gear_train_v2`; `TASKS.md` reconciled; `viewer.py` STEP limitation wording corrected. Validation: `bash ./run_cad_agent.sh validate-docs` → pass, `bash ./run_cad_agent.sh status` → aligned, `git diff --check` → clean, `uv run pytest -q` → pass.
 
 - [x] `CAD-FG-17` — Mechanism DSL expansion for tourbillon support: approved `gear`, `escape_wheel`, `balance_wheel`, `lever`, `cage`, `hairspring`, `jewel` operations, cadquery builders, surrogate bbox/volume, reserved error codes `GEAR_GENERATION_FAILED` + `ASSEMBLY_CONSTRAINT_FAILED` wired, tourbillon cage-containment assembly constraint check, example (`examples/tourbillon/`) with viewer + validation report, and tests (`tests/test_tourbillon.py`). Plan: `docs/cadagent_plans/CAD-FG-17/implementation-plan.md`. Classification: `completed`. Validation: `uv run pytest -q` → 236 passed + 2 subtests, `bash ./run_cad_agent.sh validate-docs` → pass, `bash ./run_cad_agent.sh status` → aligned, `git diff --check` → clean.
+
+## Active batch: CAD-REVIEW-02 (repository review catch-up)
+
+Source review: `docs/repository_review_2026-07-12_ja.md`
+
+Catch-up detailed design: `docs/cad_agent_catchup_detailed_design.md`
+
+Master plan: `docs/cadagent_plans/CAD-REVIEW-02/implementation-plan.md`
+
+Deepwork: `.slim/deepwork/cad_review_02.md` (`status: active`)
+
+- [ ] **`CAD-REVIEW-02`** — Repository review catch-up batch (active). Classification: `active` / parent of FG-18–22. Scope: validation honesty, E2E job runner, local job store, native export gate; real LLM only after approval (FG-22). Plan: `docs/cadagent_plans/CAD-REVIEW-02/implementation-plan.md`.
+- [ ] `CAD-FG-18` — Validation honesty + docs reconcile: stop hardcoding topology watertight/self_intersection; record DFM as parameter_proxy; fix README/SPEC/layout drift. Plan: `docs/cadagent_plans/CAD-REVIEW-02/implementation-plan.md` (§ CAD-FG-18). Classification: **`executable_now`**. Dependencies: none.
+- [ ] `CAD-FG-19` — E2E job runner (`fixture_pipeline` / `structured_pipeline`): wire agents fixtures → DSL AST → CAD → validation → store under one runner + CLI/API. Plan: same (§ CAD-FG-19). Classification: **`executable_now`**. Dependencies: FG-18 recommended.
+- [ ] `CAD-FG-20` — Local job store (sqlite) + job_id workflow API; durable export approvals for local maturity. Plan: same (§ CAD-FG-20). Classification: **`executable_now`**. Dependencies: FG-19.
+- [ ] `CAD-FG-21` — Native-required print/export gate (`EXPORT_REQUIRES_NATIVE_KERNEL` for surrogate). Plan: same (§ CAD-FG-21). Classification: **`executable_now`**. Dependencies: FG-18, FG-19.
+- [ ] `CAD-FG-22` — Real LLM agent loop via Model Gateway (schema retry, routing, audit, `llm_pipeline` mode). Plan: same (§ CAD-FG-22). Classification: **`approval_required`**. Dependencies: FG-19, FG-20. Do not start without explicit user approval.
 
 ## CADAGENT phase implementation plans
 

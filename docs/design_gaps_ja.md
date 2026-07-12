@@ -4,6 +4,8 @@
 **生成日**: 2026-06-17  
 **目的**: スケルトン実装から「実際の CADAGENT」へ進むために、未決定または不足している設計要素を整理し、優先順位と責任境界を明示する。
 
+
+> **更新 2026-07-12**: `docs/repository_review_2026-07-12_ja.md` によるレビューを実施。キャッチアップ設計 `docs/cad_agent_catchup_detailed_design.md` と実装計画 `docs/cadagent_plans/CAD-REVIEW-02/implementation-plan.md` を作成。アクティブタスク `CAD-FG-18`~`CAD-FG-22` を `TASKS.md` に登録。本ファイルの主要未決定項目のうち、検証誠実化（topology/DFM honesty）と E2E 統合（job runner）を `CAD-FG-18`/`CAD-FG-19` で着手済み。
 ---
 
 ## 1. エグゼクティブサマリ
