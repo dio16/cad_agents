@@ -444,12 +444,20 @@ def _check_artifact_traceability(artifact_ids: list[str], traceability_id: str) 
     return all(traceability_id in artifact_id for artifact_id in artifact_ids)
 
 
-def validate_artifacts(specification: dict[str, Any], dsl: dict[str, Any], runtime_result: dict[str, Any]) -> dict[str, Any]:
+def _validate_provenance(dsl: dict[str, Any], runtime_result: dict[str, Any]) -> dict[str, Any]:
+    """Validate artifact provenance: entries, metadata, hashes, traceability.
+
+    Returns `failures`, `provenance_ok`, and the derived `artifact_ids`,
+    `metadata_cad_kernel`, and `metadata_path` the orchestrator needs to build
+    the consolidated validation report.
+    """
     failures: list[dict[str, Any]] = []
     traceability_id = dsl.get("traceability_id", runtime_result.get("traceability_id", "unknown"))
-    report_traceability_id = f"tr_val_{traceability_id}"
     artifact_entries = runtime_result.get("artifacts", [])
     provenance_ok = True
+    artifact_ids: list[str] = []
+    metadata_path: Path | None = None
+    metadata_cad_kernel = ""
 
     def _append_provenance_failure(reason_code: str, failure_location: str, detail: str) -> None:
         nonlocal provenance_ok
@@ -464,7 +472,6 @@ def validate_artifacts(specification: dict[str, Any], dsl: dict[str, Any], runti
         )
         artifact_entries = []
 
-    artifact_ids: list[str] = []
     for item in artifact_entries:
         if not isinstance(item, dict):
             _append_provenance_failure(
@@ -509,9 +516,6 @@ def validate_artifacts(specification: dict[str, Any], dsl: dict[str, Any], runti
         )
 
     metadata_artifact = next((item for item in artifact_entries if isinstance(item, dict) and item.get("format") == "metadata"), None)
-    metadata_path: Path | None = None
-    metadata: dict[str, Any] = {}
-    metadata_cad_kernel = ""
     if metadata_artifact is None:
         _append_provenance_failure(
             "MISSING_METADATA_ARTIFACT",
@@ -611,6 +615,18 @@ def validate_artifacts(specification: dict[str, Any], dsl: dict[str, Any], runti
                 f"artifact {artifact_id!r} hash {recorded_hash!r} does not match recomputed hash {actual_hash!r}",
             )
 
+    return {
+        "failures": failures,
+        "provenance_ok": provenance_ok,
+        "artifact_ids": artifact_ids,
+        "metadata_cad_kernel": metadata_cad_kernel,
+        "metadata_path": metadata_path,
+    }
+
+
+def _validate_dimensions(runtime_result: dict[str, Any], specification: dict[str, Any]) -> dict[str, Any]:
+    """Validate bbox and volume against the specification parameter_table."""
+    failures: list[dict[str, Any]] = []
     bbox = runtime_result.get("bbox_mm", {}) or {}
     parameter_table = specification.get("parameter_table", {}) or {}
     constraints = specification.get("constraints", [])
@@ -639,6 +655,12 @@ def validate_artifacts(specification: dict[str, Any], dsl: dict[str, Any], runti
             f"volume_mm3={volume} must be positive",
         )
 
+    return {"failures": failures, "bbox_ok": bbox_ok, "volume_ok": volume_ok, "bbox": bbox, "volume": volume}
+
+
+def _validate_topology(runtime_result: dict[str, Any], artifact_entries: list[dict[str, Any]]) -> dict[str, Any]:
+    """Validate topology: required canonical STEP and derived STL outputs are present."""
+    failures: list[dict[str, Any]] = []
     outputs = {artifact.get("format") for artifact in artifact_entries if isinstance(artifact, dict) and isinstance(artifact.get("format"), str)}
     topology_ok = runtime_result.get("status") == "pass" and "stl" in outputs and "step_ap242" in outputs
     if not topology_ok:
@@ -648,7 +670,12 @@ def validate_artifacts(specification: dict[str, Any], dsl: dict[str, Any], runti
             "topology_check",
             f"expected step_ap242 and stl artifacts, observed formats={sorted(outputs)!r}",
         )
+    return {"failures": failures, "topology_ok": topology_ok}
 
+
+def _validate_units(dsl: dict[str, Any], runtime_result: dict[str, Any]) -> dict[str, Any]:
+    """Validate unit consistency between the DSL and the runtime result."""
+    failures: list[dict[str, Any]] = []
     unit_ok = dsl.get("units") == "mm"
     if not unit_ok:
         _append_failure(
@@ -657,7 +684,12 @@ def validate_artifacts(specification: dict[str, Any], dsl: dict[str, Any], runti
             "unit_consistency",
             f"DSL units={dsl.get('units')!r} must be mm",
         )
+    return {"failures": failures, "unit_ok": unit_ok}
 
+
+def _validate_manufacturing(dsl: dict[str, Any], specification: dict[str, Any], runtime_result: dict[str, Any]) -> dict[str, Any]:
+    """Validate manufacturing profile constraints (DFM/AM) and specification traceability."""
+    failures: list[dict[str, Any]] = []
     parameters = dsl.get("parameters", {})
     min_wall = float(parameters.get("wall_t", parameters.get("height", 0.0)))
     hole_d = float(parameters.get("hole_d", 0.0))
@@ -679,6 +711,40 @@ def validate_artifacts(specification: dict[str, Any], dsl: dict[str, Any], runti
             f"specification traceability_id={spec_traceability_id!r} must be a tr_spec_ identifier",
         )
 
+    return {
+        "failures": failures,
+        "manufacturing_ok": manufacturing_ok,
+        "min_wall": min_wall,
+        "hole_d": hole_d,
+        "spec_traceability_id": spec_traceability_id,
+    }
+
+
+def validate_artifacts(specification: dict[str, Any], dsl: dict[str, Any], runtime_result: dict[str, Any]) -> dict[str, Any]:
+    """Validate artifacts against the specification.
+
+    Orchestrates the focused sub-validators (provenance, dimensions, topology,
+    units, manufacturing) and assembles the consolidated validation report.
+    Public signature is unchanged from the original monolithic implementation.
+    """
+    traceability_id = dsl.get("traceability_id", runtime_result.get("traceability_id", "unknown"))
+    report_traceability_id = f"tr_val_{traceability_id}"
+    artifact_entries = runtime_result.get("artifacts", [])
+
+    provenance = _validate_provenance(dsl, runtime_result)
+    dimension = _validate_dimensions(runtime_result, specification)
+    topology = _validate_topology(runtime_result, artifact_entries)
+    units = _validate_units(dsl, runtime_result)
+    manufacturing = _validate_manufacturing(dsl, specification, runtime_result)
+
+    failures: list[dict[str, Any]] = (
+        provenance["failures"]
+        + dimension["failures"]
+        + topology["failures"]
+        + units["failures"]
+        + manufacturing["failures"]
+    )
+
     if not report_traceability_id.startswith("tr_val_"):
         _append_failure(
             failures,
@@ -686,6 +752,21 @@ def validate_artifacts(specification: dict[str, Any], dsl: dict[str, Any], runti
             "traceability_id",
             f"validation traceability_id={report_traceability_id!r} must be a tr_val_ identifier",
         )
+
+    bbox_ok = dimension["bbox_ok"]
+    volume_ok = dimension["volume_ok"]
+    bbox = dimension["bbox"]
+    volume = dimension["volume"]
+    topology_ok = topology["topology_ok"]
+    unit_ok = units["unit_ok"]
+    manufacturing_ok = manufacturing["manufacturing_ok"]
+    min_wall = manufacturing["min_wall"]
+    hole_d = manufacturing["hole_d"]
+    spec_traceability_id = manufacturing["spec_traceability_id"]
+    provenance_ok = provenance["provenance_ok"]
+    artifact_ids = provenance["artifact_ids"]
+    metadata_cad_kernel = provenance["metadata_cad_kernel"]
+    metadata_path = provenance["metadata_path"]
 
     report = {
         "traceability_id": report_traceability_id,
