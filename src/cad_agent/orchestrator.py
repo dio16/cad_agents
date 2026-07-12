@@ -350,8 +350,9 @@ class Workflow:
     def _append_audit_record(self, event: dict[str, Any]) -> None:
         if self.audit_path is None:
             return
-        timestamp = datetime.now(timezone.utc).isoformat()
-        timestamp_suffix = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S%f")
+        now = datetime.now(timezone.utc)
+        timestamp = now.isoformat()
+        timestamp_suffix = now.strftime("%Y%m%d%H%M%S%f")
         record = {
             "event_id": f"evt_{timestamp_suffix}",
             "recorded_at": timestamp,

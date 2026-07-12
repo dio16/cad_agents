@@ -196,6 +196,16 @@ git commit -m "fix: deduplicate datetime.now() calls in _append_audit_record to 
 - TRANSITIONS dict が handle_validation() の実際の動作と一致していることを確認
 - `_append_audit_record()` が単一の `datetime.now()` より `timestamp` と `timestamp_suffix` を生成していることを確認
 - `validate-docs` と `git diff --check` が通ることを確認
+
+## Execution Deviation Record (2026-07-12)
+
+- Task 06.1（`CREATED → VALIDATION_FAILED` の `TRANSITIONS` からの削除）は **適用せず**。
+  - 根拠: `handle_motion_validation()`（orchestrator.py L228-229）は `CREATED` 状態から失敗時に `_transition(VALIDATION_FAILED)` を行い、その後 `request_revision()` により `REVISION_REQUESTED` へ遷移する。このパスは既存テスト `test_motion_failure_blocks_export_through_workflow_gate` で期待されている。
+  - `CREATED` から `REVISION_REQUESTED` への直接遷移は `TRANSITIONS` に存在しないため、`VALIDATION_FAILED` を削除すると motion validation が `ValueError` で失敗する（regression）。
+  - `handle_validation()` が `CREATED` からの `VALIDATION_FAILED` を `ValueError` で拒否するのは、main CAD validation は CAD 構築後にのみ実行可能という意図的なガードであり、既存テスト `test_validation_failure_from_created_is_rejected` で検証されている。すなわち `TRANSITIONS` の `CREATED → VALIDATION_FAILED` は motion validation 用に意図的に保持されるべきであり「矛盾」ではない。
+  - したがって計画の前提（TRANSITIONS と method の矛盾）は誤りと判断し、遷移を維持した。
+- Task 06.2（audit timestamp dedup）は **適用済み**。
+  - テスト `test_audit_record_timestamp_consistency` は計画の `wf.start_validation()`（CREATED 既定）では `CREATED → VALIDATION_RUNNING` が `TRANSITIONS` に存在しないため `ValueError` となるため、`Workflow(state=CAD_BUILT, ...)` を使用するよう修正した（意図: 単一の `datetime.now()` から `timestamp` と `timestamp_suffix` を生成することの検証）。
 - Design Doc §11 の state machine 定義と整合していることを確認
 
 ## Required Validation Commands

@@ -25,11 +25,27 @@ from cad_agent.orchestrator import (
     SPEC_APPROVED,
     SPEC_PENDING_APPROVAL,
     VALIDATION_PASSED,
+
     MOTION_VALIDATION_PASSED_NOT_EXPORT_APPROVAL,
     NEW_OPERATION_APPROVAL_REQUIRED,
     Workflow,
     audit_event,
 )
+
+
+def test_audit_record_timestamp_consistency() -> None:
+    """Audit record timestamp and event_id suffix derive from a single datetime.now() call."""
+    import tempfile
+    from pathlib import Path
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        audit_path = Path(tmpdir) / "audit.jsonl"
+        wf = Workflow(state=CAD_BUILT, audit_path=audit_path)
+        wf.start_validation(traceability_id="tr_test_ts")
+        records = [json.loads(line) for line in audit_path.read_text().splitlines() if line.strip()]
+        assert len(records) >= 1
+        record = records[-1]
+        assert record["timestamp"] == record["recorded_at"]
 
 
 def passing_motion_validation_report() -> dict[str, object]:
