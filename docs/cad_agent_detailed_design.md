@@ -271,6 +271,9 @@ failure path:
   → (resubmit spec) spec_pending_approval
   → cad_built
   → validation_running
+
+escalation (terminal sink; reachable from any state that lists it):
+  → escalated_to_human   (no automated recovery; human resolves out-of-band)
 ```
 
 Transition table (implemented `Workflow` states):
@@ -279,7 +282,7 @@ Transition table (implemented `Workflow` states):
 |---|---|
 | created | spec_pending_approval, spec_approved, validation_failed, escalated_to_human |
 | spec_pending_approval | spec_approved, revision_requested, escalated_to_human |
-| spec_approved | dsl_generated, cad_built, revision_requested, escalated_to_human |
+| spec_approved | dsl_generated, cad_built, validation_failed, revision_requested, escalated_to_human |
 | revision_requested | spec_pending_approval, dsl_generated, validation_failed, escalated_to_human |
 | dsl_generated | cad_built, revision_requested, escalated_to_human |
 | cad_built | validation_running, revision_requested, escalated_to_human |
@@ -288,7 +291,7 @@ Transition table (implemented `Workflow` states):
 | validation_failed | revision_requested, escalated_to_human |
 | pending_export_approval | exported, revision_requested, escalated_to_human |
 | exported | revision_requested, escalated_to_human |
-| escalated_to_human | spec_pending_approval, revision_requested, escalated_to_human |
+| escalated_to_human | (none — terminal sink; human-in-the-loop resolution is handled out-of-band, not via the automated `Workflow` state machine) |
 
 ### Escalation conditions
 

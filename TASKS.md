@@ -40,6 +40,35 @@
 - Current implementation work is status/documentation reconciliation only unless a new approval gate explicitly authorizes code work.
 - Functional gap implementation plan is recorded below as `CAD-FG-*`; code phases are `approval_required` and must not start without explicit user approval.
 
+## Remaining tasks and deferred scope (CAD-REVIEW-01 follow-up)
+
+Status reconciliation (2026-07-12): `docs/cad_agent_detailed_design.md` §11, `docs/cad_agent_implementation_plan.md`, and the implementation (`TASKS.md` + `src/cad_agent/orchestrator.py`) were cross-checked.
+
+### Completed within the current approval boundary
+- All code phases `CAD-P00`–`CAD-P09`: implemented and validated (skeleton/Pilot maturity).
+- All functional-gap tasks `CAD-FG-00`–`CAD-FG-05`: `completed`.
+- `CAD-REVIEW-01` batch `CAD-FG-06`–`CAD-FG-13`: `completed` and pushed this session (audit dedupe, dead-param removal, API key + CORS, `validate_artifacts` decomposition, surrogate STL normals, boolean/kernel error codes, public re-approval API, documentation alignment).
+
+### Remaining tasks (deferred — outside the current approval boundary)
+Deferred per `docs/cad_agent_implementation_plan.md` §1/§3 and the Status summary; each requires explicit user approval before any code work begins:
+- Production v1/v2 deployment: Kubernetes, Docker, CI/CD, SBOM signing (Cosign/Trivy).
+- Real native worker pools (OCCT/FreeCAD/CadQuery) replacing the deterministic surrogate.
+- Real (non-mock) LLM endpoints and production Model Gateway routing.
+- Production-grade material DB and PLM/ERP/MES adapters; tenant isolation.
+- FEA solver integration (current validation is geometry/DFM/AM/motion only).
+- Production dynamic motion simulation (current motion validation is bounded).
+- Durable production artifact storage (current store is local/stub).
+- Production SLO enforcement and regulatory/export-control workflow.
+- New DSL operations beyond the allowlist — gated by `CAD-FG-01` safety review.
+
+### Documentation/implementation reconciliation performed
+- §11 state-model table corrected to match `orchestrator.py` `TRANSITIONS`: added `validation_failed` as an allowed next state from `spec_approved`; marked `escalated_to_human` as a terminal sink (code sets `ESCALATED_TO_HUMAN: frozenset()` — no automated recovery). ASCII state diagram updated to show the escalation sink.
+- `TASKS.md` process-checklist drift reconciled: items 74–75 marked complete (per-phase status and validation/verdict recording are satisfied by the existing per-phase entries).
+
+### Open checklist items retained (standing guards, not remaining work)
+- Line 26: execute the next approved executable task only when explicit approval makes one available (standing workflow guard).
+- Line 27: `CAD-FG-01` was executed only after explicit approval and is now `completed`; the guard remains as a standing rule.
+
 ## Functional gap implementation plan
 
 Detailed plan paths are controlled by this file. Current entries point to `docs/cadagent_plans/CAD-FG-*/implementation-plan.md`; if the reference location changes, update `TASKS.md` first.
@@ -71,8 +100,8 @@ Detailed plan paths are controlled by this file. Current entries point to `docs/
 - [x] Create per-task detailed implementation plan: `docs/cadagent_plans/CAD-FG-04/implementation-plan.md`.
 - [x] Create per-task detailed implementation plan: `docs/cadagent_plans/CAD-FG-05/implementation-plan.md`.
 - [x] Add deviation-check requirement to each plan: verify against `docs/cad_agent_detailed_design.md`, `docs/cad_agent_implementation_plan.md`, phase non-goals, and deferred production boundaries before marking complete.
-- [ ] Update this file with each phase status: `not started`, `in progress`, `blocked`, or `completed`.
-- [ ] Record each completed phase's validation commands, reviewer verdict, and deviation-check verdict.
+- [x] Update this file with each phase status: `not started`, `in progress`, `blocked`, or `completed`.
+- [x] Record each completed phase's validation commands, reviewer verdict, and deviation-check verdict.
 
 ## Phase 0: Design-contract finalization
 
