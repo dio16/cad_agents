@@ -152,7 +152,7 @@ def _build_data(
     limitations = (
         "<ul>"
         + "".join(f"<li>{_esc(item)}</li>" for item in spec.get("unresolved_risks", []))
-        + "</ul><p>※ 各ギアは run_cad_runtime が出力した STL メッシュ（成果物そのものの幾何）を描画します。STEP はメタデータ placeholder のため STL を可視化します。Surrogate CAD の場合は簡易ボックスメッシュとなります。</p>"
+        + "</ul><p>※ 各ギアは run_cad_runtime が出力した STL メッシュ（成果物そのものの幾何）を描画します。STEP（AP242）と STL は同一 cadquery モデルから生成される（cadquery 利用時は実 B-Rep；surrogate 時は placeholder）。ビューアーはレンダリングの容易さから STL メッシュを描画します。</p>"
     )
 
     return {
