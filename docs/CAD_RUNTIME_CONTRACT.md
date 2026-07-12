@@ -20,8 +20,8 @@ Define the contract boundary between validated Parametric DSL and deterministic 
 - Canonical artifacts: STEP / B-Rep.
 - Derived artifacts: STL, 3MF, glTF/GLB, PNG, PDF review report.
 - Metadata expectations: traceability IDs, source spec/dsl/report references, runtime mode, artifact hash, timestamp, and surrogate/native status.
-- V1/runtime error codes: `CAD_BUILD_FAILED`, `DSL_AST_VALIDATION_FAILED`, `UNSUPPORTED_DSL_OP`, `INVALID_PARAMETER_REFERENCE`, `NON_POSITIVE_VOLUME`, `BOOLEAN_FAILED`, `KERNEL_TIMEOUT`, `EXPORT_FAILED`.
-- Reserved future error codes: `FILLET_FAILED`, `GEAR_GENERATION_FAILED`, `ASSEMBLY_CONSTRAINT_FAILED`.
+- V1/runtime error codes: `CAD_BUILD_FAILED`, `DSL_AST_VALIDATION_FAILED`, `UNSUPPORTED_DSL_OP`, `INVALID_PARAMETER_REFERENCE`, `NON_POSITIVE_VOLUME`, `BOOLEAN_FAILED`, `KERNEL_TIMEOUT`, `EXPORT_FAILED`, `GEAR_GENERATION_FAILED`, `ASSEMBLY_CONSTRAINT_FAILED`.
+- Reserved future error codes: `FILLET_FAILED`.
 
 ## Out of scope / deferred
 - Production worker pool, production API service, real LLM endpoint, and API endpoint schema files.
@@ -45,3 +45,18 @@ CAD Runtime is the deterministic executor. It never interprets free text, never 
 - Native promotion criteria for surrogate-to-production artifacts are deferred.
 - Full B-Rep validity, mesh watertightness, assembly export, and motion sweep export are future implementation concerns.
 - Production deployment architecture remains future scope.
+
+## Deterministic Surrogate Limitations
+
+The deterministic surrogate path (`deterministic_surrogate_no_libgl`) is used when
+CadQuery/OCCT is not available. Known limitations:
+
+- STEP output is a text placeholder, not canonical B-Rep geometry
+- STL mesh uses simplified box geometry with pre-computed outward normals
+- No true boolean operations (through_holes are metadata-only)
+- No fillet, chamfer, or complex surface generation
+- Volume is computed from additive feature volumes only
+- Topology metadata (watertight, self_intersection) is set to safe defaults
+
+These limitations are acceptable for validation pipeline testing and PoC demonstration.
+Production use requires the CadQuery/OCCT backend.

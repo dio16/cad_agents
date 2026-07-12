@@ -28,21 +28,12 @@
           {
             "type": "object",
             "properties": {
-              "op": {
-                "const": "box"
-              },
-              "length_mm": {
-                "type": "string",
-                "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"
-              },
-              "width_mm": {
-                "type": "string",
-                "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"
-              },
-              "height_mm": {
-                "type": "string",
-                "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"
-              }
+              "op": {"const": "box"},
+              "length_mm": {"type": "string", "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"},
+              "width_mm": {"type": "string", "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"},
+              "height_mm": {"type": "string", "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"},
+              "axis": {"type": "string", "enum": ["z"]},
+              "positions_mm": {"$ref": "#/$defs/coordinate_pair_array"}
             },
             "required": ["op", "length_mm", "width_mm", "height_mm"],
             "additionalProperties": false
@@ -50,24 +41,11 @@
           {
             "type": "object",
             "properties": {
-              "op": {
-                "const": "cylinder"
-              },
-              "radius_mm": {
-                "type": "string",
-                "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"
-              },
-              "height_mm": {
-                "type": "string",
-                "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"
-              },
-              "axis": {
-                "type": "string",
-                "enum": ["z"]
-              },
-              "positions_mm": {
-                "$ref": "#/$defs/coordinate_pair_array"
-              }
+              "op": {"const": "cylinder"},
+              "radius_mm": {"type": "string", "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"},
+              "height_mm": {"type": "string", "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"},
+              "axis": {"type": "string", "enum": ["z"]},
+              "positions_mm": {"$ref": "#/$defs/coordinate_pair_array"}
             },
             "required": ["op", "radius_mm", "height_mm", "axis", "positions_mm"],
             "additionalProperties": false
@@ -75,26 +53,113 @@
           {
             "type": "object",
             "properties": {
-              "op": {
-                "const": "through_hole"
-              },
-              "axis": {
-                "type": "string",
-                "enum": ["z"]
-              },
-              "diameter_mm": {
-                "type": "string",
-                "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"
-              },
-              "depth_mm": {
-                "type": "string",
-                "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"
-              },
-              "positions_mm": {
-                "$ref": "#/$defs/coordinate_pair_array"
-              }
+              "op": {"const": "through_hole"},
+              "axis": {"type": "string", "enum": ["z"]},
+              "diameter_mm": {"type": "string", "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"},
+              "depth_mm": {"type": "string", "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"},
+              "positions_mm": {"$ref": "#/$defs/coordinate_pair_array"}
             },
             "required": ["op", "axis", "diameter_mm", "depth_mm", "positions_mm"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {"const": "gear"},
+              "module_mm": {"type": "string", "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"},
+              "teeth": {"type": "string", "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"},
+              "thickness_mm": {"type": "string", "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"},
+              "bore_diameter_mm": {"type": "string", "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"},
+              "axis": {"type": "string", "enum": ["z"]},
+              "positions_mm": {"$ref": "#/$defs/coordinate_pair_array"}
+            },
+            "required": ["op", "module_mm", "teeth", "thickness_mm", "bore_diameter_mm", "axis", "positions_mm"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {"const": "escape_wheel"},
+              "teeth": {"type": "string", "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"},
+              "tip_radius_mm": {"type": "string", "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"},
+              "thickness_mm": {"type": "string", "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"},
+              "bore_diameter_mm": {"type": "string", "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"},
+              "tooth_type": {"type": "string", "enum": ["pointed", "club"]},
+              "axis": {"type": "string", "enum": ["z"]},
+              "positions_mm": {"$ref": "#/$defs/coordinate_pair_array"}
+            },
+            "required": ["op", "teeth", "tip_radius_mm", "thickness_mm", "bore_diameter_mm", "axis", "positions_mm"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {"const": "balance_wheel"},
+              "outer_diameter_mm": {"type": "string", "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"},
+              "rim_width_mm": {"type": "string", "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"},
+              "spokes": {"type": "string", "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"},
+              "thickness_mm": {"type": "string", "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"},
+              "bore_diameter_mm": {"type": "string", "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"},
+              "axis": {"type": "string", "enum": ["z"]},
+              "positions_mm": {"$ref": "#/$defs/coordinate_pair_array"}
+            },
+            "required": ["op", "outer_diameter_mm", "rim_width_mm", "spokes", "thickness_mm", "bore_diameter_mm", "axis", "positions_mm"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {"const": "lever"},
+              "length_mm": {"type": "string", "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"},
+              "width_mm": {"type": "string", "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"},
+              "thickness_mm": {"type": "string", "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"},
+              "fork_width_mm": {"type": "string", "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"},
+              "pivot_diameter_mm": {"type": "string", "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"},
+              "axis": {"type": "string", "enum": ["z"]},
+              "positions_mm": {"$ref": "#/$defs/coordinate_pair_array"}
+            },
+            "required": ["op", "length_mm", "width_mm", "thickness_mm", "fork_width_mm", "pivot_diameter_mm", "axis", "positions_mm"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {"const": "cage"},
+              "outer_diameter_mm": {"type": "string", "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"},
+              "arm_count": {"type": "string", "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"},
+              "thickness_mm": {"type": "string", "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"},
+              "bore_diameter_mm": {"type": "string", "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"},
+              "bridge": {"type": "boolean"},
+              "axis": {"type": "string", "enum": ["z"]},
+              "positions_mm": {"$ref": "#/$defs/coordinate_pair_array"}
+            },
+            "required": ["op", "outer_diameter_mm", "arm_count", "thickness_mm", "bore_diameter_mm", "axis", "positions_mm"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {"const": "hairspring"},
+              "outer_diameter_mm": {"type": "string", "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"},
+              "coils": {"type": "string", "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"},
+              "wire_diameter_mm": {"type": "string", "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"},
+              "thickness_mm": {"type": "string", "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"},
+              "axis": {"type": "string", "enum": ["z"]},
+              "positions_mm": {"$ref": "#/$defs/coordinate_pair_array"}
+            },
+            "required": ["op", "outer_diameter_mm", "coils", "wire_diameter_mm", "thickness_mm", "axis", "positions_mm"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "op": {"const": "jewel"},
+              "diameter_mm": {"type": "string", "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"},
+              "thickness_mm": {"type": "string", "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"},
+              "axis": {"type": "string", "enum": ["z"]},
+              "positions_mm": {"$ref": "#/$defs/coordinate_pair_array"}
+            },
+            "required": ["op", "diameter_mm", "thickness_mm", "axis", "positions_mm"],
             "additionalProperties": false
           }
         ],

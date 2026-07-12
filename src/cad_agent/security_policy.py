@@ -1,9 +1,10 @@
 from __future__ import annotations
+import os
 
 from dataclasses import asdict, dataclass
 from typing import Any
 
-CAD_AGENT_API_KEY = "local-dev-key"
+CAD_AGENT_API_KEY = os.environ.get("CAD_AGENT_API_KEY", "local-dev-key")
 ROUTE_APPROVAL_REQUIRED = "ROUTE_APPROVAL_REQUIRED"
 ROUTE_NOT_ALLOWED = "ROUTE_NOT_ALLOWED"
 UNKNOWN_DATA_CLASSIFICATION = "UNKNOWN_DATA_CLASSIFICATION"

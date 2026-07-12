@@ -93,6 +93,18 @@ Detailed task plans live under `docs/cadagent_plans/CAD-FG-*/implementation-plan
 | `CAD-FG-03` | Model Gateway and data-classification API integration | `docs/cadagent_plans/CAD-FG-03/implementation-plan.md` | `completed` |
 | `CAD-FG-04` | Agent route hardening decision and implementation | `docs/cadagent_plans/CAD-FG-04/implementation-plan.md` | `completed` |
 | `CAD-FG-05` | Production infrastructure deferral | `docs/cadagent_plans/CAD-FG-05/implementation-plan.md` | `completed` |
+| `CAD-FG-06` | Orchestrator state machine 整合 (audit dedupe) | `docs/cadagent_plans/CAD-FG-06/implementation-plan.md` | `completed` |
+| `CAD-FG-07` | `validate_artifacts()` 分解 | `docs/cadagent_plans/CAD-FG-07/implementation-plan.md` | `completed` |
+| `CAD-FG-08` | DSL compiler cleanup (dead param removal) | `docs/cadagent_plans/CAD-FG-08/implementation-plan.md` | `completed` |
+| `CAD-FG-09` | Security hardening (API key + CORS) | `docs/cadagent_plans/CAD-FG-09/implementation-plan.md` | `completed` |
+| `CAD-FG-10` | Surrogate quality (STL normals) | `docs/cadagent_plans/CAD-FG-10/implementation-plan.md` | `completed` |
+| `CAD-FG-11` | Error handling expansion (BOOLEAN_FAILED/KERNEL_TIMEOUT) | `docs/cadagent_plans/CAD-FG-11/implementation-plan.md` | `completed` |
+| `CAD-FG-12` | Test quality improvement (public re-approval API) | `docs/cadagent_plans/CAD-FG-12/implementation-plan.md` | `completed` |
+| `CAD-FG-13` | Documentation alignment | `docs/cadagent_plans/CAD-FG-13/implementation-plan.md` | `completed` |
+| `CAD-FG-14` | HTML assembly viewer standard output + 7-stage flow | `docs/cadagent_plans/CAD-FG-14/implementation-plan.md` | `completed` |
+| `gear_train_v2` | Changed-dimension test case + viewer/STL fidelity test | `examples/gear_train_v2/` | `completed` (executable_now) |
+
+| `CAD-FG-17` | Mechanism DSL tourbillon operations — `gear`, `escape_wheel`, `balance_wheel`, `lever`, `cage`, `hairspring`, `jewel` — plus error codes `GEAR_GENERATION_FAILED`/`ASSEMBLY_CONSTRAINT_FAILED`, tourbillon assembly constraint check, example, and tests | `docs/cadagent_plans/CAD-FG-17/implementation-plan.md` | `completed` |
 
 ## 5. Detailed implementation phases
 

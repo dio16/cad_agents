@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import math
 
 
 @dataclass(frozen=True, slots=True)
@@ -223,6 +224,238 @@ def check_adjacency(
 ) -> AssemblyCheckReport:
     return check_interference(parts, tolerance_mm=tolerance_mm)
 
+
+TOURBILLON_CAGE_RADIUS_VIOLATION = "ASSEMBLY_CONSTRAINT_FAILED"
+TOURBILLON_NO_CAGE = "TOURBILLON_NO_CAGE"
+
+
+def check_tourbillon_constraints(
+    parts: list[AssemblyPart] | tuple[AssemblyPart, ...],
+    tolerance_mm: float = 0.0,
+) -> AssemblyCheckReport:
+    """Validate that a tourbillon rotating cage physically contains its escapement.
+
+    The cage (a part whose id contains "cage") must have an outer radius that fully
+    encloses every carried escapement wheel (ids containing "escape" or "balance").
+    Each carried wheel's farthest corner is measured from the cage center; if it
+    exceeds the cage outer radius the check fails with ASSEMBLY_CONSTRAINT_FAILED so
+    the CAD runtime can surface the reserved contract error code.
+    """
+    issues = list(validate_parts(parts))
+    if tolerance_mm < 0:
+        issues.append(AssemblyValidationIssue("invalid_tolerance", "tolerance_mm must be non-negative", None))
+    cage = next((p for p in parts if "cage" in p.part_id.lower()), None)
+    carried = [p for p in parts if p is not cage and ("escape" in p.part_id.lower() or "balance" in p.part_id.lower())]
+    if cage is None:
+        issues.append(AssemblyValidationIssue(TOURBILLON_NO_CAGE, "tourbillon assembly is missing a rotating cage part", None))
+    else:
+        cx = (cage.bbox.min_x + cage.bbox.max_x) / 2.0
+        cy = (cage.bbox.min_y + cage.bbox.max_y) / 2.0
+        cage_r = max(cage.bbox.max_x - cage.bbox.min_x, cage.bbox.max_y - cage.bbox.min_y) / 2.0
+        for p in carried:
+            corners = (
+                (p.bbox.min_x, p.bbox.min_y),
+                (p.bbox.max_x, p.bbox.min_y),
+                (p.bbox.min_x, p.bbox.max_y),
+                (p.bbox.max_x, p.bbox.max_y),
+            )
+            dist = max(math.hypot(x - cx, y - cy) for x, y in corners)
+            if dist > cage_r + tolerance_mm:
+                issues.append(
+                    AssemblyValidationIssue(
+                        TOURBILLON_CAGE_RADIUS_VIOLATION,
+                        f"{p.part_id} reaches {dist:.3f}mm from cage center, exceeds cage radius {cage_r:.3f}mm",
+                        p.part_id,
+                    )
+                )
+    status = "fail" if issues else "pass"
+    return AssemblyCheckReport(
+        status=status,
+        analysis_scope="tourbillon_cage_containment",
+        interferences=(),
+        separations=(),
+        adjacent_within_tolerance=(),
+        issues=tuple(issues),
+    )
+
+
+@dataclass(frozen=True, slots=True)
+class GearSpec:
+    """Minimal gear specification for mesh validation."""
+    module_mm: float
+    teeth: int
+
+
+GEAR_MESH_DISTANCE = "GEAR_MESH_DISTANCE"
+GEAR_MESH_MODULE_MISMATCH = "GEAR_MESH_MODULE_MISMATCH"
+GEAR_MESH_MISSING_SPEC = "GEAR_MESH_MISSING_SPEC"
+
+
+def check_gear_mesh(
+    parts: list[AssemblyPart] | tuple[AssemblyPart, ...],
+    gear_specs: dict[str, GearSpec],
+    meshing_pairs: list[tuple[str, str]] | tuple[tuple[str, str], ...],
+    tolerance_mm: float = 0.5,
+) -> AssemblyCheckReport:
+    """Validate that paired gears are positioned at the correct centre distance.
+
+    For each (part_a, part_b) pair the *required* centre distance is computed
+    from :math:`m \\cdot (z_a + z_b) / 2` and compared to the actual Euclidean
+    distance between the parts' bounding-box centres.  Modules must match.
+    """
+    issues = list(validate_parts(parts))
+    for part_a, part_b in meshing_pairs:
+        a = next((p for p in parts if p.part_id == part_a), None)
+        b = next((p for p in parts if p.part_id == part_b), None)
+        if a is None or b is None:
+            missing = part_a if a is None else part_b
+            issues.append(AssemblyValidationIssue("GEAR_MESH_MISSING_PART", f"part '{missing}' not found"))
+            continue
+        sa = gear_specs.get(part_a)
+        sb = gear_specs.get(part_b)
+        if sa is None or sb is None:
+            missing = part_a if sa is None else part_b
+            issues.append(AssemblyValidationIssue(GEAR_MESH_MISSING_SPEC, f"gear spec missing for '{missing}'"))
+            continue
+        if abs(sa.module_mm - sb.module_mm) > 1e-9:
+            issues.append(
+                AssemblyValidationIssue(GEAR_MESH_MODULE_MISMATCH,
+                    f"{part_a} (m={sa.module_mm}) != {part_b} (m={sb.module_mm})"))
+            continue
+        required_cd = sa.module_mm * (sa.teeth + sb.teeth) / 2.0
+        ax = (a.bbox.min_x + a.bbox.max_x) / 2.0
+        ay = (a.bbox.min_y + a.bbox.max_y) / 2.0
+        bx = (b.bbox.min_x + b.bbox.max_x) / 2.0
+        by = (b.bbox.min_y + b.bbox.max_y) / 2.0
+        actual_cd = math.hypot(ax - bx, ay - by)
+        error = abs(actual_cd - required_cd)
+        if error > tolerance_mm:
+            issues.append(
+                AssemblyValidationIssue(GEAR_MESH_DISTANCE,
+                    f"{part_a}-{part_b}: required centre distance {required_cd:.3f} mm, "
+                    f"actual {actual_cd:.3f} mm (error {error:.3f} mm > {tolerance_mm} mm)"))
+    status = "fail" if issues else "pass"
+    return AssemblyCheckReport(
+        status=status,
+        analysis_scope="gear_mesh_centre_distance",
+        interferences=(),
+        separations=(),
+        adjacent_within_tolerance=(),
+        issues=tuple(issues),
+    )
+
+
+
+
+SHAFT_BORE_VIOLATION = "SHAFT_BORE_VIOLATION"
+SHAFT_BORE_MISALIGNED = "SHAFT_BORE_MISALIGNED"
+
+
+def check_shaft_clearance(
+    bearing_part: AssemblyPart,
+    shaft_part: AssemblyPart,
+    bore_diameter_mm: float,
+    shaft_diameter_mm: float,
+    clearance_min_mm: float = 0.2,
+    coaxial_tolerance_mm: float = 1.0,
+) -> AssemblyCheckReport:
+    """Validate that a shaft fits through a bearing bore with adequate clearance.
+
+    Checks that *bearing_part* and *shaft_part* are coaxial (their bounding-box
+    centres lie within *coaxial_tolerance_mm* in the x‑y plane) and that the
+    bore diameter exceeds the shaft diameter by at least *clearance_min_mm*.
+    """
+    issues = list(validate_parts([bearing_part, shaft_part]))
+    if not issues:
+        bx = (bearing_part.bbox.min_x + bearing_part.bbox.max_x) / 2.0
+        by = (bearing_part.bbox.min_y + bearing_part.bbox.max_y) / 2.0
+        sx = (shaft_part.bbox.min_x + shaft_part.bbox.max_x) / 2.0
+        sy = (shaft_part.bbox.min_y + shaft_part.bbox.max_y) / 2.0
+        dx = abs(bx - sx)
+        dy = abs(by - sy)
+        if dx > coaxial_tolerance_mm or dy > coaxial_tolerance_mm:
+            issues.append(
+                AssemblyValidationIssue(SHAFT_BORE_MISALIGNED,
+                    f"bearing centre ({bx:.1f},{by:.1f}) vs shaft centre ({sx:.1f},{sy:.1f}) "
+                    f"— offset ({dx:.3f},{dy:.3f}) > {coaxial_tolerance_mm} mm"))
+        if bore_diameter_mm < shaft_diameter_mm + clearance_min_mm:
+            issues.append(
+                AssemblyValidationIssue(SHAFT_BORE_VIOLATION,
+                    f"bore ⌀{bore_diameter_mm:.2f} mm < shaft ⌀{shaft_diameter_mm:.2f} mm "
+                    f"+ clearance {clearance_min_mm:.2f} mm"))
+    status = "fail" if issues else "pass"
+    return AssemblyCheckReport(
+        status=status,
+        analysis_scope="shaft_clearance",
+        interferences=(),
+        separations=(),
+        adjacent_within_tolerance=(),
+        issues=tuple(issues),
+    )
+
+
+TOURBILLON_MECHANICS_VIOLATION = "TOURBILLON_MECHANICS_VIOLATION"
+
+
+def check_tourbillon_mechanics(
+    parts: list[AssemblyPart] | tuple[AssemblyPart, ...],
+    *,
+    fixed_wheel_id: str = "fixed_wheel",
+    cage_id: str = "cage",
+    cage_bore_mm: float,
+    shaft_diameter_mm: float,
+    meshing_pairs: list[tuple[str, str]] | None = None,
+    gear_specs: dict[str, GearSpec] | None = None,
+    gear_mesh_tolerance_mm: float = 0.5,
+) -> AssemblyCheckReport:
+    """Composite tourbillon mechanical validation.
+
+    Runs every mechanically meaningful check for a tourbillon assembly:
+
+    1. Cage bore accommodates the central pivot shaft (``check_shaft_clearance``).
+    2. Cage physically contains the carried escapement wheels
+       (``check_tourbillon_constraints``).
+    3. Every declared meshing pair is at the correct centre distance
+       (``check_gear_mesh``).
+
+    Returns a single report aggregating all issues.
+    """
+    all_issues: list[AssemblyValidationIssue] = []
+
+    # 1. Shaft clearance: cage bore vs central pivot shaft
+    cage = next((p for p in parts if p.part_id == cage_id), None)
+    fixed = next((p for p in parts if p.part_id == fixed_wheel_id), None)
+    if cage is not None and fixed is not None:
+        sc = check_shaft_clearance(
+            cage, fixed,
+            bore_diameter_mm=cage_bore_mm,
+            shaft_diameter_mm=shaft_diameter_mm,
+            clearance_min_mm=0.5,
+        )
+        all_issues.extend(sc.issues)
+    else:
+        missing = cage_id if cage is None else fixed_wheel_id
+        all_issues.append(AssemblyValidationIssue(TOURBILLON_MECHANICS_VIOLATION,
+            f"tourbillon mechanics: missing part '{missing}'"))
+
+    # 2. Cage containment
+    tc = check_tourbillon_constraints(parts)
+    all_issues.extend(tc.issues)
+
+    # 3. Gear mesh for declared pairs
+    if meshing_pairs and gear_specs:
+        gm = check_gear_mesh(parts, gear_specs, meshing_pairs, tolerance_mm=gear_mesh_tolerance_mm)
+        all_issues.extend(gm.issues)
+
+    status = "fail" if all_issues else "pass"
+    return AssemblyCheckReport(
+        status=status,
+        analysis_scope="tourbillon_mechanics",
+        interferences=(),
+        separations=(),
+        adjacent_within_tolerance=(),
+        issues=tuple(all_issues),
+    )
 
 def assembly_report_to_validation_result(report: AssemblyCheckReport | dict[str, object]) -> dict[str, object]:
     if isinstance(report, dict):

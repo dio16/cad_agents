@@ -126,6 +126,7 @@ After each task, or after detecting a repeated pattern, record a meta-improvemen
 ```
 
 Meta-improvements may apply only safe documentation or prompt wording improvements that preserve existing approval boundaries, forbidden actions, and stop conditions.
+- Progress follow-up: `.slim/deepwork/` is gitignored and never committed; mirror meta-improvement notes and batch progress into a committed doc (e.g. a `## Meta-Improvement Log` section in `TASKS.md`) so the follow-up is reviewable across sessions.
 
 Do not use meta-improvement to expand executable scope, change CAD/API/schema/LLM behavior, alter validation gates, or bypass review. Those changes require explicit approval.
 

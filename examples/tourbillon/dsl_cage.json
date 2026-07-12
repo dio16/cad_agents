@@ -1,0 +1,9 @@
+{
+  "traceability_id": "tr_dsl_tb_cage",
+  "units": "mm",
+    "parameters": {"od": 24.0, "a": 3, "t": 3.0, "b": 2.0},
+  "features": [
+    {"op": "cage", "outer_diameter_mm": "$od", "arm_count": "$a", "thickness_mm": "$t", "bore_diameter_mm": "$b", "bridge": true, "axis": "z", "positions_mm": [[0.0, 0.0]]}
+  ],
+  "derivative_outputs": ["step_ap242", "stl"]
+}

@@ -59,6 +59,33 @@ flowchart TD
 - CI は GitHub Actions smoke workflow。
 - SBOM/provenance は決定論的 local stub。
 - Production 実運用: Kubernetes、KServe/vLLM、Argo CD、Cosign/Trivy、sandbox worker pool は将来拡張。
+## API Key Configuration
+
+デフォルトの API key は `local-dev-key` です。環境変数 `CAD_AGENT_API_KEY` で上書きできます:
+
+```bash
+export CAD_AGENT_API_KEY="your-custom-key"
+```
+
+開発環境以外では、必ず API key を変更してください。
+
+## CORS Configuration
+
+API server はデフォルトで CORS を有効にしています:
+- `Access-Control-Allow-Origin: *`
+- `Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS`
+- `Access-Control-Allow-Headers: Content-Type, X-API-Key`
+
+本番環境では `Access-Control-Allow-Origin` を適切なドメインに制限してください。
+
+
+## HTML ビューアー (人間確認用)
+
+組立結果は surrogate CAD の placeholder STEP / box STL のみでは人間が目視確認できません。標準の `run_assembly_pipeline` (`src/cad_agent/platform_poc.py`) は、各ギアの AABB から自己完結型 HTML ビューアー (`src/cad_agent/viewer.py` の `write_assembly_viewer`) を標準出力として生成します（外部 CDN / ネットワーク依存なし、オフラインで開けます）。
+
+- 出力例: `artifacts/gear_train_v1/assembly_viewer.html`（artifacts/ は .gitignore で除外；他の成果物と同じ場所）
+- レビュー時はこの HTML をブラウザで開き、マウスドラッグで回転 / ホイールでズームして組立状態を確認します。
+- ビューアーは surrogate のバウンディングボックス表示であり、真の歯形等は含みません（真の歯車幾何には新規 DSL 操作の承認が必要）。
 
 ## SLO候補
 

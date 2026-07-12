@@ -1,0 +1,9 @@
+{
+  "traceability_id": "tr_dsl_tb_fixed_wheel",
+  "units": "mm",
+  "parameters": {"m": 1.0, "z": 12, "t": 3.0, "b": 2.0},
+  "features": [
+    {"op": "gear", "module_mm": "$m", "teeth": "$z", "thickness_mm": "$t", "bore_diameter_mm": "$b", "axis": "z", "positions_mm": [[0.0, 0.0]]}
+  ],
+  "derivative_outputs": ["step_ap242", "stl"]
+}

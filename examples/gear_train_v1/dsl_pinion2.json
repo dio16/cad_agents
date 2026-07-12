@@ -1,0 +1,9 @@
+{
+  "traceability_id": "tr_dsl_gear_pinion2",
+  "units": "mm",
+  "parameters": {"r": 20.0, "h": 20.0},
+  "features": [
+    {"op": "cylinder", "radius_mm": "$r", "height_mm": "$h", "axis": "z", "positions_mm": [[60.0, 0.0]]}
+  ],
+  "derivative_outputs": ["step_ap242", "stl"]
+}

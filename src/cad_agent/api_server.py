@@ -611,6 +611,16 @@ class CADAgentAPIHandler(BaseHTTPRequestHandler):
 
     def do_PUT(self) -> None:
         self.do_POST()
+    def do_OPTIONS(self) -> None:
+        self.send_response(204)
+        self._set_cors_headers()
+        self.end_headers()
+
+    def _set_cors_headers(self) -> None:
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type, X-API-Key")
+        self.send_header("Access-Control-Max-Age", "86400")
 
     def log_message(self, format: str, *args: Any) -> None:
         return None
@@ -618,6 +628,7 @@ class CADAgentAPIHandler(BaseHTTPRequestHandler):
     def _send_json(self, status_code: int, body: Any) -> None:
         data = _json_bytes(body)
         self.send_response(status_code)
+        self._set_cors_headers()
         self.send_header("Content-Type", JSON_CONTENT_TYPE)
         self.send_header("Content-Length", str(len(data)))
         self.end_headers()
@@ -626,6 +637,7 @@ class CADAgentAPIHandler(BaseHTTPRequestHandler):
     def _send_text(self, status_code: int, body: str, content_type: str) -> None:
         data = body.encode("utf-8")
         self.send_response(status_code)
+        self._set_cors_headers()
         self.send_header("Content-Type", content_type)
         self.send_header("Content-Length", str(len(data)))
         self.end_headers()

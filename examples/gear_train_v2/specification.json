@@ -1,0 +1,48 @@
+{
+  "traceability_id": "tr_spec_gear_train_v2",
+  "requirement_id": "tr_req_gear_train_v2",
+  "parameter_table": {
+    "module_mm": 2.0,
+    "pinion1_teeth": 10,
+    "gear1_teeth": 25,
+    "pinion2_teeth": 12,
+    "gear2_teeth": 48,
+    "pinion1_radius_mm": 10.0,
+    "gear1_radius_mm": 25.0,
+    "pinion2_radius_mm": 12.0,
+    "gear2_radius_mm": 48.0,
+    "stage1_center_distance_mm": 35.0,
+    "stage2_center_distance_mm": 60.0,
+    "shaft_A_x_mm": 0.0,
+    "shaft_B_x_mm": 35.0,
+    "shaft_C_x_mm": 95.0,
+    "gear_thickness_mm": 12.0,
+    "stage2_thickness_mm": 8.0,
+    "total_ratio": 10.0,
+    "overall_length_mm": 160.0,
+    "overall_width_mm": 110.0,
+    "overall_height_mm": 55.0
+  },
+  "constraints": [
+    "total_ratio == (gear1_teeth / pinion1_teeth) * (gear2_teeth / pinion2_teeth)",
+    "stage1_center_distance_mm == pinion1_radius_mm + gear1_radius_mm",
+    "stage2_center_distance_mm == pinion2_radius_mm + gear2_radius_mm",
+    "all shaft axes parallel (z)",
+    "distinct gear types: spur (stage1) and helical (stage2)",
+    "units == mm"
+  ],
+  "material_candidates": ["Steel_4140", "Aluminum_7075", "PLA_prototype"],
+  "manufacturing_profile": "cnc_standard",
+  "validation_plan": [
+    "dimensions_check",
+    "topology_check",
+    "unit_consistency",
+    "manufacturing_profile_rules",
+    "assembly_aabb_interference"
+  ],
+  "unresolved_risks": [
+    "Gear tooth geometry deferred: no 'gear' DSL operation is approved",
+    "Helix angle for the helical stage unspecified",
+    "Load and torque capacity not validated in this surrogate test"
+  ]
+}

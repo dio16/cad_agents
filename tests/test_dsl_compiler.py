@@ -21,6 +21,16 @@ def assert_parametric_dsl_ast_passes(dsl: dict[str, object]) -> None:
     assert all(check.status == "pass" for check in checks), checks
 
 
+
+def test_resolve_dimension_no_parameter_name() -> None:
+    """_resolve_dimension should not accept a parameter_name argument."""
+    import inspect
+
+    from cad_agent.dsl_compiler import _resolve_dimension
+
+    sig = inspect.signature(_resolve_dimension)
+    assert "parameter_name" not in sig.parameters
+
 def test_compiler_rejects_unsupported_operation() -> None:
     plan = {"operations": [{"op": "gear_raw_code", "code": "print('bad')"}]}
 

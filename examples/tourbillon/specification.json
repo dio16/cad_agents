@@ -1,0 +1,39 @@
+{
+  "traceability_id": "tr_spec_tourbillon",
+  "requirement_id": "tr_req_tourbillon",
+  "parameter_table": {
+    "fixed_wheel_module_mm": 1.0,
+    "fixed_wheel_teeth": 12,
+    "cage_arm_count": 3,
+    "cage_outer_diameter_mm": 24.0,
+    "escape_wheel_teeth": 15,
+    "escape_wheel_tip_radius_mm": 6.0,
+    "balance_wheel_outer_diameter_mm": 14.0,
+    "balance_wheel_rim_width_mm": 2.0,
+    "balance_wheel_spokes": 3,
+    "hairspring_outer_diameter_mm": 8.0,
+    "hairspring_coils": 5.0,
+    "jewel_diameter_mm": 3.0
+  },
+  "constraints": [
+    "cage_outer_diameter_mm >= 2 * escape_wheel_tip_radius_mm",
+    "cage_outer_diameter_mm >= balance_wheel_outer_diameter_mm",
+    "fixed_wheel_teeth > 0",
+    "all shaft axes parallel (z)",
+    "units == mm"
+  ],
+  "material_candidates": ["Brass_C360", "Steel_4140", "PLA_prototype"],
+  "manufacturing_profile": "cnc_standard",
+  "validation_plan": [
+    "dimensions_check",
+    "topology_check",
+    "unit_consistency",
+    "manufacturing_profile_rules",
+    "assembly_aabb_interference",
+    "tourbillon_cage_containment"
+  ],
+  "unresolved_risks": [
+    "Hairspring preload/rate not validated in this surrogate test",
+    "Load and dynamic balance not validated in this surrogate test"
+  ]
+}

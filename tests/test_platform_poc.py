@@ -560,5 +560,141 @@ class PlatformPocTest(unittest.TestCase):
         self.assertEqual(workflow2.state, "export_pending_approval")
 
 
+    # --- CAD-FG-07: validate_artifacts() decomposition -----------------------
+    def test_validate_provenance_independent(self) -> None:
+        """_validate_provenance can be invoked standalone and reports provenance state."""
+        with TemporaryDirectory() as temp_dir:
+            runtime = run_cad_runtime(golden_dsl(), Path(temp_dir) / "runtime")
+            result = platform_poc._validate_provenance(golden_dsl(), runtime)
+        self.assertIsInstance(result, dict)
+        self.assertIn("failures", result)
+        self.assertIn("provenance_ok", result)
+        self.assertIn("artifact_ids", result)
+        self.assertIn("metadata_cad_kernel", result)
+        self.assertIn("metadata_path", result)
+        self.assertTrue(result["provenance_ok"])
+        self.assertEqual(result["failures"], [])
+
+    def test_validate_dimensions_independent(self) -> None:
+        """_validate_dimensions reports bbox/volume status and catches out-of-range bbox."""
+        spec = golden_specification()
+        dsl = golden_dsl()
+        with TemporaryDirectory() as temp_dir:
+            runtime = run_cad_runtime(dsl, Path(temp_dir) / "runtime")
+        result = platform_poc._validate_dimensions(runtime, spec)
+        self.assertEqual(result["failures"], [])
+        self.assertTrue(result["bbox_ok"])
+        self.assertTrue(result["volume_ok"])
+
+        bad = dict(runtime)
+        bad["bbox_mm"] = {}
+        bad_result = platform_poc._validate_dimensions(bad, spec)
+        self.assertFalse(bad_result["bbox_ok"])
+        self.assertTrue(any(f["reason_code"] == "BBOX_OUT_OF_RANGE" for f in bad_result["failures"]))
+
+    def test_validate_topology_independent(self) -> None:
+        """_validate_topology requires canonical STEP and derived STL outputs."""
+        dsl = golden_dsl()
+        with TemporaryDirectory() as temp_dir:
+            runtime = run_cad_runtime(dsl, Path(temp_dir) / "runtime")
+        result = platform_poc._validate_topology(runtime, runtime.get("artifacts", []))
+        self.assertTrue(result["topology_ok"])
+        self.assertEqual(result["failures"], [])
+
+        bad = dict(runtime)
+        bad["artifacts"] = [a for a in runtime["artifacts"] if a.get("format") != "stl"]
+        bad_result = platform_poc._validate_topology(bad, bad.get("artifacts", []))
+        self.assertFalse(bad_result["topology_ok"])
+        self.assertTrue(any(f["reason_code"] == "MISSING_CANONICAL_OR_DERIVED_ARTIFACT" for f in bad_result["failures"]))
+
+    def test_validate_units_independent(self) -> None:
+        """_validate_units enforces millimetre units."""
+        dsl = golden_dsl()
+        with TemporaryDirectory() as temp_dir:
+            runtime = run_cad_runtime(dsl, Path(temp_dir) / "runtime")
+        result = platform_poc._validate_units(dsl, runtime)
+        self.assertTrue(result["unit_ok"])
+        self.assertEqual(result["failures"], [])
+
+        bad_dsl = dict(dsl)
+        bad_dsl["units"] = "inch"
+        bad_result = platform_poc._validate_units(bad_dsl, runtime)
+        self.assertFalse(bad_result["unit_ok"])
+        self.assertTrue(any(f["reason_code"] == "UNIT_MISMATCH" for f in bad_result["failures"]))
+
+    def test_validate_manufacturing_independent(self) -> None:
+        """_validate_manufacturing evaluates DFM/AM rules and spec traceability."""
+        spec = golden_specification()
+        dsl = golden_dsl()
+        with TemporaryDirectory() as temp_dir:
+            runtime = run_cad_runtime(dsl, Path(temp_dir) / "runtime")
+        result = platform_poc._validate_manufacturing(dsl, spec, runtime)
+        self.assertIn("manufacturing_ok", result)
+        self.assertIn("min_wall", result)
+        self.assertIn("hole_d", result)
+        self.assertIn("spec_traceability_id", result)
+        self.assertTrue(result["manufacturing_ok"])
+        self.assertEqual(result["failures"], [])
+
+    def test_validate_artifacts_orchestrator_consistency(self) -> None:
+        """Orchestrator failures must equal the union of sub-validator failures."""
+        spec = golden_specification()
+        dsl = golden_dsl()
+        with TemporaryDirectory() as temp_dir:
+            runtime = run_cad_runtime(dsl, Path(temp_dir) / "runtime")
+            report = validate_artifacts(spec, dsl, runtime)
+            provenance = platform_poc._validate_provenance(dsl, runtime)
+            dimension = platform_poc._validate_dimensions(runtime, spec)
+            topology = platform_poc._validate_topology(runtime, runtime.get("artifacts", []))
+            units = platform_poc._validate_units(dsl, runtime)
+            manufacturing = platform_poc._validate_manufacturing(dsl, spec, runtime)
+        expected_failures = (
+            provenance["failures"]
+            + dimension["failures"]
+            + topology["failures"]
+            + units["failures"]
+            + manufacturing["failures"]
+        )
+        self.assertEqual(report["failures"], expected_failures)
+        self.assertEqual(report["pass"], len(expected_failures) == 0)
+
+    def test_surrogate_stl_normals_are_nonzero(self) -> None:
+        """Surrogate STL mesh facets must carry valid non-zero outward normals."""
+        import re
+
+        from cad_agent.platform_poc import _mesh_for_box
+
+        stl_text = _mesh_for_box(50.0, 30.0, 20.0)
+        normals = re.findall(r"facet normal ([\d.eE+-]+) ([\d.eE+-]+) ([\d.eE+-]+)", stl_text)
+        self.assertGreater(len(normals), 0, "STL should have at least one facet")
+        for nx, ny, nz in normals:
+            length = (float(nx) ** 2 + float(ny) ** 2 + float(nz) ** 2) ** 0.5
+            self.assertGreater(length, 0.0, f"Normal ({nx},{ny},{nz}) has zero length")
+
+    def test_boolean_failed_error_code_defined(self) -> None:
+        """BOOLEAN_FAILED error code should be available for future boolean operations."""
+        from cad_agent.platform_poc import BOOLEAN_FAILED
+
+        self.assertEqual(BOOLEAN_FAILED, "BOOLEAN_FAILED")
+
+    def test_kernel_timeout_error_code_defined(self) -> None:
+        """KERNEL_TIMEOUT error code should be available for CAD kernel timeout."""
+        from cad_agent.platform_poc import KERNEL_TIMEOUT
+
+        self.assertEqual(KERNEL_TIMEOUT, "KERNEL_TIMEOUT")
+
+    def test_cad_build_runtime_error_captured(self) -> None:
+        """RuntimeError from CadQuery should be captured as CAD_BUILD_FAILED."""
+        from unittest.mock import patch
+
+        from cad_agent.platform_poc import run_cad_runtime
+
+        dsl = golden_dsl()
+        with patch("cad_agent.platform_poc._cadquery_available", return_value=True):
+            with patch("cad_agent.platform_poc._build_cadquery_model", side_effect=RuntimeError("kernel error")):
+                result = run_cad_runtime(dsl)
+        self.assertEqual(result["status"], "fail")
+        self.assertEqual(result["reason_code"], "CAD_BUILD_FAILED")
+
 if __name__ == "__main__":
     unittest.main()

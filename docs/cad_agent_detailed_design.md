@@ -95,19 +95,26 @@ Future approved work may implement:
 ```text
 Human intent
   → Requirement Extractor
-  → Requirement JSON
+  → Requirement JSON (unknowns / assumptions separated)
   → Spec Composer
-  → Specification JSON
-  → Mechanism Planner
+  → Specification JSON (human approval gate)
+  → Mechanism Planner (design-intent; not yet implemented)
   → Mechanism plan
-  → DSL Compiler
-  → Parametric DSL
+  → DSL Compiler (allowlisted DSL only)
   → Schema / AST validator
-  → Deterministic CAD Runtime
+  → Parametric DSL
+  → Deterministic CAD Runtime (security-policy API boundary)
   → STEP / B-Rep / derived artifacts
   → Validation
-  → Orchestrator
+      → Assembly validation (parallel path)
+      → Motion validation (parallel path)
+  → Orchestrator (state machine; see Section 11)
   → Approval / revision / export
+
+Security policy integration points:
+  - API key enforcement (CAD_AGENT_API_KEY; default local-dev-key)
+  - CORS headers on API responses
+  - Audit / traceability recorded at every transition
 ```
 
 ### Component responsibilities
@@ -249,28 +256,42 @@ A validation report must include:
 
 ```text
 created
-  → requirement_extracted
-  → spec_drafted
-  → pending_spec_approval
+  → spec_pending_approval
   → spec_approved
-  → mechanism_planned
   → dsl_generated
   → cad_built
   → validation_running
   → validation_passed
   → pending_export_approval
   → exported
-```
 
-Failure path:
-
-```text
-validation_failed
+failure path:
+  → validation_failed
   → revision_requested
-  → dsl_revised
+  → (resubmit spec) spec_pending_approval
   → cad_built
   → validation_running
+
+escalation (terminal sink; reachable from any state that lists it):
+  → escalated_to_human   (no automated recovery; human resolves out-of-band)
 ```
+
+Transition table (implemented `Workflow` states):
+
+| From | Allowed next states |
+|---|---|
+| created | spec_pending_approval, spec_approved, validation_failed, escalated_to_human |
+| spec_pending_approval | spec_approved, revision_requested, escalated_to_human |
+| spec_approved | dsl_generated, cad_built, validation_failed, revision_requested, escalated_to_human |
+| revision_requested | spec_pending_approval, dsl_generated, validation_failed, escalated_to_human |
+| dsl_generated | cad_built, revision_requested, escalated_to_human |
+| cad_built | validation_running, revision_requested, escalated_to_human |
+| validation_running | validation_passed, validation_failed, revision_requested, escalated_to_human |
+| validation_passed | pending_export_approval, revision_requested, escalated_to_human |
+| validation_failed | revision_requested, escalated_to_human |
+| pending_export_approval | exported, revision_requested, escalated_to_human |
+| exported | revision_requested, escalated_to_human |
+| escalated_to_human | (none — terminal sink; human-in-the-loop resolution is handled out-of-band, not via the automated `Workflow` state machine) |
 
 ### Escalation conditions
 
@@ -346,3 +367,20 @@ Security rules:
 | `deterministic surrogate` | Current PoC/Pilot fallback when native executables are absent. |
 | `native CAD` | Approved Phase 1 PoC/native CadQuery path; production worker deployment remains future scope. |
 | `Phase 1 hardening` | Bounded hardening of the existing PoC/native CadQuery path, not production deployment. |
+
+## 16. End-to-end workflow and HTML review artifact
+
+The end-to-end design/review flow is:
+
+```text
+構想 → 詳細設計 → 設計案review → 案の敵対的review → 実装計画作成 → 実装 → テストケースでテスト
+```
+
+Mapped to the orchestrator workflow (`docs/ORCHESTRATOR_WORKFLOW.md`):
+
+- 構想 / 詳細設計 → Requirement / Specification JSON with human approval gate.
+- 設計案review / 案の敵対的review → the assembled result is reviewed by the human/reviewer using the **standard HTML assembly viewer** (`src/cad_agent/viewer.py`, `write_assembly_viewer`), driven by `run_assembly_pipeline` in `src/cad_agent/platform_poc.py`. The viewer is emitted by default into the artifact directory so a human can visually confirm the Assy result (surrogate AABB boxes; true gear teeth require a new approved DSL operation).
+- 実装計画作成 → plan under `docs/cadagent_plans/<TASK_ID>/implementation-plan.md`.
+- 実装 / テストケースでテスト → deterministic CAD runtime, Validation, and `examples/*` test cases.
+
+This viewer is the standard human-review artifact for assemblies; it closes the gap where placeholder STEP / box STL could not be visually verified by a human.

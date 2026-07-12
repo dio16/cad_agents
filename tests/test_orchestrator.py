@@ -25,11 +25,28 @@ from cad_agent.orchestrator import (
     SPEC_APPROVED,
     SPEC_PENDING_APPROVAL,
     VALIDATION_PASSED,
+    VALIDATION_RUNNING,
+
     MOTION_VALIDATION_PASSED_NOT_EXPORT_APPROVAL,
     NEW_OPERATION_APPROVAL_REQUIRED,
     Workflow,
     audit_event,
 )
+
+
+def test_audit_record_timestamp_consistency() -> None:
+    """Audit record timestamp and event_id suffix derive from a single datetime.now() call."""
+    import tempfile
+    from pathlib import Path
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        audit_path = Path(tmpdir) / "audit.jsonl"
+        wf = Workflow(state=CAD_BUILT, audit_path=audit_path)
+        wf.start_validation(traceability_id="tr_test_ts")
+        records = [json.loads(line) for line in audit_path.read_text().splitlines() if line.strip()]
+        assert len(records) >= 1
+        record = records[-1]
+        assert record["timestamp"] == record["recorded_at"]
 
 
 def passing_motion_validation_report() -> dict[str, object]:
@@ -191,7 +208,6 @@ def test_three_failures_escalate_to_human() -> None:
 
     for index in range(3):
         if index > 0:
-            workflow._transition(SPEC_PENDING_APPROVAL)
             workflow.approve_specification(f"spec_retry_{index}")
         else:
             workflow.approve_specification("spec-initial")
@@ -240,7 +256,6 @@ def test_three_validation_failures_escalate_to_human() -> None:
     for index in range(3):
         result = workflow.handle_validation({"passed": False, "reason_codes": ["RETRY_FAILURE"]})
         if index < 2:
-            workflow._transition(SPEC_PENDING_APPROVAL)
             workflow.approve_specification(f"spec_retry_{index}")
             workflow.run_cad({"traceability_id": f"tr_cad_retry_{index}"})
             workflow.start_validation(f"tr_val_retry_{index}")
@@ -407,7 +422,6 @@ def test_revision_loop_can_return_to_cad_generation_and_resets_failure_count() -
     workflow.start_validation("tr_val_1")
     workflow.handle_validation({"passed": False, "reason_codes": ["RETRY_FAILURE"]})
 
-    workflow._transition(SPEC_PENDING_APPROVAL)
     workflow.approve_specification("spec-2")
     workflow.run_cad({"traceability_id": "tr_cad_2"})
     workflow.start_validation("tr_val_2")
@@ -420,13 +434,30 @@ def test_revision_loop_can_return_to_cad_generation_and_resets_failure_count() -
 
 
 def test_invalid_state_transition_is_rejected() -> None:
+    """Public API rejects an invalid state transition (created -> validation_running)."""
     workflow = Workflow()
 
-    workflow._transition(SPEC_PENDING_APPROVAL)
+    with pytest.raises(ValueError, match="invalid workflow transition"):
+        workflow.start_validation("tr_val_x")
 
-    try:
-        workflow._transition(EXPORTED)
-    except ValueError as exc:
-        assert "invalid workflow transition" in str(exc)
-    else:
-        raise AssertionError("invalid transition was accepted")
+
+def test_assembly_then_motion_validation_workflow() -> None:
+    """Combined assembly and motion validation drive the workflow to a passed state via public API."""
+    workflow = Workflow(state=CREATED)
+    workflow.approve_specification("tr_test_combined")
+    workflow.run_cad({"traceability_id": "tr_test_combined", "features": []}, traceability_id="tr_test_combined")
+    workflow.start_validation(traceability_id="tr_test_combined")
+    assert workflow.state == VALIDATION_RUNNING
+
+    # Assembly validation passes and finalizes the workflow to VALIDATION_PASSED.
+    assembly_result = {"passed": True, "reason_codes": [], "failure_locations": [], "analysis_scope": "assembly"}
+    assembly_decision = workflow.handle_assembly_validation(assembly_result, traceability_id="tr_test_combined")
+    assert assembly_decision.approved is True
+    assert workflow.state == VALIDATION_PASSED
+
+    # Motion validation is then evaluated against the already-passed workflow and
+    # requires export approval rather than failing.
+    motion_result = {"valid": True, "reason_code": None, "clearance_mm": 5.0}
+    motion_decision = workflow.handle_motion_validation(motion_result, traceability_id="tr_test_combined")
+    assert motion_decision.approved is False
+    assert motion_decision.reason == MOTION_VALIDATION_PASSED_NOT_EXPORT_APPROVAL

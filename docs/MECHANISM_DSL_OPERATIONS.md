@@ -1,6 +1,6 @@
 # Mechanism DSL Approved Operations
 
-Status: approved for CAD-P06 Task 06.2 only.
+Status: approved for CAD-P06 Task 06.2, extended by CAD-FG-17 (tourbillon support).
 
 This document records the small deterministic mechanism operation set that the
 Phase 1 compiler may accept before any LLM/raw-code path is introduced.
@@ -10,6 +10,29 @@ Phase 1 compiler may accept before any LLM/raw-code path is introduced.
 | Mechanism-plan operation | Phase 1 Parametric DSL mapping |
 |---|---|
 | `shaft` | one `cylinder` feature with generated numeric `radius` and `length` parameters |
+
+## Approved direct Parametric DSL operations (CAD-FG-17)
+
+The following operations were approved (with the tourbillon condition: the
+additional DSL must include every element needed to build a tourbillon object)
+and added to `ALLOWED_DSL_OPERATIONS` in `dsl_compiler.py` and
+`ALLOWED_DSL_OPS` in `platform_poc.py`. All are z-axis extrusions and reuse the
+existing contract (`units = mm`, `$param` references, `axis = "z"`,
+`positions_mm`).
+
+| Operation | Required fields | Optional fields | Purpose |
+|---|---|---|---|
+| `gear` | `module_mm`, `teeth`, `thickness_mm`, `bore_diameter_mm` | — | Toothed wheel (involute-style spur approximation) |
+| `escape_wheel` | `teeth`, `tip_radius_mm`, `thickness_mm`, `bore_diameter_mm` | `tooth_type` (`pointed`\|`club`) | Escapement star wheel |
+| `balance_wheel` | `outer_diameter_mm`, `rim_width_mm`, `spokes`, `thickness_mm`, `bore_diameter_mm` | — | Oscillating wheel with rim + spokes |
+| `lever` | `length_mm`, `width_mm`, `thickness_mm`, `fork_width_mm`, `pivot_diameter_mm` | — | Pallet fork / lever with pivot bore |
+| `cage` | `outer_diameter_mm`, `arm_count`, `thickness_mm`, `bore_diameter_mm` | `bridge` (bool, default `true`) | Rotating carriage that carries the escapement |
+| `hairspring` | `outer_diameter_mm`, `coils`, `wire_diameter_mm`, `thickness_mm` | — | Spiral balance spring (Archimedean band) |
+| `jewel` | `diameter_mm`, `thickness_mm` | — | Bearing jewel / pivot stone |
+
+Failure to satisfy the required fields is rejected by the Phase 1 validator
+(`_validate_phase1_feature`) before any CAD runtime call. Generation failures
+during geometry build surface the reserved contract code `GEAR_GENERATION_FAILED`.
 
 ## `shaft` mapping
 
@@ -59,8 +82,6 @@ compiler allowlist:
 
 - bearing seats
 - bearing rings
-- cages
-- gears and tooth geometry
 - motion constraints
 - FEA
 - raw code execution
