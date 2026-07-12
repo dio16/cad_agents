@@ -1,0 +1,28 @@
+{
+  "traceability_id": "tr_req_tourbillon_3dp",
+  "product_type": "tourbillon_display_object",
+  "functional_requirements": [
+    "Display a tourbillon escapement mechanism at approximately 100×100×100 mm scale suitable for 3D printing",
+    "Show the rotating cage carrying the escape wheel, balance wheel, lever, and hairspring",
+    "Mount on a solid base plate with a central fixed fourth wheel",
+    "Produce individual STL files per part plus a combined assembly STEP for reference"
+  ],
+  "dimensions": {
+    "base_length_mm": 100.0,
+    "base_width_mm": 100.0,
+    "overall_height_mm": 95.0,
+    "cage_outer_diameter_mm": 110.0
+  },
+  "manufacturing": {
+    "primary_process": "FDM_3D_print"
+  },
+  "unknowns": [
+    "Optimal print orientation and support strategy per part",
+    "Tolerances for press-fit assembly (nominal 0.3 mm clearance recommended)"
+  ],
+  "assumptions": [
+    "Each part is printed separately; the assembly STEP shows the intended relative positions",
+    "The cage is a static display element (not a functional rotating bearing)",
+    "All parts use the approved Mechanism DSL tourbillon operations"
+  ]
+}

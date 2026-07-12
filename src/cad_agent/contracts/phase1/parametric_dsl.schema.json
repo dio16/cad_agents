@@ -31,7 +31,9 @@
               "op": {"const": "box"},
               "length_mm": {"type": "string", "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"},
               "width_mm": {"type": "string", "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"},
-              "height_mm": {"type": "string", "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"}
+              "height_mm": {"type": "string", "pattern": "^\\$[A-Za-z_][A-Za-z0-9_]*$"},
+              "axis": {"type": "string", "enum": ["z"]},
+              "positions_mm": {"$ref": "#/$defs/coordinate_pair_array"}
             },
             "required": ["op", "length_mm", "width_mm", "height_mm"],
             "additionalProperties": false
