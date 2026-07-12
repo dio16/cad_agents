@@ -223,3 +223,54 @@ def test_tourbillon_constraint_missing_cage():
     report = check_tourbillon_constraints([wheel])
     assert report.status == "fail"
     assert any(i.code == "TOURBILLON_NO_CAGE" for i in report.issues)
+
+
+from cad_agent.assembly_checks import GearSpec, check_gear_mesh
+
+
+def test_gear_mesh_passes_at_correct_centre_distance():
+    """Two gears placed at the exact required centre distance must pass."""
+    spec = {
+        "a": GearSpec(module_mm=3.0, teeth=20),
+        "b": GearSpec(module_mm=3.0, teeth=12),
+    }
+    # Required cd = 3*(20+12)/2 = 48 mm. Place b at x=48.
+    a = AssemblyPart("a", "tr_a", BBox(-30.0, -10.0, 0.0, 30.0, 10.0, 8.0))
+    b = AssemblyPart("b", "tr_b", BBox(30.0, -10.0, 0.0, 66.0, 10.0, 6.0))
+    report = check_gear_mesh([a, b], spec, [("a", "b")])
+    assert report.status == "pass", [i.message for i in report.issues]
+
+
+def test_gear_mesh_fails_at_wrong_distance():
+    """Two gears placed at an incorrect centre distance must fail."""
+    spec = {
+        "a": GearSpec(module_mm=3.0, teeth=20),
+        "b": GearSpec(module_mm=3.0, teeth=12),
+    }
+    # Required cd = 48 mm. Place b at x=50 (off by 2 mm).
+    a = AssemblyPart("a", "tr_a", BBox(-30.0, -10.0, 0.0, 30.0, 10.0, 8.0))
+    b = AssemblyPart("b", "tr_b", BBox(32.0, -10.0, 0.0, 68.0, 10.0, 6.0))
+    report = check_gear_mesh([a, b], spec, [("a", "b")], tolerance_mm=0.5)
+    assert report.status == "fail"
+    assert any(i.code == "GEAR_MESH_DISTANCE" for i in report.issues)
+
+
+def test_gear_mesh_fails_on_module_mismatch():
+    """Gears with different modules must fail even if at the right distance."""
+    spec = {
+        "a": GearSpec(module_mm=3.0, teeth=20),
+        "b": GearSpec(module_mm=2.0, teeth=20),
+    }
+    a = AssemblyPart("a", "tr_a", BBox(-15.0, -5.0, 0.0, 15.0, 5.0, 8.0))
+    b = AssemblyPart("b", "tr_b", BBox(25.0, -5.0, 0.0, 55.0, 5.0, 6.0))
+    report = check_gear_mesh([a, b], spec, [("a", "b")])
+    assert report.status == "fail"
+    assert any(i.code == "GEAR_MESH_MODULE_MISMATCH" for i in report.issues)
+
+
+def test_gear_mesh_fails_on_missing_spec():
+    a = AssemblyPart("a", "tr_a", BBox(-10.0, -5.0, 0.0, 10.0, 5.0, 8.0))
+    b = AssemblyPart("b", "tr_b", BBox(30.0, -5.0, 0.0, 50.0, 5.0, 6.0))
+    report = check_gear_mesh([a, b], {}, [("a", "b")])
+    assert report.status == "fail"
+    assert any(i.code == "GEAR_MESH_MISSING_SPEC" for i in report.issues)

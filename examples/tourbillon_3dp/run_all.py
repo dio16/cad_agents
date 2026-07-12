@@ -20,7 +20,7 @@ import cadquery as cq
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
-from cad_agent.assembly_checks import AssemblyPart, BBox, check_tourbillon_constraints
+from cad_agent.assembly_checks import AssemblyPart, BBox, GearSpec, check_gear_mesh, check_tourbillon_constraints
 from cad_agent.platform_poc import (
     run_assembly_pipeline,
     run_cad_runtime,
@@ -51,22 +51,30 @@ PARTS: list[tuple[str, dict, dict, float, float, float]] = [
      {"op": "box", "length_mm": "$L", "width_mm": "$W", "height_mm": "$H",
       "axis": "z", "positions_mm": [[0.0, 0.0]]},
      {"L": 100.0, "W": 100.0, "H": 10.0},
-     0.0, 0.0, 0.0),
+     0.0, 0.0, 0.0),                                              # hz=5  → [0, 10]
 
-    # ── fixed fourth wheel (spur gear at centre) ──
+    # ── fixed fourth wheel (spur gear at centre, m=3, z=20, pitch-r=30) ──
     ("fixed_wheel",
      {"op": "gear", "module_mm": "$m", "teeth": "$z", "thickness_mm": "$t",
       "bore_diameter_mm": "$b", "axis": "z", "positions_mm": [[0.0, 0.0]]},
      {"m": 3.0, "z": 20, "t": 8.0, "b": 10.0},
-     0.0, 0.0, 12.0),
+     0.0, 0.0, 12.0),                                             # hz=8  → [12, 28]
 
-    # ── rotating cage ──
+    # ── intermediate wheel (meshes with fixed_wheel, m=3, z=12, pitch-r=18) ──
+    # centre distance = m·(z1+z2)/2 = 3·(20+12)/2 = 48 mm → placed at x=48
+    ("intermediate_wheel",
+     {"op": "gear", "module_mm": "$m", "teeth": "$z", "thickness_mm": "$t",
+      "bore_diameter_mm": "$b", "axis": "z", "positions_mm": [[0.0, 0.0]]},
+     {"m": 3.0, "z": 12, "t": 6.0, "b": 6.0},
+     48.0, 0.0, 12.0),                                            # hz=6  → [12, 24]
+
+    # ── rotating cage (coaxial with fixed_wheel) ──
     ("cage",
      {"op": "cage", "outer_diameter_mm": "$od", "arm_count": "$a",
       "thickness_mm": "$t", "bore_diameter_mm": "$b", "bridge": True,
       "axis": "z", "positions_mm": [[0.0, 0.0]]},
      {"od": 110.0, "a": 5, "t": 6.0, "b": 14.0},
-     0.0, 0.0, 30.0),
+     0.0, 0.0, 32.0),                                             # hz=7.5 → [32, 47]
 
     # ── escape wheel ──
     ("escape_wheel",
@@ -74,7 +82,7 @@ PARTS: list[tuple[str, dict, dict, float, float, float]] = [
       "thickness_mm": "$t", "bore_diameter_mm": "$b",
       "tooth_type": "club", "axis": "z", "positions_mm": [[0.0, 0.0]]},
      {"z": 12, "ra": 26.0, "t": 5.0, "b": 5.0},
-     14.0, 0.0, 47.0),
+     14.0, 0.0, 49.0),                                            # hz=5  → [49, 59]
 
     # ── balance wheel ──
     ("balance_wheel",
@@ -83,7 +91,7 @@ PARTS: list[tuple[str, dict, dict, float, float, float]] = [
       "thickness_mm": "$t", "bore_diameter_mm": "$b",
       "axis": "z", "positions_mm": [[0.0, 0.0]]},
      {"od": 52.0, "rw": 8.0, "s": 5, "t": 5.0, "b": 5.0},
-     -12.0, 0.0, 59.0),
+     -12.0, 0.0, 61.0),                                           # hz=5  → [61, 71]
 
     # ── lever (pallet fork) ──
     ("lever",
@@ -92,7 +100,7 @@ PARTS: list[tuple[str, dict, dict, float, float, float]] = [
       "pivot_diameter_mm": "$pd",
       "axis": "z", "positions_mm": [[0.0, 0.0]]},
      {"L": 48.0, "W": 8.0, "t": 5.0, "fw": 12.0, "pd": 4.0},
-     14.0, 0.0, 71.0),
+     14.0, 0.0, 73.0),                                           # hz=5  → [73, 83]
 
     # ── hairspring ──
     ("hairspring",
@@ -101,14 +109,14 @@ PARTS: list[tuple[str, dict, dict, float, float, float]] = [
       "thickness_mm": "$t",
       "axis": "z", "positions_mm": [[0.0, 0.0]]},
      {"od": 38.0, "co": 8.0, "wd": 1.5, "t": 1.5},
-     0.0, 0.0, 83.0),
+     0.0, 0.0, 85.0),                                            # hz=1.5 → [85, 88]
 
     # ── jewel bearing ──
     ("jewel",
      {"op": "jewel", "diameter_mm": "$d", "thickness_mm": "$t",
       "axis": "z", "positions_mm": [[0.0, 0.0]]},
      {"d": 8.0, "t": 6.0},
-     0.0, 0.0, 86.0),
+     0.0, 0.0, 90.0),                                            # hz=6  → [90, 102]
 ]
 
 BUILDERS = {
@@ -235,6 +243,11 @@ def main() -> int:
 
         print(f"\n  Pipeline overall: {pipeline['status']}")
         print(f"  Assembly (AABB):  {pipeline['assembly']['status']}")
+        # AABB interference is EXPECTED for meshing gears sharing a z-slab.
+        interferences = pipeline["assembly"].get("interferences", [])
+        if interferences:
+            pairs = [f"{i['parts'][0]}↔{i['parts'][1]}" for i in interferences]
+            print(f"    ⚠ AABB interference (expected for meshing gear pair): {', '.join(pairs)}")
 
     # ── Phase 4: tourbillon containment check ────────────────────
     placement = {row[0]: (row[3], row[4], row[5]) for row in PARTS}
@@ -255,15 +268,38 @@ def main() -> int:
         for i in tourbillon.issues:
             print(f"    [{i.code}] {i.message}")
 
+
+    # ── Phase 5: gear mesh validation ────────────────────────────
+    # The fixed fourth wheel (z=20) and intermediate wheel (z=12) share
+    # module m=3.  Required centre distance = 3·(20+12)/2 = 48 mm.
+    # The intermediate wheel is placed at cx=48 → actual cd = 48 mm.
+    gear_specs = {
+        "fixed_wheel": GearSpec(module_mm=3.0, teeth=20),
+        "intermediate_wheel": GearSpec(module_mm=3.0, teeth=12),
+    }
+    meshing_pairs = [("fixed_wheel", "intermediate_wheel")]
+    gear_report = check_gear_mesh(asm_parts, gear_specs, meshing_pairs)
+    print(f"\n  Gear mesh: {gear_report.status}")
+    if gear_report.status != "pass":
+        for i in gear_report.issues:
+            print(f"    [{i.code}] {i.message}")
+    else:
+        cd = 3.0 * (20 + 12) / 2.0
+        print(f"    fixed_wheel (z=20) ↔ intermediate_wheel (z=12): centre distance = {cd:.1f} mm ✓")
+
+    # ── Mechanical honesty summary ────────────────────────────────
+    mechanical = (
+        tourbillon.status == "pass"
+        and gear_report.status == "pass"
+    )
+    print(f"\n  Mechanical validation (gear mesh + tourbillon containment): {'pass' if mechanical else 'FAIL'}")
     # ── Summary ──────────────────────────────────────────────────
     print(f"\n{'='*60}")
     print(f"  All artifacts in: {ARTIFACT_DIR}")
     print(f"  Parts generated:  {len(PARTS)}")
     print(f"  Assembly STEP:    {asm_step.name}  ({asm_step.stat().st_size:,} bytes)")
     print(f"  Assembly STL:     {asm_stl.name}  ({asm_stl.stat().st_size:,} bytes)")
-    print(f"  Viewer HTML:      assembly_viewer.html")
-    print(f"{'='*60}")
-    return 0
+    return 0 if mechanical else 1
 
 
 if __name__ == "__main__":

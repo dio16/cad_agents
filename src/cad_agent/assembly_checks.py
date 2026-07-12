@@ -279,6 +279,72 @@ def check_tourbillon_constraints(
     )
 
 
+@dataclass(frozen=True, slots=True)
+class GearSpec:
+    """Minimal gear specification for mesh validation."""
+    module_mm: float
+    teeth: int
+
+
+GEAR_MESH_DISTANCE = "GEAR_MESH_DISTANCE"
+GEAR_MESH_MODULE_MISMATCH = "GEAR_MESH_MODULE_MISMATCH"
+GEAR_MESH_MISSING_SPEC = "GEAR_MESH_MISSING_SPEC"
+
+
+def check_gear_mesh(
+    parts: list[AssemblyPart] | tuple[AssemblyPart, ...],
+    gear_specs: dict[str, GearSpec],
+    meshing_pairs: list[tuple[str, str]] | tuple[tuple[str, str], ...],
+    tolerance_mm: float = 0.5,
+) -> AssemblyCheckReport:
+    """Validate that paired gears are positioned at the correct centre distance.
+
+    For each (part_a, part_b) pair the *required* centre distance is computed
+    from :math:`m \\cdot (z_a + z_b) / 2` and compared to the actual Euclidean
+    distance between the parts' bounding-box centres.  Modules must match.
+    """
+    issues = list(validate_parts(parts))
+    for part_a, part_b in meshing_pairs:
+        a = next((p for p in parts if p.part_id == part_a), None)
+        b = next((p for p in parts if p.part_id == part_b), None)
+        if a is None or b is None:
+            missing = part_a if a is None else part_b
+            issues.append(AssemblyValidationIssue("GEAR_MESH_MISSING_PART", f"part '{missing}' not found"))
+            continue
+        sa = gear_specs.get(part_a)
+        sb = gear_specs.get(part_b)
+        if sa is None or sb is None:
+            missing = part_a if sa is None else part_b
+            issues.append(AssemblyValidationIssue(GEAR_MESH_MISSING_SPEC, f"gear spec missing for '{missing}'"))
+            continue
+        if abs(sa.module_mm - sb.module_mm) > 1e-9:
+            issues.append(
+                AssemblyValidationIssue(GEAR_MESH_MODULE_MISMATCH,
+                    f"{part_a} (m={sa.module_mm}) != {part_b} (m={sb.module_mm})"))
+            continue
+        required_cd = sa.module_mm * (sa.teeth + sb.teeth) / 2.0
+        ax = (a.bbox.min_x + a.bbox.max_x) / 2.0
+        ay = (a.bbox.min_y + a.bbox.max_y) / 2.0
+        bx = (b.bbox.min_x + b.bbox.max_x) / 2.0
+        by = (b.bbox.min_y + b.bbox.max_y) / 2.0
+        actual_cd = math.hypot(ax - bx, ay - by)
+        error = abs(actual_cd - required_cd)
+        if error > tolerance_mm:
+            issues.append(
+                AssemblyValidationIssue(GEAR_MESH_DISTANCE,
+                    f"{part_a}-{part_b}: required centre distance {required_cd:.3f} mm, "
+                    f"actual {actual_cd:.3f} mm (error {error:.3f} mm > {tolerance_mm} mm)"))
+    status = "fail" if issues else "pass"
+    return AssemblyCheckReport(
+        status=status,
+        analysis_scope="gear_mesh_centre_distance",
+        interferences=(),
+        separations=(),
+        adjacent_within_tolerance=(),
+        issues=tuple(issues),
+    )
+
+
 def assembly_report_to_validation_result(report: AssemblyCheckReport | dict[str, object]) -> dict[str, object]:
     if isinstance(report, dict):
         reason_codes = report.get("reason_codes")
