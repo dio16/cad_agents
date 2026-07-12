@@ -4,6 +4,8 @@
 
 このリポジトリの目的は、[`docs/Origen/Design_document_for_a_machine_design_platform.md`](docs/Origen/Design_document_for_a_machine_design_platform.md) を原案として、AI活用機械設計プラットフォームの仕様、運用規則、検証ゲート、実装ロードマップを一貫した形で管理することです。
 
+> **現在の成熟度 (2026-07-12)**: PoC/Pilot 検証済み。E2E job runner、job store、export gate、LLM mock loop 実装済み。288 pytest pass。本番デプロイ・実 worker pool・FEA は延期。詳細: `docs/backlog/IMPLEMENTATION_HISTORY.md`
+
 ## 成功状態
 
 次の状態を成功とします。

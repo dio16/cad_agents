@@ -1,31 +1,31 @@
 # CADAGENT Detailed Design
 
 ## 1. Document status
-
-- Status: maintained planning/design artifact; Phase 1 hardening record included
+- Status: maintained; CAD-REVIEW-02 catch-up applied (2026-07-12)
 - Source: `docs/Origen/cad_agent_design_spec_and_implementation_plan.md`
-- Related prompt workflow: `docs/prompt_execution_plan.md`
-- Scope boundary: this document defines CADAGENT design intent and maintained planning contracts, and records bounded Phase 1 hardening. It does not authorize production CAD features, native workers, schemas, API services, LLM endpoints, or production architecture.
+- Related: `docs/cad_agent_catchup_detailed_design.md` (FG-18–22 catch-up design), `docs/backlog/IMPLEMENTATION_HISTORY.md` (completed tasks)
+- Current maturity: PoC/Pilot validated; 288 pytest pass; topology honesty + E2E job runner + job store + export gate + LLM mock loop implemented
 
 ## 2. Executive summary
 
-CADAGENT is an AI-assisted mechanical design platform that converts human design intent into structured engineering artifacts, then uses deterministic CAD runtime and validation components to generate and verify geometry.
+CADAGENT converts human design intent into structured engineering artifacts through deterministic CAD runtime and validation gates.
 
-The core design principle is separation of responsibility:
+**Implemented (2026-07-12)**:
 
-| Layer | Responsibility | Must not do |
-|---|---|---|
-| Human | Final intent, approval, specification changes | Delegate safety/legal judgment to agents |
-| LLM agents | Requirement, specification, mechanism, and DSL proposals | Execute raw CAD code or change approved specs alone |
-| Deterministic CAD Runtime | Execute validated DSL and generate geometry/artifacts | Interpret specs or hide failures |
-| Validation | Geometry, manufacturing, assembly, and motion quality gates | Mark failed artifacts as pass |
-| Orchestrator / Audit | Workflow, revision loop, approval, traceability | Bypass gates or omit audit records |
+| Layer | Implementation |
+|---|---|
+| Requirement extraction | fixture + LLM adapter (mock default, CAD_AGENT_LLM_LIVE=1 for live) |
+| Specification composition | fixture + LLM adapter (route_model enforced) |
+| Parametric DSL | golden DSL + mechanism compiler (allowlist-based) |
+| CAD Runtime | CadQuery/OCCT (native) + deterministic surrogate (fallback) |
+| Validation | dimensions, artifact presence, DFM parameter_proxy, topology unchecked (honest null) |
+| E2E Job Runner | fixture_pipeline / structured_pipeline / llm_pipeline modes |
+| Job Store | sqlite3 durable (local_durable_stub), jobs/approvals/audit tables |
+| Export gate | EXPORT_REQUIRES_NATIVE_KERNEL for surrogate kernel |
+| Orchestrator | state machine + audit JSONL + max_revision_loops + approval gates |
+| API server | stdlib HTTP (local skeleton), /v1/workflows/run, /v1/cad/jobs, /v1/exports |
 
-The initial pass creates planning/design documents only. A later bounded Phase 1 hardening pass updated the existing PoC/native CadQuery path without expanding into production deployment. Future implementation must remain gated by review and validation.
-
-Full-design implementation status: this detailed design is not fully implemented. The repository contains real bounded PoC/Pilot/skeleton code, including the Phase 1 golden CAD path, Phase 2 DFM/AM pilot, local artifact hashing/indexing, API/job/project skeletons, and Phase 3/4 data-model stubs. Missing or only stubbed items include real LLM requirement/spec extraction, a Mechanism Planner, a Specification-to-DSL compiler, enforced human approval/export gates, a full Orchestrator revision-loop state machine, production API/worker/auth infrastructure, durable artifact storage, full assembly DSL/interference, motion validation, and FEA.
-
-Approval samples are not workflow enforcement: existing approval helpers and sample JSONL records document audit shape only; they do not yet block CAD generation, validation override, or print/export without approval. The bounded workflow safety gate is tracked as `CAD-P03` in `docs/cad_agent_implementation_plan.md` and is the recommended next implementation phase.
+**Deferred**: production deployment (K8s, Cosign), real worker pools, FEA, production auth, material DB/PLM/ERP/MES.
 
 ## 3. Goals and non-goals
 
